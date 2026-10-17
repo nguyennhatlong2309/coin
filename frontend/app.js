@@ -171,6 +171,14 @@ async function loadChartData(coin, interval = "1h") {
     }
 
     if (candleSeries && volumeSeries) {
+      // Configure dynamic price precision & minMove based on coin price scale
+      const last = data.candles[data.candles.length - 1];
+      const samplePrice = last ? last.close : 1.0;
+      const priceFormatConfig = getPriceFormatOptions(samplePrice);
+      candleSeries.applyOptions({
+        priceFormat: priceFormatConfig
+      });
+
       candleSeries.setData(data.candles);
       volumeSeries.setData(data.volumes);
 
@@ -178,7 +186,6 @@ async function loadChartData(coin, interval = "1h") {
       chartInstance.timeScale().fitContent();
 
       // Update banner with last candle
-      const last = data.candles[data.candles.length - 1];
       const lastVol = data.volumes[data.volumes.length - 1];
       updateStatsBanner(last.open, last.high, last.low, last.close, lastVol ? lastVol.value : 0);
     }
@@ -186,6 +193,7 @@ async function loadChartData(coin, interval = "1h") {
     console.error("Error fetching chart data:", err);
   }
 }
+
 
 let chartRefreshTimer = null;
 
@@ -270,13 +278,57 @@ function renderChartCoinTabs(coins) {
   }).join("");
 }
 
-function formatPriceNum(num) {
-  if (num === undefined || num === null) return "-";
-  if (num >= 1000) return `$${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  if (num >= 1) return `$${num.toFixed(3)}`;
-  if (num >= 0.001) return `$${num.toFixed(6)}`;
-  return `$${num.toFixed(8)}`;
+function getPriceFormatOptions(price) {
+  if (price === undefined || price === null || price <= 0) {
+    return { type: 'price', precision: 2, minMove: 0.01 };
+  }
+
+  let precision = 2;
+  let minMove = 0.01;
+
+  if (price >= 1000) {
+    precision = 2;
+    minMove = 0.01;
+  } else if (price >= 10) {
+    precision = 3;
+    minMove = 0.001;
+  } else if (price >= 1) {
+    precision = 4;
+    minMove = 0.0001;
+  } else if (price >= 0.01) {
+    precision = 5;
+    minMove = 0.00001;
+  } else if (price >= 0.0001) {
+    // e.g. PIXEL ($0.00538) -> 6 decimals, step 0.000001
+    precision = 6;
+    minMove = 0.000001;
+  } else if (price >= 0.000001) {
+    // e.g. PEPE ($0.00000391) -> 8 decimals, step 0.00000001
+    precision = 8;
+    minMove = 0.00000001;
+  } else {
+    precision = 10;
+    minMove = 0.0000000001;
+  }
+
+  return {
+    type: 'price',
+    precision: precision,
+    minMove: minMove
+  };
 }
+
+function formatPriceNum(num) {
+  if (num === undefined || num === null || isNaN(num)) return "-";
+  if (num >= 1000) return `$${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  if (num >= 10) return `$${num.toFixed(3)}`;
+  if (num >= 1) return `$${num.toFixed(4)}`;
+  if (num >= 0.01) return `$${num.toFixed(5)}`;
+  if (num >= 0.0001) return `$${num.toFixed(6)}`;
+  if (num >= 0.000001) return `$${num.toFixed(8)}`;
+  return `$${num.toFixed(10)}`;
+}
+
 
 // ============================================================
 // 2. PORTFOLIO & SWARM ENGINE STATS
@@ -335,8 +387,8 @@ async function loadPortfolio() {
         }
 
         const sharesStr = isCrypto ? (pos.shares < 1 ? pos.shares.toFixed(4) : pos.shares.toFixed(2)) : pos.shares.toFixed(1);
-        const entryStr = isCrypto && pos.entry_price >= 1 ? `$${pos.entry_price.toLocaleString('en-US', {minimumFractionDigits: 2})}` : `$${pos.entry_price}`;
-        const currentStr = isCrypto && pos.current_price >= 1 ? `$${pos.current_price.toLocaleString('en-US', {minimumFractionDigits: 2})}` : `$${pos.current_price}`;
+        const entryStr = isCrypto ? formatPriceNum(pos.entry_price) : `$${pos.entry_price.toFixed(2)}`;
+        const currentStr = isCrypto ? formatPriceNum(pos.current_price) : `$${pos.current_price.toFixed(2)}`;
 
         return `
           <tr>
@@ -382,12 +434,13 @@ async function loadPortfolio() {
             <td><span class="${isBuy ? 'tag-outcome-yes' : 'tag-outcome-no'}">${t.action}</span></td>
             <td>${escapeHtml(t.question)}</td>
             <td>${t.shares}</td>
-            <td>$${Number(t.price).toLocaleString()}</td>
+            <td>${formatPriceNum(t.price)}</td>
             <td>$${t.total_amount.toFixed(2)}</td>
             <td class="text-muted" style="font-size:0.75rem">${escapeHtml(t.reasoning)}</td>
           </tr>
         `;
       }).join("");
+
     } else {
       tradesTbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted">Chưa có lịch sử giao dịch nào.</td></tr>`;
     }
