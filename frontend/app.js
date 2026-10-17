@@ -16,10 +16,12 @@ document.addEventListener("DOMContentLoaded", () => {
   loadChartData(currentChartCoin, currentChartInterval);
   loadMarkets();
   checkAutoStatus();
+  loadProposals();
 
   // Periodic portfolio poll (every 3 seconds)
   setInterval(() => {
     loadPortfolio();
+    loadProposals();
   }, 3000);
 
   // Periodic crypto watchlist poll (every 4 seconds)
@@ -444,6 +446,9 @@ async function loadPortfolio() {
     const winrateEl = document.getElementById("kpi-winrate");
     const tradesEl = document.getElementById("kpi-trades");
 
+    currentPortfolioCash = data.cash_balance;
+    currentPortfolioEquity = data.total_equity;
+
     equityEl.textContent = `$${data.total_equity.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
     cashEl.textContent = `Tiền mặt: $${data.cash_balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
 
@@ -617,7 +622,7 @@ async function loadCryptoWatchlist(force = false) {
           </td>
           <td style="text-align:center">
             <div class="row-actions" style="justify-content:center;">
-              <button class="btn-table-action btn-scan-coin" onclick="triggerManualScan('${t.coin}')" title="Quét đồng coin này bằng AI Swarm">⚡ Quét</button>
+              <button class="btn-table-action btn-scan-coin" onclick="openScanModal('${t.coin}')" title="Thiết lập quét & phân tích AI cho ${t.coin}">⚡ Quét</button>
               <button class="btn-table-action" onclick="changeChartCoin('${t.coin}', true)" title="Mở biểu đồ nến">📈 Biểu Đồ</button>
               <button class="btn-table-action" onclick="openDepthModal('${t.coin}')" title="Xem độ sâu sổ lệnh L2">📊 Độ Sâu</button>
               <button class="btn-table-action btn-del-coin" onclick="removeCoin('${t.coin}')" title="Xóa khỏi danh sách">✕</button>
@@ -812,30 +817,361 @@ async function loadMarkets() {
   }
 }
 
-// 7. Trigger Swarm Scan Manual Run (supports target coin or global)
-async function triggerManualScan(coin = null) {
-  const btn = document.getElementById("btn-scan");
-  const origText = btn.innerHTML;
-  btn.disabled = true;
-  btn.innerHTML = `<span class="btn-icon">⏳</span> AI ĐANG SUY LUẬN TRÊN ${coin || 'HỆ THỐNG'}...`;
+// ============================================================
+// 7. SCAN SETUP MODAL & AI TRADE PROPOSALS QUEUE
+// ============================================================
+
+let currentPendingProposals = [];
+
+async function openScanModal(targetCoin = null) {
+  const modal = document.getElementById("scan-modal");
+  if (!modal) return;
+
+  const coinSelect = document.getElementById("scan-target-coin");
+  const titleEl = document.getElementById("scan-modal-title");
+
+  // Populate target coin options from watchlist
+  if (coinSelect) {
+    try {
+      const res = await fetch("/api/crypto/watchlist");
+      const data = await res.json();
+      let optionsHtml = `<option value="ALL">🌐 Quét toàn bộ danh sách coin đang theo dõi (AI tự chọn cơ hội tốt nhất)</option>`;
+      if (data.tickers && data.tickers.length > 0) {
+        optionsHtml += data.tickers.map(t => {
+          const isSelected = targetCoin && targetCoin.toUpperCase() === t.coin.toUpperCase() ? "selected" : "";
+          return `<option value="${t.coin}" ${isSelected}>🪙 ${t.coin}/USDT (${t.price_formatted} • 24h: ${t.change_24h}%)</option>`;
+        }).join("");
+      }
+      coinSelect.innerHTML = optionsHtml;
+      if (targetCoin) {
+        coinSelect.value = targetCoin.toUpperCase();
+      }
+    } catch (e) {}
+  }
+
+  if (titleEl) {
+    titleEl.textContent = targetCoin 
+      ? `⚡ THIẾT LẬP QUÉT & PHÂN TÍCH CHO ${targetCoin.toUpperCase()}/USDT`
+      : `⚡ THIẾT LẬP THÔNG SỐ QUÉT & PHÂN TÍCH AI`;
+  }
+
+  // Pre-fill 3% stake recommendation
+  setScanStakePct(0.03);
+
+  modal.classList.add("open");
+}
+
+function closeScanModal() {
+  const modal = document.getElementById("scan-modal");
+  if (modal) modal.classList.remove("open");
+}
+
+function setScanStakePct(pct) {
+  const input = document.getElementById("scan-max-stake");
+  if (!input) return;
+  const base = currentPortfolioCash > 0 ? currentPortfolioCash : currentPortfolioEquity;
+  const val = Math.max(5.0, Math.round(base * pct * 100) / 100);
+  input.value = val.toFixed(2);
+}
+
+async function executeScanWithOptions() {
+  const btn = document.getElementById("btn-run-scan-submit");
+  const origText = btn ? btn.innerHTML : "";
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="btn-icon">⏳</span> AI ĐANG QUÉT & THẨM ĐỊNH TÍN HIỆU...`;
+  }
+
+  const coinSelect = document.getElementById("scan-target-coin");
+  const rawCoin = coinSelect ? coinSelect.value : "ALL";
+  const coin = rawCoin === "ALL" ? null : rawCoin;
+
+  const tfEl = document.getElementById("scan-timeframe");
+  const timeframe = tfEl ? tfEl.value : "1h";
+
+  const levEl = document.getElementById("scan-leverage");
+  const levVal = levEl ? parseInt(levEl.value) : 0;
+  const max_leverage = levVal > 0 ? levVal : null;
+
+  const stakeEl = document.getElementById("scan-max-stake");
+  const stakeVal = stakeEl ? parseFloat(stakeEl.value) : 0;
+  const max_stake = stakeVal > 0 ? stakeVal : null;
+
+  const slEl = document.getElementById("scan-sl-pct");
+  const slVal = slEl ? parseFloat(slEl.value) : 0;
+  const custom_sl_pct = slVal > 0 ? slVal : null;
+
+  const tpEl = document.getElementById("scan-tp-pct");
+  const tpVal = tpEl ? parseFloat(tpEl.value) : 0;
+  const custom_tp_pct = tpVal > 0 ? tpVal : null;
+
+  const modeEl = document.querySelector('input[name="scan-exec-mode"]:checked');
+  const mode = modeEl ? modeEl.value : "PROPOSAL";
+
+  const payload = {
+    coin: coin,
+    timeframe: timeframe,
+    max_leverage: max_leverage,
+    max_stake: max_stake,
+    custom_sl_pct: custom_sl_pct,
+    custom_tp_pct: custom_tp_pct,
+    mode: mode
+  };
 
   try {
-    const body = coin ? JSON.stringify({ coin: coin }) : null;
     const res = await fetch("/api/scan", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: body
+      body: JSON.stringify(payload)
     });
     const data = await res.json();
+    closeScanModal();
+
     await loadPortfolio();
     await loadCryptoWatchlist(true);
+    await loadProposals();
+
+    if (mode === "PROPOSAL") {
+      scrollToProposals();
+      if (data.cycle_result && data.cycle_result.status === "hold") {
+        alert(`Hội đồng AI (The Pricer & Kelly Risk) nhận định:\nLợi thế thống kê của thị trường hiện tại trên ${data.cycle_result.coin || 'coin này'} chưa vượt ngưỡng an toàn (>4.0%). AI quyết định GIỮ NGUYÊN TIỀN MẶT (HOLD) để bảo toàn vốn.`);
+      }
+    }
   } catch (err) {
     alert("Lỗi khi chạy quét AI: " + err);
   } finally {
-    btn.disabled = false;
-    btn.innerHTML = origText;
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = origText;
+    }
   }
 }
+
+// Fallback for header or quick calls
+async function triggerManualScan(coin = null) {
+  openScanModal(coin);
+}
+
+// ============================================================
+// 8. TRADE PROPOSALS QUEUE MANAGEMENT
+// ============================================================
+
+async function loadProposals() {
+  try {
+    const res = await fetch("/api/proposals");
+    if (!res.ok) return;
+    const data = await res.json();
+    currentPendingProposals = data.proposals || [];
+    renderProposals(currentPendingProposals);
+
+    // Update count badges
+    const badge = document.getElementById("proposals-count");
+    if (badge) badge.textContent = `${currentPendingProposals.length} ĐỀ XUẤT`;
+
+    const headerBadge = document.getElementById("header-proposals-count");
+    if (headerBadge) headerBadge.textContent = currentPendingProposals.length;
+  } catch (err) {
+    console.error("Error loading proposals:", err);
+  }
+}
+
+function renderProposals(proposals) {
+  const container = document.getElementById("proposals-list-container");
+  if (!container) return;
+
+  if (!proposals || proposals.length === 0) {
+    container.innerHTML = `
+      <div class="text-center text-muted" style="padding: 24px; font-size: 0.85rem;">
+        Chưa có đề xuất nào trong danh sách đợi. Hãy bấm <strong>"QUÉT THỊ TRƯỜNG"</strong> để AI phân tích và đưa cơ hội vào đây!
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="proposals-list">
+      ${proposals.map(p => {
+        const isLong = p.side === "LONG";
+        const sideClass = isLong ? "prop-side-long" : "prop-side-short";
+        const cardSideClass = isLong ? "side-long" : "side-short";
+        const sym = p.coin || "COIN";
+        const priceStr = formatPriceNum(p.price);
+        const slStr = p.stop_loss ? formatPriceNum(p.stop_loss) : "Không SL";
+        const tpStr = p.take_profit ? formatPriceNum(p.take_profit) : "Gồng tự do";
+        const liqStr = p.liquidation_price ? formatPriceNum(p.liquidation_price) : "-";
+
+        let analysisHtml = "";
+        if (p.analysis_summary && Object.keys(p.analysis_summary).length > 0) {
+          analysisHtml = `
+            <div class="prop-analysis-box">
+              <div style="font-weight:700; color:#a5b4fc; margin-bottom:4px; font-size:0.75rem;">🧠 BÁO CÁO PHÂN TÍCH CỦA 4 ĐẶC VỤ AI:</div>
+              ${p.analysis_summary.spotter ? `<div>• <strong>Spotter:</strong> ${escapeHtml(p.analysis_summary.spotter)}</div>` : ''}
+              ${p.analysis_summary.researcher ? `<div>• <strong>Researcher:</strong> ${escapeHtml(p.analysis_summary.researcher)}</div>` : ''}
+              ${p.analysis_summary.pricer ? `<div>• <strong>The Pricer:</strong> ${escapeHtml(p.analysis_summary.pricer)}</div>` : ''}
+              ${p.analysis_summary.kelly ? `<div>• <strong>Kelly Risk:</strong> ${escapeHtml(p.analysis_summary.kelly)}</div>` : ''}
+            </div>
+          `;
+        }
+
+        return `
+          <div class="proposal-card ${cardSideClass}" id="prop-card-${p.id}">
+            <div class="prop-header">
+              <div class="prop-title-area">
+                <span class="prop-coin-badge">${escapeHtml(sym)}/USDT</span>
+                <span class="prop-side-badge ${sideClass}">${p.side} ${p.leverage}x</span>
+                <span class="sub-badge" style="font-size:0.65rem;">${p.timeframe ? p.timeframe.toUpperCase() : '1H'}</span>
+              </div>
+              <div class="prop-time">Tạo lúc: ${p.created_at || '-'}</div>
+            </div>
+
+            <div class="prop-grid">
+              <div class="prop-metric">
+                <span class="prop-metric-lbl">Giá Vào Dự Kiến</span>
+                <span class="prop-metric-val highlight-cyan">${priceStr}</span>
+              </div>
+              <div class="prop-metric">
+                <span class="prop-metric-lbl">Ký Quỹ / Vị Thế</span>
+                <span class="prop-metric-val">$${p.stake_amount.toFixed(2)} ($${p.position_size.toFixed(2)})</span>
+              </div>
+              <div class="prop-metric">
+                <span class="prop-metric-lbl">Cắt Lỗ (Hard SL)</span>
+                <span class="prop-metric-val highlight-red">${slStr}</span>
+              </div>
+              <div class="prop-metric">
+                <span class="prop-metric-lbl">Chốt Lời (Hard TP)</span>
+                <span class="prop-metric-val highlight-green">${tpStr}</span>
+              </div>
+              <div class="prop-metric">
+                <span class="prop-metric-lbl">Tỷ Lệ Risk:Reward</span>
+                <span class="prop-metric-val" style="color:#a855f7;">1 : ${p.risk_reward_ratio || 2.0}</span>
+              </div>
+              <div class="prop-metric">
+                <span class="prop-metric-lbl">Lợi Thế Thống Kê (Edge)</span>
+                <span class="prop-metric-val" style="color:#38bdf8;">${p.edge_percent || '+0.0%'}</span>
+              </div>
+              <div class="prop-metric">
+                <span class="prop-metric-lbl">Giá Thanh Lý</span>
+                <span class="prop-metric-val" style="color:#f59e0b;">${liqStr}</span>
+              </div>
+              <div class="prop-metric">
+                <span class="prop-metric-lbl">Trạng Thái</span>
+                <span class="prop-metric-val" style="color:#fbbf24;">⏳ CHỜ DUYỆT</span>
+              </div>
+            </div>
+
+            ${analysisHtml}
+
+            <div class="prop-actions">
+              <button class="btn-prop-approve" onclick="approveProposal('${p.id}')">
+                ✅ CHẤP NHẬN & VÀO LỆNH NGAY
+              </button>
+              <button class="btn-prop-tweak" onclick="tweakProposalInPlanner('${p.id}')" title="Mở kế hoạch này trong bộ đàm phán AI để điều chỉnh SL/TP">
+                ⚡ ĐIỀU CHỈNH
+              </button>
+              <button class="btn-prop-reject" onclick="rejectProposal('${p.id}')" title="Từ chối cơ hội này">
+                ✕ HỦY BỎ
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
+async function approveProposal(proposalId) {
+  if (!confirm("Bạn có chắc chắn muốn CHẤP NHẬN đề xuất này và mở vị thế ngay lập tức?")) return;
+  try {
+    const res = await fetch("/api/proposals/approve", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ proposal_id: proposalId })
+    });
+    const data = await res.json();
+    if (data.success) {
+      await loadPortfolio();
+      await loadProposals();
+      // Switch chart to this coin if possible
+      const prop = currentPendingProposals.find(p => p.id === proposalId);
+      if (prop) changeChartCoin(prop.coin, true);
+    } else {
+      alert("Thông báo: " + data.message);
+    }
+  } catch (err) {
+    alert("Lỗi khi phê duyệt đề xuất: " + err);
+  }
+}
+
+async function rejectProposal(proposalId) {
+  try {
+    const res = await fetch("/api/proposals/reject", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ proposal_id: proposalId })
+    });
+    const data = await res.json();
+    if (data.success) {
+      await loadProposals();
+    }
+  } catch (err) {
+    alert("Lỗi khi hủy đề xuất: " + err);
+  }
+}
+
+async function clearAllProposals() {
+  if (!confirm("Bạn có chắc muốn xóa tất cả đề xuất trong hàng đợi?")) return;
+  try {
+    await fetch("/api/proposals/clear", { method: "POST" });
+    await loadProposals();
+  } catch (err) {
+    alert("Lỗi khi xóa đề xuất: " + err);
+  }
+}
+
+function tweakProposalInPlanner(proposalId) {
+  const prop = currentPendingProposals.find(p => p.id === proposalId);
+  if (!prop) return;
+
+  openTradePlannerModal(prop.coin);
+
+  // Set values into planner form
+  setTimeout(() => {
+    const sideSelect = document.getElementById("plan-side");
+    if (sideSelect) sideSelect.value = prop.side;
+
+    const levSelect = document.getElementById("plan-leverage");
+    if (levSelect) levSelect.value = prop.leverage;
+
+    const stakeInput = document.getElementById("plan-stake");
+    if (stakeInput) stakeInput.value = prop.stake_amount;
+
+    const slInput = document.getElementById("plan-stop-loss");
+    if (slInput && prop.stop_loss) slInput.value = prop.stop_loss;
+
+    const tpInput = document.getElementById("plan-take-profit");
+    if (tpInput && prop.take_profit) tpInput.value = prop.take_profit;
+
+    recalculatePlannerEstimates();
+    submitPlanForAIValidation();
+  }, 300);
+}
+
+function scrollToProposals() {
+  const el = document.getElementById("proposals-panel");
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+
+window.openScanModal = openScanModal;
+window.closeScanModal = closeScanModal;
+window.setScanStakePct = setScanStakePct;
+window.executeScanWithOptions = executeScanWithOptions;
+window.approveProposal = approveProposal;
+window.rejectProposal = rejectProposal;
+window.clearAllProposals = clearAllProposals;
+window.tweakProposalInPlanner = tweakProposalInPlanner;
+window.scrollToProposals = scrollToProposals;
 
 // 8. Toggle Auto-Scan Mode
 async function toggleAutoMode() {

@@ -13,11 +13,21 @@ from ..config import (
 )
 
 class SwarmEngine:
-    def __init__(self, portfolio: PortfolioManager, crypto_service=None):
+    def __init__(self, portfolio: PortfolioManager, crypto_service=None, proposal_manager=None):
         self.portfolio = portfolio
         self.crypto_service = crypto_service
+        self.proposal_manager = proposal_manager
 
-    def run_crypto_cycle(self, target_coin: Optional[str] = None) -> Dict[str, Any]:
+    def run_crypto_cycle(
+        self,
+        target_coin: Optional[str] = None,
+        timeframe: str = "1h",
+        max_leverage: Optional[int] = None,
+        max_stake: Optional[float] = None,
+        custom_sl_pct: Optional[float] = None,
+        custom_tp_pct: Optional[float] = None,
+        as_proposal: bool = True
+    ) -> Dict[str, Any]:
         """
         Executes a 4-Agent Swarm cycle specifically targeted on a Crypto coin:
         1. Spotter Agent: Selects coin from user's watchlist, inspects 24h liquidity & order book depth.
@@ -137,7 +147,10 @@ class SwarmEngine:
             final_stake_fraction = 0.02 # Minimum 2% position
 
         stake_dollars = round(total_equity * final_stake_fraction, 2)
-        stake_dollars = min(stake_dollars, cash)
+        if max_stake and max_stake > 0:
+            stake_dollars = round(min(max_stake, cash), 2)
+        else:
+            stake_dollars = min(stake_dollars, cash)
 
         if stake_dollars < 5.0 or cash < 5.0:
             self.portfolio.log_thought(
@@ -157,28 +170,70 @@ class SwarmEngine:
         else:
             leverage = DEFAULT_LEVERAGE
 
+        if max_leverage and max_leverage > 0:
+            leverage = min(leverage, max_leverage)
+
         # Stop-Loss & Take-Profit targets
+        sl_pct = custom_sl_pct if (custom_sl_pct and custom_sl_pct > 0) else DEFAULT_SL_PERCENT
+        tp_pct = custom_tp_pct if (custom_tp_pct and custom_tp_pct > 0) else DEFAULT_TP_PERCENT
+
         curr_price = ticker["price"]
         if chosen_side == "SHORT":
-            stop_loss = round(curr_price * (1.0 + DEFAULT_SL_PERCENT), 6 if curr_price < 1 else 4)
-            take_profit = round(curr_price * (1.0 - DEFAULT_TP_PERCENT), 6 if curr_price < 1 else 4)
+            stop_loss = round(curr_price * (1.0 + sl_pct), 6 if curr_price < 1 else 4)
+            take_profit = round(curr_price * (1.0 - tp_pct), 6 if curr_price < 1 else 4)
             liq_price = round(curr_price * (1.0 + (1.0 / leverage) * 0.95), 6 if curr_price < 1 else 4)
         else:
-            stop_loss = round(curr_price * (1.0 - DEFAULT_SL_PERCENT), 6 if curr_price < 1 else 4)
-            take_profit = round(curr_price * (1.0 + DEFAULT_TP_PERCENT), 6 if curr_price < 1 else 4)
+            stop_loss = round(curr_price * (1.0 - sl_pct), 6 if curr_price < 1 else 4)
+            take_profit = round(curr_price * (1.0 + tp_pct), 6 if curr_price < 1 else 4)
             liq_price = round(curr_price * (1.0 - (1.0 / leverage) * 0.95), 6 if curr_price < 1 else 4)
 
         self.portfolio.log_thought(
             "Kelly Risk",
             "INFO",
-            f"Quản trị Rủi ro ({selected_coin}): Đòn bẩy {leverage}x | Ký quỹ: ${stake_dollars:.2f} | Cắt lỗ (SL): ${stop_loss:,.4f} (-{DEFAULT_SL_PERCENT*100:.1f}%) | Chốt lời (TP): ${take_profit:,.4f} (+{DEFAULT_TP_PERCENT*100:.1f}%) | Giá thanh lý: ${liq_price:,.4f}"
+            f"Quản trị Rủi ro ({selected_coin}): Đòn bẩy {leverage}x | Ký quỹ: ${stake_dollars:.2f} | Cắt lỗ (SL): ${stop_loss:,.4f} (-{sl_pct*100:.1f}%) | Chốt lời (TP): ${take_profit:,.4f} (+{tp_pct*100:.1f}%) | Giá thanh lý: ${liq_price:,.4f}"
         )
 
         reasoning = (
             f"Tín hiệu Alpha: {chosen_side} {leverage}x trên {selected_coin} (Lợi thế: {edge:+.1%}). "
-            f"Ký quỹ Quarter-Kelly: ${stake_dollars:.2f} (Vị thế: ${stake_dollars*leverage:.2f}). "
+            f"Ký quỹ: ${stake_dollars:.2f} (Vị thế: ${stake_dollars*leverage:.2f}). "
             f"SL: ${stop_loss:,.4f} | TP: ${take_profit:,.4f}"
         )
+
+        analysis_summary = {
+            "spotter": f"Khối lượng 24h: {ticker.get('liquidity_formatted', 'Tốt')} | Sổ lệnh L2: {ratio:.2f}x ({depth_sentiment})",
+            "researcher": f"Tâm lý tin tức: {'Tích cực' if news_score > 0 else ('Tiêu cực' if news_score < 0 else 'Trung tính')} ({len(articles)} tin)",
+            "pricer": f"Xác suất {chosen_side}: {int(chosen_prob*100)}% (Lợi thế: {edge:+.1%})",
+            "kelly": f"Ký quỹ đề xuất ${stake_dollars:.2f} (Đòn bẩy {leverage}x)"
+        }
+
+        # If proposal mode is requested (or default), put into the approval queue
+        if as_proposal and self.proposal_manager:
+            proposal = self.proposal_manager.add_proposal(
+                coin=selected_coin,
+                side=chosen_side,
+                price=ticker["price"],
+                leverage=leverage,
+                stake_amount=stake_dollars,
+                stop_loss=stop_loss,
+                take_profit=take_profit,
+                liquidation_price=liq_price,
+                timeframe=timeframe,
+                edge=edge,
+                reasoning=reasoning,
+                analysis_summary=analysis_summary
+            )
+            self.portfolio.log_thought(
+                "Kelly Risk",
+                "SUCCESS",
+                f"ĐÃ TẠO ĐỀ XUẤT CHỜ DUYỆT: {chosen_side} {leverage}x ${stake_dollars:.2f} của {selected_coin}/USDT @ {ticker['price_formatted']} (SL: ${stop_loss:,.4f} | TP: ${take_profit:,.4f})"
+            )
+            return {
+                "status": "proposed",
+                "proposal": proposal,
+                "coin": selected_coin,
+                "side": chosen_side,
+                "edge": edge
+            }
 
         success = self.portfolio.execute_trade(
             market_id=f"crypto_{ticker['symbol']}",
@@ -214,13 +269,31 @@ class SwarmEngine:
             "edge": edge
         }
 
-    def run_cycle(self, markets: Optional[List[Dict[str, Any]]] = None, target_coin: Optional[str] = None) -> Dict[str, Any]:
+    def run_cycle(
+        self,
+        markets: Optional[List[Dict[str, Any]]] = None,
+        target_coin: Optional[str] = None,
+        timeframe: str = "1h",
+        max_leverage: Optional[int] = None,
+        max_stake: Optional[float] = None,
+        custom_sl_pct: Optional[float] = None,
+        custom_tp_pct: Optional[float] = None,
+        as_proposal: bool = True
+    ) -> Dict[str, Any]:
         """
         Executes 1 cycle. If target_coin or active crypto watchlist is available, runs crypto cycle.
         Otherwise falls back to prediction markets.
         """
         if target_coin or (self.crypto_service and self.crypto_service.watchlist):
-            return self.run_crypto_cycle(target_coin)
+            return self.run_crypto_cycle(
+                target_coin=target_coin,
+                timeframe=timeframe,
+                max_leverage=max_leverage,
+                max_stake=max_stake,
+                custom_sl_pct=custom_sl_pct,
+                custom_tp_pct=custom_tp_pct,
+                as_proposal=as_proposal
+            )
 
         # Fallback to binary prediction markets
         if not markets:

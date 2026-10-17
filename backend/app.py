@@ -12,13 +12,15 @@ from .core.markets import fetch_prediction_markets
 from .core.crypto_service import CryptoService
 from .core.agents import SwarmEngine
 from .core.plan_validator import TradePlanValidator
+from .core.proposals import ProposalManager
 from .config import BASE_DIR, AUTO_SCAN_INTERVAL_SECONDS
 
 app = FastAPI(title="Quant Desk - Multi-Agent Mock Trading System")
 
 portfolio = PortfolioManager()
 crypto_service = CryptoService()
-swarm = SwarmEngine(portfolio, crypto_service=crypto_service)
+proposal_manager = ProposalManager()
+swarm = SwarmEngine(portfolio, crypto_service=crypto_service, proposal_manager=proposal_manager)
 plan_validator = TradePlanValidator(crypto_service, portfolio)
 
 # Background auto-scan flag
@@ -29,6 +31,15 @@ class CoinRequest(BaseModel):
 
 class ScanRequest(BaseModel):
     coin: Optional[str] = None
+    timeframe: str = "1h"
+    max_leverage: Optional[int] = None
+    max_stake: Optional[float] = None
+    custom_sl_pct: Optional[float] = None
+    custom_tp_pct: Optional[float] = None
+    mode: str = "PROPOSAL" # "PROPOSAL" or "DIRECT_EXECUTE"
+
+class ProposalActionRequest(BaseModel):
+    proposal_id: str
 
 class ClosePositionRequest(BaseModel):
     position_id: str
@@ -133,12 +144,95 @@ def get_coin_klines(coin: str, interval: str = "1h", limit: int = 100):
 @app.post("/api/scan")
 def trigger_scan(req: Optional[ScanRequest] = None):
     target_coin = req.coin if req else None
+    timeframe = req.timeframe if req else "1h"
+    max_leverage = req.max_leverage if req else None
+    max_stake = req.max_stake if req else None
+    custom_sl_pct = req.custom_sl_pct if req else None
+    custom_tp_pct = req.custom_tp_pct if req else None
+    as_proposal = (req.mode == "PROPOSAL") if req else True
+
     markets = fetch_prediction_markets(limit=20)
-    result = swarm.run_cycle(markets=markets, target_coin=target_coin)
+    result = swarm.run_cycle(
+        markets=markets,
+        target_coin=target_coin,
+        timeframe=timeframe,
+        max_leverage=max_leverage,
+        max_stake=max_stake,
+        custom_sl_pct=custom_sl_pct,
+        custom_tp_pct=custom_tp_pct,
+        as_proposal=as_proposal
+    )
     return {
         "cycle_result": result,
-        "portfolio": portfolio.get_summary()
+        "portfolio": portfolio.get_summary(),
+        "proposals": proposal_manager.get_pending()
     }
+
+# ----------------- PROPOSALS APPROVAL QUEUE ENDPOINTS -----------------
+
+@app.get("/api/proposals")
+def get_pending_proposals():
+    return {
+        "proposals": proposal_manager.get_pending(),
+        "total_count": len(proposal_manager.get_pending())
+    }
+
+@app.post("/api/proposals/approve")
+def approve_proposal(req: ProposalActionRequest):
+    prop = proposal_manager.get(req.proposal_id)
+    if not prop:
+        return {"success": False, "message": "Không tìm thấy đề xuất này."}
+    if prop.get("status") != "PENDING":
+        return {"success": False, "message": "Đề xuất này đã được xử lý trước đó."}
+
+    coin = prop["coin"]
+    ticker = crypto_service.fetch_coin_ticker(coin)
+    exec_price = ticker["price"] if ticker else prop["price"]
+
+    success = portfolio.execute_trade(
+        market_id=f"crypto_{coin}USDT",
+        question=f"{coin}/USDT ({prop['side']})",
+        outcome=prop["side"],
+        price=exec_price,
+        stake_amount=prop["stake_amount"],
+        reasoning=f"Duyệt đề xuất AI: {prop['reasoning']}",
+        asset_type="crypto",
+        leverage=prop["leverage"],
+        stop_loss=prop["stop_loss"],
+        take_profit=prop["take_profit"],
+        symbol=coin
+    )
+
+    if success:
+        proposal_manager.update_status(req.proposal_id, "APPROVED")
+        portfolio.log_thought(
+            "User",
+            "SUCCESS",
+            f"ĐÃ PHÊ DUYỆT ĐỀ XUẤT: {prop['side']} {prop['leverage']}x {coin}/USDT @ ${exec_price:,.4f}"
+        )
+        return {
+            "success": True,
+            "message": f"Khớp lệnh thành công cho {coin}!",
+            "portfolio": portfolio.get_summary(),
+            "proposals": proposal_manager.get_pending()
+        }
+    else:
+        return {"success": False, "message": "Không thể khớp lệnh (Vui lòng kiểm tra lại số dư tiền mặt)."}
+
+@app.post("/api/proposals/reject")
+def reject_proposal(req: ProposalActionRequest):
+    prop = proposal_manager.get(req.proposal_id)
+    if not prop:
+        return {"success": False, "message": "Không tìm thấy đề xuất."}
+    proposal_manager.update_status(req.proposal_id, "REJECTED")
+    portfolio.log_thought("User", "INFO", f"Đã từ chối đề xuất {prop['side']} {prop['coin']}.")
+    return {"success": True, "proposals": proposal_manager.get_pending()}
+
+@app.post("/api/proposals/clear")
+def clear_proposals():
+    proposal_manager.clear_all()
+    portfolio.log_thought("System", "INFO", "Đã xóa sạch hàng đợi đề xuất giao dịch.")
+    return {"success": True, "proposals": []}
 
 @app.post("/api/ai/validate-plan")
 def validate_trade_plan(req: PlanValidationRequest):

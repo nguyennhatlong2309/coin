@@ -1,0 +1,80 @@
+{
+  "prop_SOL_LONG_1792273376": {
+    "id": "prop_SOL_LONG_1792273376",
+    "coin": "SOL",
+    "symbol": "SOLUSDT",
+    "side": "LONG",
+    "timeframe": "1h",
+    "price": 102.13,
+    "leverage": 3,
+    "stake_amount": 30.0,
+    "position_size": 90.0,
+    "stop_loss": 100.0874,
+    "take_profit": 106.2152,
+    "liquidation_price": 69.7888,
+    "risk_reward_ratio": 2.0,
+    "edge": 0.105,
+    "edge_percent": "+10.5%",
+    "reasoning": "Tín hiệu Alpha: LONG 3x trên SOL (Lợi thế: +10.5%). Ký quỹ: $30.00 (Vị thế: $90.00). SL: $100.0874 | TP: $106.2152",
+    "analysis_summary": {
+      "spotter": "Khối lượng 24h: $92.2M USDT | Sổ lệnh L2: 1.61x (LỰC MUA ÁP ĐẢO (Bò Gom Hàng))",
+      "researcher": "Tâm lý tin tức: Trung tính (3 tin)",
+      "pricer": "Xác suất LONG: 60% (Lợi thế: +10.5%)",
+      "kelly": "Ký quỹ đề xuất $30.00 (Đòn bẩy 3x)"
+    },
+    "status": "REJECTED",
+    "created_at": "2026-10-18 04:42:56"
+  },
+  "prop_SOL_LONG_1792273404": {
+    "id": "prop_SOL_LONG_1792273404",
+    "coin": "SOL",
+    "symbol": "SOLUSDT",
+    "side": "LONG",
+    "timeframe": "15m",
+    "price": 102.13,
+    "leverage": 3,
+    "stake_amount": 25.0,
+    "position_size": 75.0,
+    "stop_loss": 100.0874,
+    "take_profit": 106.2152,
+    "liquidation_price": 69.7888,
+    "risk_reward_ratio": 2.0,
+    "edge": 0.11,
+    "edge_percent": "+11.0%",
+    "reasoning": "Tín hiệu Alpha: LONG 3x trên SOL (Lợi thế: +11.0%). Ký quỹ: $25.00 (Vị thế: $75.00). SL: $100.0874 | TP: $106.2152",
+    "analysis_summary": {
+      "spotter": "Khối lượng 24h: $92.2M USDT | Sổ lệnh L2: 1.63x (LỰC MUA ÁP ĐẢO (Bò Gom Hàng))",
+      "researcher": "Tâm lý tin tức: Trung tính (3 tin)",
+      "pricer": "Xác suất LONG: 61% (Lợi thế: +11.0%)",
+      "kelly": "Ký quỹ đề xuất $25.00 (Đòn bẩy 3x)"
+    },
+    "status": "APPROVED",
+    "created_at": "2026-10-18 04:43:24"
+  },
+  "prop_BNB_LONG_1792273431": {
+    "id": "prop_BNB_LONG_1792273431",
+    "coin": "BNB",
+    "symbol": "BNBUSDT",
+    "side": "LONG",
+    "timeframe": "1h",
+    "price": 712.97,
+    "leverage": 3,
+    "stake_amount": 32.0,
+    "position_size": 96.0,
+    "stop_loss": 698.7106,
+    "take_profit": 741.4888,
+    "liquidation_price": 487.1962,
+    "risk_reward_ratio": 2.0,
+    "edge": 0.064,
+    "edge_percent": "+6.4%",
+    "reasoning": "Tín hiệu Alpha: LONG 3x trên BNB (Lợi thế: +6.4%). Ký quỹ: $32.00 (Vị thế: $96.00). SL: $698.7106 | TP: $741.4888",
+    "analysis_summary": {
+      "spotter": "Khối lượng 24h: $53.7M USDT | Sổ lệnh L2: 1.53x (LỰC MUA ÁP ĐẢO (Bò Gom Hàng))",
+      "researcher": "Tâm lý tin tức: Trung tính (3 tin)",
+      "pricer": "Xác suất LONG: 56% (Lợi thế: +6.4%)",
+      "kelly": "Ký quỹ đề xuất $32.00 (Đòn bẩy 3x)"
+    },
+    "status": "PENDING",
+    "created_at": "2026-10-18 04:43:51"
+  }
+}

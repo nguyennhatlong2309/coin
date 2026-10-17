@@ -1,5 +1,5 @@
 {
-  "cash_balance": 939.58,
+  "cash_balance": 815.58,
   "realized_pnl": 0.08,
   "open_positions": {
     "crypto_PIXELUSDT_LONG": {
@@ -39,9 +39,117 @@
       "take_profit": 0.083616,
       "liquidation_price": 0.04221,
       "opened_at": "2026-10-18 04:06:32"
+    },
+    "crypto_ETHUSDT_LONG_1792272729": {
+      "id": "crypto_ETHUSDT_LONG_1792272729",
+      "market_id": "crypto_ETHUSDT",
+      "symbol": "ETH",
+      "question": "ETH/USDT (LONG)",
+      "asset_type": "crypto",
+      "outcome": "LONG",
+      "leverage": 5,
+      "shares": 0.10232,
+      "entry_price": 2394.46,
+      "current_price": 2394.46,
+      "margin": 49.0,
+      "cost_basis": 49.0,
+      "position_size": 245.0,
+      "stop_loss": 2346.5708,
+      "take_profit": 2490.2384,
+      "liquidation_price": 1939.5126,
+      "opened_at": "2026-10-18 04:32:09"
+    },
+    "crypto_ETHUSDT_LONG_1792272738": {
+      "id": "crypto_ETHUSDT_LONG_1792272738",
+      "market_id": "crypto_ETHUSDT",
+      "symbol": "ETH",
+      "question": "ETH/USDT (LONG)",
+      "asset_type": "crypto",
+      "outcome": "LONG",
+      "leverage": 5,
+      "shares": 0.104883,
+      "entry_price": 2383.6,
+      "current_price": 2383.6,
+      "margin": 50.0,
+      "cost_basis": 50.0,
+      "position_size": 250.0,
+      "stop_loss": 2335.928,
+      "take_profit": 2478.944,
+      "liquidation_price": 1930.716,
+      "opened_at": "2026-10-18 04:32:18"
+    },
+    "crypto_SOLUSDT_LONG_1792273452": {
+      "id": "crypto_SOLUSDT_LONG_1792273452",
+      "market_id": "crypto_SOLUSDT",
+      "symbol": "SOL",
+      "question": "SOL/USDT (LONG)",
+      "asset_type": "crypto",
+      "outcome": "LONG",
+      "leverage": 3,
+      "shares": 0.735366,
+      "entry_price": 101.99,
+      "current_price": 101.99,
+      "margin": 25.0,
+      "cost_basis": 25.0,
+      "position_size": 75.0,
+      "stop_loss": 100.0874,
+      "take_profit": 106.2152,
+      "liquidation_price": 69.6932,
+      "opened_at": "2026-10-18 04:44:12"
     }
   },
   "trades_history": [
+    {
+      "timestamp": "04:44:12",
+      "action": "OPEN_LONG_3X",
+      "market_id": "crypto_SOLUSDT",
+      "symbol": "SOL",
+      "asset_type": "crypto",
+      "question": "SOL/USDT (LONG)",
+      "shares": 0.735366,
+      "price": 101.99,
+      "leverage": 3,
+      "margin": 25.0,
+      "total_amount": 25.0,
+      "stop_loss": 100.0874,
+      "take_profit": 106.2152,
+      "liquidation_price": 69.6932,
+      "reasoning": "Duyệt đề xuất AI: Tín hiệu Alpha: LONG 3x trên SOL (Lợi thế: +11.0%). Ký quỹ: $25.00 (Vị thế: $75.00). SL: $100.0874 | TP: $106.2152"
+    },
+    {
+      "timestamp": "04:32:18",
+      "action": "OPEN_LONG_5X",
+      "market_id": "crypto_ETHUSDT",
+      "symbol": "ETH",
+      "asset_type": "crypto",
+      "question": "ETH/USDT (LONG)",
+      "shares": 0.104883,
+      "price": 2383.6,
+      "leverage": 5,
+      "margin": 50.0,
+      "total_amount": 50.0,
+      "stop_loss": 2335.928,
+      "take_profit": 2478.944,
+      "liquidation_price": 1930.716,
+      "reasoning": "Tín hiệu Alpha: LONG 5x trên ETH (Lợi thế: +35.0%). Ký quỹ Quarter-Kelly: $50.00 (Vị thế: $250.00). SL: $2,335.9280 | TP: $2,478.9440"
+    },
+    {
+      "timestamp": "04:32:09",
+      "action": "OPEN_LONG_5X",
+      "market_id": "crypto_ETHUSDT",
+      "symbol": "ETH",
+      "asset_type": "crypto",
+      "question": "ETH/USDT (LONG)",
+      "shares": 0.10232,
+      "price": 2394.46,
+      "leverage": 5,
+      "margin": 49.0,
+      "total_amount": 49.0,
+      "stop_loss": 2346.5708,
+      "take_profit": 2490.2384,
+      "liquidation_price": 1939.5126,
+      "reasoning": "Tín hiệu Alpha: LONG 5x trên ETH (Lợi thế: +9.8%). Ký quỹ Quarter-Kelly: $49.00 (Vị thế: $245.00). SL: $2,346.5708 | TP: $2,490.2384"
+    },
     {
       "timestamp": "04:18:23",
       "action": "OPEN_LONG_3X",
@@ -115,6 +223,252 @@
     }
   ],
   "thought_logs": [
+    {
+      "timestamp": "04:44:12",
+      "agent": "User",
+      "level": "SUCCESS",
+      "message": "ĐÃ PHÊ DUYỆT ĐỀ XUẤT: LONG 3x SOL/USDT @ $101.9900"
+    },
+    {
+      "timestamp": "04:43:51",
+      "agent": "Kelly Risk",
+      "level": "SUCCESS",
+      "message": "ĐÃ TẠO ĐỀ XUẤT CHỜ DUYỆT: LONG 3x $32.00 của BNB/USDT @ $712.970 (SL: $698.7106 | TP: $741.4888)"
+    },
+    {
+      "timestamp": "04:43:51",
+      "agent": "Kelly Risk",
+      "level": "INFO",
+      "message": "Quản trị Rủi ro (BNB): Đòn bẩy 3x | Ký quỹ: $32.00 | Cắt lỗ (SL): $698.7106 (-2.0%) | Chốt lời (TP): $741.4888 (+4.0%) | Giá thanh lý: $487.1962"
+    },
+    {
+      "timestamp": "04:43:51",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá xác suất (BNB): Tín hiệu=LONG (P_fair=56% | Lợi thế=+6.4%). Tỷ số sổ lệnh=1.53x, Đà 24h=-1.3%"
+    },
+    {
+      "timestamp": "04:43:51",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho BNB: [TradingView] Here’s why the crypto market is going down today (Oct. ... | [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:..."
+    },
+    {
+      "timestamp": "04:43:50",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: BNB/USDT | Giá: $712.970 | Thanh khoản 24h: $53.7M USDT (DEEP TIER (Thanh Khoản Sâu)) | Sổ lệnh: LỰC MUA ÁP ĐẢO (Bò Gom Hàng) (Tỷ số 1.53)"
+    },
+    {
+      "timestamp": "04:43:31",
+      "agent": "Kelly Risk",
+      "level": "WARN",
+      "message": "Lợi thế thống kê (+1.6%) thấp hơn ngưỡng tối thiểu (4.0%) trên SOL. Giữ nguyên tiền mặt."
+    },
+    {
+      "timestamp": "04:43:31",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá xác suất (SOL): Tín hiệu=LONG (P_fair=51% | Lợi thế=+1.6%). Tỷ số sổ lệnh=1.07x, Đà 24h=-2.1%"
+    },
+    {
+      "timestamp": "04:43:31",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho SOL: [TradingView] Here’s why the crypto market is going down today (Oct. ... | [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:..."
+    },
+    {
+      "timestamp": "04:43:31",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: SOL/USDT | Giá: $102.110 | Thanh khoản 24h: $92.3M USDT (DEEP TIER (Thanh Khoản Sâu)) | Sổ lệnh: CÂN BẰNG CUNG CẦU (Giằng Co) (Tỷ số 1.07)"
+    },
+    {
+      "timestamp": "04:43:24",
+      "agent": "Kelly Risk",
+      "level": "SUCCESS",
+      "message": "ĐÃ TẠO ĐỀ XUẤT CHỜ DUYỆT: LONG 3x $25.00 của SOL/USDT @ $102.130 (SL: $100.0874 | TP: $106.2152)"
+    },
+    {
+      "timestamp": "04:43:24",
+      "agent": "Kelly Risk",
+      "level": "INFO",
+      "message": "Quản trị Rủi ro (SOL): Đòn bẩy 3x | Ký quỹ: $25.00 | Cắt lỗ (SL): $100.0874 (-2.0%) | Chốt lời (TP): $106.2152 (+4.0%) | Giá thanh lý: $69.7888"
+    },
+    {
+      "timestamp": "04:43:24",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá xác suất (SOL): Tín hiệu=LONG (P_fair=61% | Lợi thế=+11.0%). Tỷ số sổ lệnh=1.63x, Đà 24h=-2.1%"
+    },
+    {
+      "timestamp": "04:43:24",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho SOL: [TradingView] Here’s why the crypto market is going down today (Oct. ... | [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:..."
+    },
+    {
+      "timestamp": "04:43:23",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: SOL/USDT | Giá: $102.130 | Thanh khoản 24h: $92.2M USDT (DEEP TIER (Thanh Khoản Sâu)) | Sổ lệnh: LỰC MUA ÁP ĐẢO (Bò Gom Hàng) (Tỷ số 1.63)"
+    },
+    {
+      "timestamp": "04:43:15",
+      "agent": "Kelly Risk",
+      "level": "WARN",
+      "message": "Lợi thế thống kê (+2.7%) thấp hơn ngưỡng tối thiểu (4.0%) trên SOL. Giữ nguyên tiền mặt."
+    },
+    {
+      "timestamp": "04:43:15",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá xác suất (SOL): Tín hiệu=LONG (P_fair=52% | Lợi thế=+2.7%). Tỷ số sổ lệnh=1.28x, Đà 24h=-2.1%"
+    },
+    {
+      "timestamp": "04:43:15",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho SOL: [TradingView] Here’s why the crypto market is going down today (Oct. ... | [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:..."
+    },
+    {
+      "timestamp": "04:43:15",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: SOL/USDT | Giá: $102.140 | Thanh khoản 24h: $92.2M USDT (DEEP TIER (Thanh Khoản Sâu)) | Sổ lệnh: LỰC MUA ÁP ĐẢO (Bò Gom Hàng) (Tỷ số 1.28)"
+    },
+    {
+      "timestamp": "04:43:06",
+      "agent": "User",
+      "level": "INFO",
+      "message": "Đã từ chối đề xuất LONG SOL."
+    },
+    {
+      "timestamp": "04:42:56",
+      "agent": "Kelly Risk",
+      "level": "SUCCESS",
+      "message": "ĐÃ TẠO ĐỀ XUẤT CHỜ DUYỆT: LONG 3x $30.00 của SOL/USDT @ $102.130 (SL: $100.0874 | TP: $106.2152)"
+    },
+    {
+      "timestamp": "04:42:56",
+      "agent": "Kelly Risk",
+      "level": "INFO",
+      "message": "Quản trị Rủi ro (SOL): Đòn bẩy 3x | Ký quỹ: $30.00 | Cắt lỗ (SL): $100.0874 (-2.0%) | Chốt lời (TP): $106.2152 (+4.0%) | Giá thanh lý: $69.7888"
+    },
+    {
+      "timestamp": "04:42:56",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá xác suất (SOL): Tín hiệu=LONG (P_fair=60% | Lợi thế=+10.5%). Tỷ số sổ lệnh=1.61x, Đà 24h=-2.1%"
+    },
+    {
+      "timestamp": "04:42:56",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho SOL: [TradingView] Here’s why the crypto market is going down today (Oct. ... | [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:..."
+    },
+    {
+      "timestamp": "04:42:55",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: SOL/USDT | Giá: $102.130 | Thanh khoản 24h: $92.2M USDT (DEEP TIER (Thanh Khoản Sâu)) | Sổ lệnh: LỰC MUA ÁP ĐẢO (Bò Gom Hàng) (Tỷ số 1.61)"
+    },
+    {
+      "timestamp": "04:42:45",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "04:42:09",
+      "agent": "Kelly Risk",
+      "level": "INFO",
+      "message": "Quản trị Rủi ro (SOL): Đòn bẩy 3x | Ký quỹ: $30.00 | Cắt lỗ (SL): $100.2246 (-2.0%) | Chốt lời (TP): $106.3608 (+4.0%) | Giá thanh lý: $69.8845"
+    },
+    {
+      "timestamp": "04:42:09",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá xác suất (SOL): Tín hiệu=LONG (P_fair=59% | Lợi thế=+9.4%). Tỷ số sổ lệnh=1.87x, Đà 24h=-2.0%"
+    },
+    {
+      "timestamp": "04:42:09",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho SOL: [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:... | [TradingView] Here’s why the crypto market is going down today (Oct. ..."
+    },
+    {
+      "timestamp": "04:42:07",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: SOL/USDT | Giá: $102.270 | Thanh khoản 24h: $92.2M USDT (DEEP TIER (Thanh Khoản Sâu)) | Sổ lệnh: LỰC MUA ÁP ĐẢO (Bò Gom Hàng) (Tỷ số 1.87)"
+    },
+    {
+      "timestamp": "04:41:47",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "04:32:18",
+      "agent": "Executor",
+      "level": "TRADE",
+      "message": "KHỚP LỆNH MARGIN THÀNH CÔNG: LONG 5x $50.00 của ETH/USDT @ $2,383.60 (Vị thế: $250.00 | SL: $2,335.9280 | TP: $2,478.9440)"
+    },
+    {
+      "timestamp": "04:32:18",
+      "agent": "Kelly Risk",
+      "level": "INFO",
+      "message": "Quản trị Rủi ro (ETH): Đòn bẩy 5x | Ký quỹ: $50.00 | Cắt lỗ (SL): $2,335.9280 (-2.0%) | Chốt lời (TP): $2,478.9440 (+4.0%) | Giá thanh lý: $1,930.7160"
+    },
+    {
+      "timestamp": "04:32:18",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá xác suất (ETH): Tín hiệu=LONG (P_fair=85% | Lợi thế=+35.0%). Tỷ số sổ lệnh=11.00x, Đà 24h=-1.5%"
+    },
+    {
+      "timestamp": "04:32:18",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho ETH: [TradingView] Here’s why the crypto market is going down today (Oct. ... | [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:..."
+    },
+    {
+      "timestamp": "04:32:17",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: ETH/USDT | Giá: $2,383.60 | Thanh khoản 24h: $266.9M USDT (MEGA TIER (Thanh Khoản Khổng Lồ)) | Sổ lệnh: LỰC MUA ÁP ĐẢO (Bò Gom Hàng) (Tỷ số 11.0)"
+    },
+    {
+      "timestamp": "04:32:09",
+      "agent": "Executor",
+      "level": "TRADE",
+      "message": "KHỚP LỆNH MARGIN THÀNH CÔNG: LONG 5x $49.00 của ETH/USDT @ $2,394.46 (Vị thế: $245.00 | SL: $2,346.5708 | TP: $2,490.2384)"
+    },
+    {
+      "timestamp": "04:32:09",
+      "agent": "Kelly Risk",
+      "level": "INFO",
+      "message": "Quản trị Rủi ro (ETH): Đòn bẩy 5x | Ký quỹ: $49.00 | Cắt lỗ (SL): $2,346.5708 (-2.0%) | Chốt lời (TP): $2,490.2384 (+4.0%) | Giá thanh lý: $1,939.5126"
+    },
+    {
+      "timestamp": "04:32:09",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá xác suất (ETH): Tín hiệu=LONG (P_fair=59% | Lợi thế=+9.8%). Tỷ số sổ lệnh=1.77x, Đà 24h=-1.1%"
+    },
+    {
+      "timestamp": "04:32:09",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho ETH: [TradingView] Here’s why the crypto market is going down today (Oct. ... | [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:..."
+    },
+    {
+      "timestamp": "04:32:08",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: ETH/USDT | Giá: $2,394.46 | Thanh khoản 24h: $261.6M USDT (MEGA TIER (Thanh Khoản Khổng Lồ)) | Sổ lệnh: LỰC MUA ÁP ĐẢO (Bò Gom Hàng) (Tỷ số 1.77)"
+    },
     {
       "timestamp": "04:28:46",
       "agent": "System",
@@ -468,139 +822,7 @@
       "agent": "Researcher",
       "level": "INFO",
       "message": "Ingested 3 fresh reports for SOL: [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:... | [TradingView] Here’s why the crypto market is going down today (Oct. ..."
-    },
-    {
-      "timestamp": "01:35:42",
-      "agent": "Spotter",
-      "level": "INFO",
-      "message": "Locked target: SOL/USDT | Price: $103.900 | 24h Liq: $100.5M USDT (DEEP TIER (High Liquidity)) | Order Book: BALANCED DEPTH (Neutral Spread) (Ratio 1.02)"
-    },
-    {
-      "timestamp": "01:35:40",
-      "agent": "Spotter",
-      "level": "SUCCESS",
-      "message": "Added NEAR/USDT to active trading watchlist."
-    },
-    {
-      "timestamp": "01:33:41",
-      "agent": "System",
-      "level": "INFO",
-      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
-    },
-    {
-      "timestamp": "01:33:25",
-      "agent": "System",
-      "level": "INFO",
-      "message": "Quant Desk Backend initialized. Ready for simulation."
-    },
-    {
-      "timestamp": "01:32:57",
-      "agent": "System",
-      "level": "INFO",
-      "message": "Quant Desk Backend initialized. Ready for simulation."
-    },
-    {
-      "timestamp": "01:31:58",
-      "agent": "System",
-      "level": "INFO",
-      "message": "Quant Desk Backend initialized. Ready for simulation."
-    },
-    {
-      "timestamp": "01:31:40",
-      "agent": "Kelly Risk",
-      "level": "WARN",
-      "message": "Edge (+0.8%) below execution threshold (4.0%). No trade triggered."
-    },
-    {
-      "timestamp": "01:31:40",
-      "agent": "The Pricer",
-      "level": "INFO",
-      "message": "Gaussian Density Evaluation: Fair Value YES = 69% vs Market 69% (Edge: +0.8%)"
-    },
-    {
-      "timestamp": "01:31:40",
-      "agent": "Researcher",
-      "level": "INFO",
-      "message": "Ingested 3 fresh news reports: [Benzinga] Saylor Sees Bitcoin Above $100,000—So Why Is Strategy Willin... | [Stocktwits] Michael Saylor Says Bitcoin Has Bottomed And Should Get Back..."
-    },
-    {
-      "timestamp": "01:31:39",
-      "agent": "Spotter",
-      "level": "INFO",
-      "message": "Locked target: 'Will Bitcoin trade above $100,000 before Q4?' (Market Odds: YES 69% | NO 30% | Vol: $12,890,340)"
-    },
-    {
-      "timestamp": "01:31:09",
-      "agent": "Kelly Risk",
-      "level": "WARN",
-      "message": "Edge (+3.0%) below execution threshold (4.0%). No trade triggered."
-    },
-    {
-      "timestamp": "01:31:09",
-      "agent": "The Pricer",
-      "level": "INFO",
-      "message": "Gaussian Density Evaluation: Fair Value YES = 33% vs Market 30% (Edge: +3.0%)"
-    },
-    {
-      "timestamp": "01:31:09",
-      "agent": "Researcher",
-      "level": "INFO",
-      "message": "Ingested 3 fresh news reports: [CoinMarketCap] Hong Kong Approves Solana ETF Ahead of United States - CoinM... | [MEXC] What Is a Solana ETF? Spot Funds, Staking, and SEC Approval ..."
-    },
-    {
-      "timestamp": "01:31:08",
-      "agent": "Spotter",
-      "level": "INFO",
-      "message": "Locked target: 'Will the SEC approve the first spot Solana ETF this year?' (Market Odds: YES 30% | NO 70% | Vol: $5,891,175)"
-    },
-    {
-      "timestamp": "01:30:37",
-      "agent": "Kelly Risk",
-      "level": "WARN",
-      "message": "Edge (+1.6%) below execution threshold (4.0%). No trade triggered."
-    },
-    {
-      "timestamp": "01:30:37",
-      "agent": "The Pricer",
-      "level": "INFO",
-      "message": "Gaussian Density Evaluation: Fair Value YES = 65% vs Market 67% (Edge: -1.6%)"
-    },
-    {
-      "timestamp": "01:30:37",
-      "agent": "Researcher",
-      "level": "INFO",
-      "message": "Ingested 3 fresh news reports: [Benzinga] Saylor Sees Bitcoin Above $100,000—So Why Is Strategy Willin... | [Stocktwits] Michael Saylor Says Bitcoin Has Bottomed And Should Get Back..."
-    },
-    {
-      "timestamp": "01:30:36",
-      "agent": "Spotter",
-      "level": "INFO",
-      "message": "Locked target: 'Will Bitcoin trade above $100,000 before Q4?' (Market Odds: YES 67% | NO 32% | Vol: $12,890,355)"
-    },
-    {
-      "timestamp": "01:30:06",
-      "agent": "System",
-      "level": "INFO",
-      "message": "Autonomous Swarm Loop ENABLED (Active every 30s)."
-    },
-    {
-      "timestamp": "01:24:05",
-      "agent": "System",
-      "level": "INFO",
-      "message": "Quant Desk Backend initialized. Ready for simulation."
-    },
-    {
-      "timestamp": "01:23:18",
-      "agent": "System",
-      "level": "INFO",
-      "message": "Quant Desk Backend initialized. Ready for simulation."
-    },
-    {
-      "timestamp": "01:15:27",
-      "agent": "System",
-      "level": "INFO",
-      "message": "Portfolio reset successfully. Initial capital established at $1,000.00 USD."
     }
   ],
-  "last_updated": 1792272526.2604976
+  "last_updated": 1792273452.518856
 }
