@@ -1,104 +1,83 @@
 {
-  "cash_balance": 815.58,
-  "realized_pnl": 0.08,
-  "open_positions": {
-    "crypto_PIXELUSDT_LONG": {
-      "id": "crypto_PIXELUSDT_LONG",
-      "market_id": "crypto_PIXELUSDT",
-      "symbol": "PIXEL",
-      "question": "PIXEL/USDT (LONG)",
-      "asset_type": "crypto",
-      "outcome": "LONG",
-      "leverage": 3,
-      "shares": 21111.11,
-      "entry_price": 0.0054,
-      "current_price": 0.0054,
-      "margin": 38.0,
-      "cost_basis": 38.0,
-      "position_size": 114.0,
-      "stop_loss": 0.005292,
-      "take_profit": 0.005616,
-      "liquidation_price": 0.00369,
-      "opened_at": "2026-10-18 04:18:23"
-    },
-    "crypto_DOGEUSDT_LONG": {
-      "id": "crypto_DOGEUSDT_LONG",
-      "market_id": "crypto_DOGEUSDT",
-      "symbol": "DOGE",
-      "question": "DOGE/USDT (LONG)",
-      "asset_type": "crypto",
-      "outcome": "LONG",
-      "leverage": 2,
-      "shares": 559.7,
-      "entry_price": 0.0804,
-      "current_price": 0.0804,
-      "margin": 22.5,
-      "cost_basis": 22.5,
-      "position_size": 45.0,
-      "stop_loss": 0.078792,
-      "take_profit": 0.083616,
-      "liquidation_price": 0.04221,
-      "opened_at": "2026-10-18 04:06:32"
-    },
-    "crypto_ETHUSDT_LONG_1792272729": {
-      "id": "crypto_ETHUSDT_LONG_1792272729",
-      "market_id": "crypto_ETHUSDT",
-      "symbol": "ETH",
-      "question": "ETH/USDT (LONG)",
-      "asset_type": "crypto",
-      "outcome": "LONG",
-      "leverage": 5,
-      "shares": 0.10232,
-      "entry_price": 2394.46,
-      "current_price": 2394.46,
-      "margin": 49.0,
-      "cost_basis": 49.0,
-      "position_size": 245.0,
-      "stop_loss": 2346.5708,
-      "take_profit": 2490.2384,
-      "liquidation_price": 1939.5126,
-      "opened_at": "2026-10-18 04:32:09"
-    },
-    "crypto_ETHUSDT_LONG_1792272738": {
-      "id": "crypto_ETHUSDT_LONG_1792272738",
-      "market_id": "crypto_ETHUSDT",
-      "symbol": "ETH",
-      "question": "ETH/USDT (LONG)",
-      "asset_type": "crypto",
-      "outcome": "LONG",
-      "leverage": 5,
-      "shares": 0.104883,
-      "entry_price": 2383.6,
-      "current_price": 2383.6,
-      "margin": 50.0,
-      "cost_basis": 50.0,
-      "position_size": 250.0,
-      "stop_loss": 2335.928,
-      "take_profit": 2478.944,
-      "liquidation_price": 1930.716,
-      "opened_at": "2026-10-18 04:32:18"
-    },
-    "crypto_SOLUSDT_LONG_1792273452": {
-      "id": "crypto_SOLUSDT_LONG_1792273452",
+  "cash_balance": 994.68,
+  "realized_pnl": -5.32,
+  "open_positions": {},
+  "trades_history": [
+    {
+      "timestamp": "04:45:35",
+      "action": "CLOSE_LONG",
       "market_id": "crypto_SOLUSDT",
       "symbol": "SOL",
-      "question": "SOL/USDT (LONG)",
       "asset_type": "crypto",
-      "outcome": "LONG",
-      "leverage": 3,
+      "question": "SOL/USDT (LONG)",
       "shares": 0.735366,
       "entry_price": 101.99,
-      "current_price": 101.99,
+      "exit_price": 102.35,
       "margin": 25.0,
-      "cost_basis": 25.0,
-      "position_size": 75.0,
-      "stop_loss": 100.0874,
-      "take_profit": 106.2152,
-      "liquidation_price": 69.6932,
-      "opened_at": "2026-10-18 04:44:12"
-    }
-  },
-  "trades_history": [
+      "pnl": 0.26,
+      "pnl_percent": 1.06,
+      "reason": "MANUAL"
+    },
+    {
+      "timestamp": "04:45:34",
+      "action": "CLOSE_LONG",
+      "market_id": "crypto_ETHUSDT",
+      "symbol": "ETH",
+      "asset_type": "crypto",
+      "question": "ETH/USDT (LONG)",
+      "shares": 0.104883,
+      "entry_price": 2383.6,
+      "exit_price": 2382.29,
+      "margin": 50.0,
+      "pnl": -0.14,
+      "pnl_percent": -0.27,
+      "reason": "MANUAL"
+    },
+    {
+      "timestamp": "04:45:32",
+      "action": "CLOSE_LONG",
+      "market_id": "crypto_ETHUSDT",
+      "symbol": "ETH",
+      "asset_type": "crypto",
+      "question": "ETH/USDT (LONG)",
+      "shares": 0.10232,
+      "entry_price": 2394.46,
+      "exit_price": 2381.76,
+      "margin": 49.0,
+      "pnl": -1.3,
+      "pnl_percent": -2.65,
+      "reason": "MANUAL"
+    },
+    {
+      "timestamp": "04:45:30",
+      "action": "CLOSE_LONG",
+      "market_id": "crypto_DOGEUSDT",
+      "symbol": "DOGE",
+      "asset_type": "crypto",
+      "question": "DOGE/USDT (LONG)",
+      "shares": 559.7,
+      "entry_price": 0.0804,
+      "exit_price": 0.07852,
+      "margin": 22.5,
+      "pnl": -1.05,
+      "pnl_percent": -4.68,
+      "reason": "MANUAL"
+    },
+    {
+      "timestamp": "04:45:28",
+      "action": "CLOSE_LONG",
+      "market_id": "crypto_PIXELUSDT",
+      "symbol": "PIXEL",
+      "asset_type": "crypto",
+      "question": "PIXEL/USDT (LONG)",
+      "shares": 21111.11,
+      "entry_price": 0.0054,
+      "exit_price": 0.00525,
+      "margin": 38.0,
+      "pnl": -3.17,
+      "pnl_percent": -8.33,
+      "reason": "MANUAL"
+    },
     {
       "timestamp": "04:44:12",
       "action": "OPEN_LONG_3X",
@@ -223,6 +202,66 @@
     }
   ],
   "thought_logs": [
+    {
+      "timestamp": "04:45:43",
+      "agent": "Kelly Risk",
+      "level": "SUCCESS",
+      "message": "ĐÃ TẠO ĐỀ XUẤT CHỜ DUYỆT: SHORT 3x $36.31 của BTC/USDT @ $81,226.88 (SL: $82,851.4176 | TP: $77,977.8048)"
+    },
+    {
+      "timestamp": "04:45:43",
+      "agent": "Kelly Risk",
+      "level": "INFO",
+      "message": "Quản trị Rủi ro (BTC): Đòn bẩy 3x | Ký quỹ: $36.31 | Cắt lỗ (SL): $82,851.4176 (-2.0%) | Chốt lời (TP): $77,977.8048 (+4.0%) | Giá thanh lý: $106,948.7253"
+    },
+    {
+      "timestamp": "04:45:43",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá xác suất (BTC): Tín hiệu=SHORT (P_fair=57% | Lợi thế=+7.3%). Tỷ số sổ lệnh=0.17x, Đà 24h=-0.6%"
+    },
+    {
+      "timestamp": "04:45:43",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho BTC: [TradingView] Here’s why the crypto market is going down today (Oct. ... | [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:..."
+    },
+    {
+      "timestamp": "04:45:42",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: BTC/USDT | Giá: $81,226.88 | Thanh khoản 24h: $594.0M USDT (MEGA TIER (Thanh Khoản Khổng Lồ)) | Sổ lệnh: TƯỜNG BÁN ĐÈ GIÁ (Gấu Xả Hàng) (Tỷ số 0.17)"
+    },
+    {
+      "timestamp": "04:45:35",
+      "agent": "Portfolio",
+      "level": "SUCCESS",
+      "message": "[ĐÓNG LỆNH THỦ CÔNG] SOL (LONG 3x): Đóng tại $102.3500. PnL: +0.26 USD (+1.1%), Hoàn vốn: $25.26"
+    },
+    {
+      "timestamp": "04:45:34",
+      "agent": "Portfolio",
+      "level": "WARN",
+      "message": "[ĐÓNG LỆNH THỦ CÔNG] ETH (LONG 5x): Đóng tại $2,382.2900. PnL: -0.14 USD (-0.3%), Hoàn vốn: $49.86"
+    },
+    {
+      "timestamp": "04:45:32",
+      "agent": "Portfolio",
+      "level": "WARN",
+      "message": "[ĐÓNG LỆNH THỦ CÔNG] ETH (LONG 5x): Đóng tại $2,381.7600. PnL: -1.30 USD (-2.7%), Hoàn vốn: $47.70"
+    },
+    {
+      "timestamp": "04:45:30",
+      "agent": "Portfolio",
+      "level": "WARN",
+      "message": "[ĐÓNG LỆNH THỦ CÔNG] DOGE (LONG 2x): Đóng tại $0.0785. PnL: -1.05 USD (-4.7%), Hoàn vốn: $21.45"
+    },
+    {
+      "timestamp": "04:45:28",
+      "agent": "Portfolio",
+      "level": "WARN",
+      "message": "[ĐÓNG LỆNH THỦ CÔNG] PIXEL (LONG 3x): Đóng tại $0.0053. PnL: -3.17 USD (-8.3%), Hoàn vốn: $34.83"
+    },
     {
       "timestamp": "04:44:12",
       "agent": "User",
@@ -762,67 +801,7 @@
       "agent": "Executor",
       "level": "TRADE",
       "message": "EXECUTED MOCK FILL: LONG $50.00 of BTC/USDT @ $81,547.60 (24h Vol: $585.2M USDT)"
-    },
-    {
-      "timestamp": "01:53:21",
-      "agent": "The Pricer",
-      "level": "INFO",
-      "message": "Multivariate Valuation (BTC): Signal bias=LONG (P_model=85% | Edge=+35.0%). OrderBook=8.28x, 24hMom=+0.7%"
-    },
-    {
-      "timestamp": "01:53:21",
-      "agent": "Researcher",
-      "level": "INFO",
-      "message": "Ingested 3 fresh reports for BTC: [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:... | [TradingView] Here’s why the crypto market is going down today (Oct. ..."
-    },
-    {
-      "timestamp": "01:53:19",
-      "agent": "Spotter",
-      "level": "INFO",
-      "message": "Locked target: BTC/USDT | Price: $81,547.60 | 24h Liq: $585.2M USDT (MEGA TIER (Top 1% Depth)) | Order Book: BULLISH DEPTH (Heavy Buy Orders) (Ratio 8.28)"
-    },
-    {
-      "timestamp": "01:46:11",
-      "agent": "System",
-      "level": "INFO",
-      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
-    },
-    {
-      "timestamp": "01:41:16",
-      "agent": "System",
-      "level": "INFO",
-      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
-    },
-    {
-      "timestamp": "01:41:06",
-      "agent": "System",
-      "level": "INFO",
-      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
-    },
-    {
-      "timestamp": "01:38:22",
-      "agent": "System",
-      "level": "INFO",
-      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
-    },
-    {
-      "timestamp": "01:35:43",
-      "agent": "Kelly Risk",
-      "level": "WARN",
-      "message": "Statistical Edge (+1.2%) below execution threshold (4.0%) on SOL. Holding capital."
-    },
-    {
-      "timestamp": "01:35:43",
-      "agent": "The Pricer",
-      "level": "INFO",
-      "message": "Multivariate Valuation (SOL): Signal bias=LONG (P_model=51% | Edge=+1.2%). OrderBook=1.02x, 24hMom=-0.1%"
-    },
-    {
-      "timestamp": "01:35:43",
-      "agent": "Researcher",
-      "level": "INFO",
-      "message": "Ingested 3 fresh reports for SOL: [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:... | [TradingView] Here’s why the crypto market is going down today (Oct. ..."
     }
   ],
-  "last_updated": 1792273452.518856
+  "last_updated": 1792273543.9232335
 }
