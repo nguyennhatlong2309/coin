@@ -28,6 +28,9 @@ class CoinRequest(BaseModel):
 class ScanRequest(BaseModel):
     coin: Optional[str] = None
 
+class ClosePositionRequest(BaseModel):
+    position_id: str
+
 @app.get("/api/portfolio")
 def get_portfolio():
     # Sync current prices for prediction markets
@@ -49,6 +52,18 @@ def get_portfolio():
 @app.post("/api/portfolio/reset")
 def reset_portfolio():
     return portfolio.reset()
+
+@app.post("/api/portfolio/close")
+def close_position_api(req: ClosePositionRequest):
+    pos = portfolio.state["open_positions"].get(req.position_id)
+    if not pos:
+        return {"success": False, "message": "Vị thế không tồn tại hoặc đã được đóng."}
+    
+    clean_sym = pos.get("symbol") or pos["market_id"].replace("crypto_", "").replace("USDT", "")
+    ticker = crypto_service.fetch_coin_ticker(clean_sym)
+    current_p = ticker["price"] if ticker else pos["current_price"]
+    success = portfolio.close_position(req.position_id, current_p, reason="MANUAL")
+    return {"success": success, "portfolio": portfolio.get_summary()}
 
 @app.get("/api/markets")
 def get_markets():

@@ -188,6 +188,9 @@ async function loadChartData(coin, interval = "1h") {
       // Update banner with last candle
       const lastVol = data.volumes[data.volumes.length - 1];
       updateStatsBanner(last.open, last.high, last.low, last.close, lastVol ? lastVol.value : 0);
+
+      // Render TP / SL / Entry / Liq price lines for active position
+      updateChartPositionLines();
     }
   } catch (err) {
     console.error("Error fetching chart data:", err);
@@ -248,6 +251,100 @@ function updateStatsBanner(o, h, l, c, volUsdt) {
     elV.textContent = volUsdt >= 1e6 ? `$${(volUsdt / 1e6).toFixed(2)}M` : `$${(volUsdt / 1e3).toFixed(1)}K`;
   }
 }
+
+let activeChartPriceLines = [];
+let currentOpenPositions = [];
+
+function updateChartPositionLines() {
+  if (!candleSeries) return;
+
+  // Clear existing lines safely
+  activeChartPriceLines.forEach(line => {
+    try { candleSeries.removePriceLine(line); } catch (e) {}
+  });
+  activeChartPriceLines = [];
+
+  if (!currentOpenPositions || currentOpenPositions.length === 0) return;
+
+  // Find position matching currentChartCoin
+  const matchingPos = currentOpenPositions.find(p => {
+    const sym = (p.symbol || p.question || "").toUpperCase();
+    return sym.includes(currentChartCoin.toUpperCase());
+  });
+
+  if (!matchingPos) return;
+
+  // Draw Entry line (Blue dashed)
+  if (matchingPos.entry_price) {
+    const entryLine = candleSeries.createPriceLine({
+      price: matchingPos.entry_price,
+      color: '#3b82f6',
+      lineWidth: 2,
+      lineStyle: 2, // Dashed
+      axisLabelVisible: true,
+      title: `VÀO (${matchingPos.outcome} ${matchingPos.leverage || 1}x)`
+    });
+    activeChartPriceLines.push(entryLine);
+  }
+
+  // Draw Take-Profit line (Green solid)
+  if (matchingPos.take_profit) {
+    const tpLine = candleSeries.createPriceLine({
+      price: matchingPos.take_profit,
+      color: '#10b981',
+      lineWidth: 2,
+      lineStyle: 0, // Solid
+      axisLabelVisible: true,
+      title: `TP: ${formatPriceNum(matchingPos.take_profit)}`
+    });
+    activeChartPriceLines.push(tpLine);
+  }
+
+  // Draw Stop-Loss line (Red solid)
+  if (matchingPos.stop_loss) {
+    const slLine = candleSeries.createPriceLine({
+      price: matchingPos.stop_loss,
+      color: '#ef4444',
+      lineWidth: 2,
+      lineStyle: 0, // Solid
+      axisLabelVisible: true,
+      title: `SL: ${formatPriceNum(matchingPos.stop_loss)}`
+    });
+    activeChartPriceLines.push(slLine);
+  }
+
+  // Draw Liquidation line (Amber dotted)
+  if (matchingPos.liquidation_price) {
+    const liqLine = candleSeries.createPriceLine({
+      price: matchingPos.liquidation_price,
+      color: '#f59e0b',
+      lineWidth: 1,
+      lineStyle: 3, // Dotted
+      axisLabelVisible: true,
+      title: `THANH LÝ: ${formatPriceNum(matchingPos.liquidation_price)}`
+    });
+    activeChartPriceLines.push(liqLine);
+  }
+}
+
+window.closePosition = async function(positionId) {
+  if (!confirm("Bạn có chắc chắn muốn đóng vị thế này ngay lập tức theo giá thị trường?")) return;
+  try {
+    const res = await fetch("/api/portfolio/close", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ position_id: positionId })
+    });
+    const data = await res.json();
+    if (data.success) {
+      loadPortfolio();
+    } else {
+      alert(data.message || "Không thể đóng vị thế.");
+    }
+  } catch (err) {
+    console.error("Error closing position:", err);
+  }
+};
 
 function changeTimeframe(tf) {
   currentChartInterval = tf;
@@ -363,44 +460,60 @@ async function loadPortfolio() {
     const posCountBadge = document.getElementById("open-positions-count");
     posCountBadge.textContent = `${data.open_positions.length} ĐANG MỞ`;
 
+    currentOpenPositions = data.open_positions || [];
+    updateChartPositionLines();
+
     if (data.open_positions.length === 0) {
-      posTbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Chưa có vị thế nào. Hãy bấm "QUÉT THỊ TRƯỜNG NGAY" để AI vào lệnh!</td></tr>`;
+      posTbody.innerHTML = `<tr><td colspan="10" class="text-center text-muted">Chưa có vị thế nào. Hãy bấm "QUÉT THỊ TRƯỜNG NGAY" để AI vào lệnh Margin!</td></tr>`;
     } else {
 
       posTbody.innerHTML = data.open_positions.map(pos => {
         const isCrypto = pos.asset_type === "crypto";
+        const outcome = pos.outcome || "LONG";
+        const lev = pos.leverage || 1;
+        const margin = pos.margin || pos.cost_basis || (pos.shares * pos.entry_price);
+
         let pnl = 0;
         let pnlPct = 0;
 
-        if (isCrypto && pos.outcome === "SHORT") {
+        if (outcome === "SHORT" || outcome === "NO") {
           pnl = (pos.entry_price - pos.current_price) * pos.shares;
-          pnlPct = ((pos.entry_price - pos.current_price) / pos.entry_price) * 100;
         } else {
           pnl = (pos.current_price - pos.entry_price) * pos.shares;
-          pnlPct = ((pos.current_price - pos.entry_price) / pos.entry_price) * 100;
         }
+        pnlPct = margin > 0 ? (pnl / margin) * 100 : 0;
 
         const pnlClass = pnl >= 0 ? "highlight-green" : "highlight-red";
         let tagClass = "tag-outcome-yes";
-        if (pos.outcome === "NO" || pos.outcome === "SHORT") {
+        if (outcome === "NO" || outcome === "SHORT") {
           tagClass = "tag-outcome-no";
         }
 
+        const sym = pos.symbol || pos.question.split("/")[0].replace("crypto_", "");
         const sharesStr = isCrypto ? (pos.shares < 1 ? pos.shares.toFixed(4) : pos.shares.toFixed(2)) : pos.shares.toFixed(1);
         const entryStr = isCrypto ? formatPriceNum(pos.entry_price) : `$${pos.entry_price.toFixed(2)}`;
         const currentStr = isCrypto ? formatPriceNum(pos.current_price) : `$${pos.current_price.toFixed(2)}`;
+        const slStr = pos.stop_loss ? formatPriceNum(pos.stop_loss) : "-";
+        const tpStr = pos.take_profit ? formatPriceNum(pos.take_profit) : "-";
+        const liqStr = pos.liquidation_price ? formatPriceNum(pos.liquidation_price) : "-";
 
         return `
           <tr>
             <td>
-              <strong>${escapeHtml(pos.question)}</strong>
-              ${isCrypto ? '<span class="sub-badge" style="margin-left:6px; font-size:0.65rem">CRYPTO</span>' : '<span class="sub-badge" style="margin-left:6px; font-size:0.65rem">PREDICTION</span>'}
+              <strong>${escapeHtml(sym)}/USDT</strong>
+              ${isCrypto ? '<span class="sub-badge" style="margin-left:4px; font-size:0.62rem">MARGIN</span>' : '<span class="sub-badge" style="margin-left:4px; font-size:0.62rem">PRED</span>'}
             </td>
-            <td><span class="${tagClass}">${pos.outcome}</span></td>
+            <td><span class="${tagClass}">${outcome} ${lev}x</span></td>
             <td>${sharesStr}</td>
             <td>${entryStr}</td>
             <td>${currentStr}</td>
-            <td class="${pnlClass}">${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)} (${pnlPct.toFixed(1)}%)</td>
+            <td><span class="highlight-red" style="font-size:0.8rem; font-weight:600">${slStr}</span></td>
+            <td><span class="highlight-green" style="font-size:0.8rem; font-weight:600">${tpStr}</span></td>
+            <td><span style="color:#f59e0b; font-size:0.8rem; font-weight:600">${liqStr}</span></td>
+            <td class="${pnlClass}">${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)} (${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(1)}%)</td>
+            <td>
+              <button class="btn btn-outline" style="padding:2px 8px; font-size:0.75rem; border-color:#ef4444; color:#ef4444" onclick="closePosition('${pos.id}')">Đóng</button>
+            </td>
           </tr>
         `;
       }).join("");

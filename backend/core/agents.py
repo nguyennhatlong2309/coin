@@ -3,7 +3,14 @@ import random
 from typing import Dict, Any, List, Optional
 from .news_fetcher import search_google_news
 from .portfolio import PortfolioManager
-from ..config import KELLY_FRACTION, MAX_PORTFOLIO_PER_TRADE, MIN_EDGE_THRESHOLD
+from ..config import (
+    KELLY_FRACTION, 
+    MAX_PORTFOLIO_PER_TRADE, 
+    MIN_EDGE_THRESHOLD,
+    DEFAULT_LEVERAGE,
+    DEFAULT_SL_PERCENT,
+    DEFAULT_TP_PERCENT
+)
 
 class SwarmEngine:
     def __init__(self, portfolio: PortfolioManager, crypto_service=None):
@@ -140,10 +147,37 @@ class SwarmEngine:
             )
             return {"status": "insufficient_capital"}
 
+        # Adaptive Margin Leverage based on statistical edge
+        if edge >= 0.08:
+            leverage = 5
+        elif edge >= 0.05:
+            leverage = 3
+        elif edge >= 0.04:
+            leverage = 2
+        else:
+            leverage = DEFAULT_LEVERAGE
+
+        # Stop-Loss & Take-Profit targets
+        curr_price = ticker["price"]
+        if chosen_side == "SHORT":
+            stop_loss = round(curr_price * (1.0 + DEFAULT_SL_PERCENT), 6 if curr_price < 1 else 4)
+            take_profit = round(curr_price * (1.0 - DEFAULT_TP_PERCENT), 6 if curr_price < 1 else 4)
+            liq_price = round(curr_price * (1.0 + (1.0 / leverage) * 0.95), 6 if curr_price < 1 else 4)
+        else:
+            stop_loss = round(curr_price * (1.0 - DEFAULT_SL_PERCENT), 6 if curr_price < 1 else 4)
+            take_profit = round(curr_price * (1.0 + DEFAULT_TP_PERCENT), 6 if curr_price < 1 else 4)
+            liq_price = round(curr_price * (1.0 - (1.0 / leverage) * 0.95), 6 if curr_price < 1 else 4)
+
+        self.portfolio.log_thought(
+            "Kelly Risk",
+            "INFO",
+            f"Quản trị Rủi ro ({selected_coin}): Đòn bẩy {leverage}x | Ký quỹ: ${stake_dollars:.2f} | Cắt lỗ (SL): ${stop_loss:,.4f} (-{DEFAULT_SL_PERCENT*100:.1f}%) | Chốt lời (TP): ${take_profit:,.4f} (+{DEFAULT_TP_PERCENT*100:.1f}%) | Giá thanh lý: ${liq_price:,.4f}"
+        )
+
         reasoning = (
-            f"Tín hiệu Alpha: {chosen_side} trên {selected_coin} (Lợi thế: {edge:+.1%}). "
-            f"Thanh khoản: {ticker['liquidity_formatted']}, Tỷ số sổ lệnh: {ratio:.2f}x. "
-            f"Định cỡ Quarter-Kelly: ${stake_dollars:.2f} ({stake_dollars/total_equity:.1%} vốn)."
+            f"Tín hiệu Alpha: {chosen_side} {leverage}x trên {selected_coin} (Lợi thế: {edge:+.1%}). "
+            f"Ký quỹ Quarter-Kelly: ${stake_dollars:.2f} (Vị thế: ${stake_dollars*leverage:.2f}). "
+            f"SL: ${stop_loss:,.4f} | TP: ${take_profit:,.4f}"
         )
 
         success = self.portfolio.execute_trade(
@@ -153,16 +187,19 @@ class SwarmEngine:
             price=ticker["price"],
             stake_amount=stake_dollars,
             reasoning=reasoning,
-            asset_type="crypto"
+            asset_type="crypto",
+            leverage=leverage,
+            stop_loss=stop_loss,
+            take_profit=take_profit,
+            symbol=selected_coin
         )
 
         if success:
             self.portfolio.log_thought(
                 "Executor",
                 "TRADE",
-                f"KHỚP LỆNH ẢO THÀNH CÔNG: {chosen_side} ${stake_dollars:.2f} của {selected_coin}/USDT @ {ticker['price_formatted']} (Thanh khoản 24h: {ticker['liquidity_formatted']})"
+                f"KHỚP LỆNH MARGIN THÀNH CÔNG: {chosen_side} {leverage}x ${stake_dollars:.2f} của {selected_coin}/USDT @ {ticker['price_formatted']} (Vị thế: ${stake_dollars*leverage:.2f} | SL: ${stop_loss:,.4f} | TP: ${take_profit:,.4f})"
             )
-
 
         return {
             "status": "traded",
@@ -170,6 +207,10 @@ class SwarmEngine:
             "side": chosen_side,
             "price": ticker["price"],
             "stake": stake_dollars,
+            "leverage": leverage,
+            "stop_loss": stop_loss,
+            "take_profit": take_profit,
+            "liquidation_price": liq_price,
             "edge": edge
         }
 
