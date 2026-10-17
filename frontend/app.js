@@ -296,24 +296,25 @@ async function loadPortfolio() {
     const tradesEl = document.getElementById("kpi-trades");
 
     equityEl.textContent = `$${data.total_equity.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-    cashEl.textContent = `Cash: $${data.cash_balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+    cashEl.textContent = `Tiền mặt: $${data.cash_balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
 
     const pnlSign = data.total_pnl >= 0 ? "+" : "";
     pnlEl.textContent = `${pnlSign}$${data.total_pnl.toFixed(2)} (${pnlSign}${data.pnl_percent.toFixed(1)}%)`;
     pnlEl.className = `kpi-value ${data.total_pnl >= 0 ? 'highlight-green' : 'highlight-red'}`;
 
-    realizedEl.textContent = `Realized: $${data.realized_pnl.toFixed(2)} • Unr: $${data.unrealized_pnl.toFixed(2)}`;
+    realizedEl.textContent = `Đã chốt: $${data.realized_pnl.toFixed(2)} • Tạm tính: $${data.unrealized_pnl.toFixed(2)}`;
     winrateEl.textContent = `${data.win_rate.toFixed(1)}%`;
-    tradesEl.textContent = `${data.trades_count} Trades • ${data.total_open_count} Active Positions`;
+    tradesEl.textContent = `${data.trades_count} Lệnh • ${data.total_open_count} Vị thế mở`;
 
     // Active Positions Table
     const posTbody = document.getElementById("positions-tbody");
     const posCountBadge = document.getElementById("open-positions-count");
-    posCountBadge.textContent = `${data.open_positions.length} ACTIVE`;
+    posCountBadge.textContent = `${data.open_positions.length} ĐANG MỞ`;
 
     if (data.open_positions.length === 0) {
-      posTbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">No open positions. Run a Swarm Scan to take positions!</td></tr>`;
+      posTbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Chưa có vị thế nào. Hãy bấm "QUÉT THỊ TRƯỜNG NGAY" để AI vào lệnh!</td></tr>`;
     } else {
+
       posTbody.innerHTML = data.open_positions.map(pos => {
         const isCrypto = pos.asset_type === "crypto";
         let pnl = 0;
@@ -387,6 +388,8 @@ async function loadPortfolio() {
           </tr>
         `;
       }).join("");
+    } else {
+      tradesTbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted">Chưa có lịch sử giao dịch nào.</td></tr>`;
     }
   } catch (err) {
     console.error("Error polling portfolio:", err);
@@ -406,7 +409,7 @@ async function loadCryptoWatchlist(force = false) {
     const countBadge = document.getElementById("watchlist-count-badge");
     if (countBadge) {
       const activeCount = data.tickers.filter(t => t.is_active).length;
-      countBadge.textContent = `${activeCount}/${data.tickers.length} ACTIVE IN SWARM`;
+      countBadge.textContent = `${activeCount}/${data.tickers.length} COIN ĐANG BẬT AI`;
     }
 
     // Render coin selector tabs above the chart
@@ -415,7 +418,7 @@ async function loadCryptoWatchlist(force = false) {
     }
 
     if (!data.tickers || data.tickers.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted">No coins in watchlist. Use the bar above to add coins (e.g. BTC, ETH, SOL)!</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted">Chưa có coin nào trong danh sách. Hãy dùng ô phía trên để thêm coin (ví dụ: BTC, ETH, SOL)!</td></tr>`;
       return;
     }
 
@@ -442,16 +445,16 @@ async function loadCryptoWatchlist(force = false) {
           <td class="text-muted" style="font-family:var(--font-mono)">${t.spread_bps} bps</td>
           <td>
             <div class="switch-wrapper">
-              <input type="checkbox" class="toggle-input" ${t.is_active ? 'checked' : ''} onchange="toggleCoin('${t.coin}')" title="Enable/disable for Swarm scanning" />
-              <span style="font-size:0.7rem; color:var(--text-dim)">${t.is_active ? 'Active' : 'Off'}</span>
+              <input type="checkbox" class="toggle-input" ${t.is_active ? 'checked' : ''} onchange="toggleCoin('${t.coin}')" title="Bật/Tắt quyền quét cho AI Swarm" />
+              <span style="font-size:0.7rem; color:var(--text-dim)">${t.is_active ? 'Bật' : 'Tắt'}</span>
             </div>
           </td>
           <td style="text-align:center">
             <div class="row-actions" style="justify-content:center;">
-              <button class="btn-table-action btn-scan-coin" onclick="triggerManualScan('${t.coin}')" title="Scan this coin with AI Swarm">⚡ Scan</button>
-              <button class="btn-table-action" onclick="changeChartCoin('${t.coin}', true)" title="Open Candlestick Chart">📈 Chart</button>
-              <button class="btn-table-action" onclick="openDepthModal('${t.coin}')" title="View Order Book Depth">📊 Depth</button>
-              <button class="btn-table-action btn-del-coin" onclick="removeCoin('${t.coin}')" title="Remove coin">✕</button>
+              <button class="btn-table-action btn-scan-coin" onclick="triggerManualScan('${t.coin}')" title="Quét đồng coin này bằng AI Swarm">⚡ Quét</button>
+              <button class="btn-table-action" onclick="changeChartCoin('${t.coin}', true)" title="Mở biểu đồ nến">📈 Biểu Đồ</button>
+              <button class="btn-table-action" onclick="openDepthModal('${t.coin}')" title="Xem độ sâu sổ lệnh L2">📊 Độ Sâu</button>
+              <button class="btn-table-action btn-del-coin" onclick="removeCoin('${t.coin}')" title="Xóa khỏi danh sách">✕</button>
             </div>
           </td>
         </tr>
@@ -481,10 +484,10 @@ async function addNewCoin() {
       await loadCryptoWatchlist(true);
       await loadPortfolio();
     } else {
-      alert("Notice: " + result.message);
+      alert("Thông báo: " + result.message);
     }
   } catch (err) {
-    alert("Error adding coin: " + err);
+    alert("Lỗi khi thêm coin: " + err);
   }
 }
 
@@ -508,9 +511,9 @@ async function quickAdd(coin) {
 }
 
 async function removeCoin(coin) {
-  if (!confirm(`Remove ${coin} from trading watchlist?`)) return;
+  if (!confirm(`Bạn có chắc muốn xóa ${coin} khỏi danh sách theo dõi?`)) return;
   try {
-    await fetch("/api/crypto/watchlist/remove", {
+    const res = await fetch("/api/crypto/watchlist/remove", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ coin: coin })
@@ -540,15 +543,15 @@ async function openDepthModal(coin) {
   const title = document.getElementById("modal-coin-title");
   const content = document.getElementById("modal-depth-content");
 
-  title.textContent = `📊 ${coin}/USDT Real-Time Order Book Depth (Binance L2)`;
-  content.innerHTML = `<div class="text-center text-muted" style="padding: 25px;">Connecting to Binance Order Book L2 for ${coin}...</div>`;
+  title.textContent = `📊 Độ Sâu Sổ Lệnh L2 ${coin}/USDT (Binance L2)`;
+  content.innerHTML = `<div class="text-center text-muted" style="padding: 25px;">Đang kết nối sổ lệnh L2 Binance cho ${coin}...</div>`;
   modal.classList.add("open");
 
   try {
     const res = await fetch(`/api/crypto/depth/${coin}`);
     const data = await res.json();
     if (data.error) {
-      content.innerHTML = `<div class="highlight-red text-center" style="padding:20px;">Error: ${data.error}</div>`;
+      content.innerHTML = `<div class="highlight-red text-center" style="padding:20px;">Lỗi: ${data.error}</div>`;
       return;
     }
 
@@ -558,24 +561,24 @@ async function openDepthModal(coin) {
     content.innerHTML = `
       <div class="depth-ratio-bar">
         <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-          <span>Buyers (Bids): <strong>$${data.total_bid_usd.toLocaleString()}</strong> (${bidPct}%)</span>
+          <span>Bên Mua (Bids): <strong>$${data.total_bid_usd.toLocaleString()}</strong> (${bidPct}%)</span>
           <span class="${data.sentiment_color}"><strong>${data.depth_sentiment}</strong></span>
-          <span>Sellers (Asks): <strong>$${data.total_ask_usd.toLocaleString()}</strong> (${askPct}%)</span>
+          <span>Bên Bán (Asks): <strong>$${data.total_ask_usd.toLocaleString()}</strong> (${askPct}%)</span>
         </div>
         <div style="width:100%; height:8px; background:var(--accent-red); border-radius:4px; overflow:hidden; display:flex;">
           <div style="width:${bidPct}%; height:100%; background:var(--accent-green);"></div>
         </div>
         <div style="text-align:center; margin-top:6px; font-size:0.72rem; color:var(--text-dim)">
-          Order Book Bid/Ask Ratio: <strong>${data.bid_ask_ratio}x</strong> (Above 1.15x indicates bullish absorption)
+          Tỷ số Mua/Bán: <strong>${data.bid_ask_ratio}x</strong> (Trên 1.15x thể hiện lực gom mua áp đảo)
         </div>
       </div>
 
       <div class="depth-grid">
         <div>
-          <h4 style="font-size:0.8rem; color:var(--accent-green); margin-bottom:8px;">🟢 TOP BUY ORDERS (BIDS)</h4>
+          <h4 style="font-size:0.8rem; color:var(--accent-green); margin-bottom:8px;">🟢 TOP LỆNH ĐẶT MUA (BIDS)</h4>
           <table class="depth-subtable">
             <thead>
-              <tr><th>Price ($)</th><th>Amount</th><th>Total ($)</th></tr>
+              <tr><th>Mức Giá ($)</th><th>Số Lượng</th><th>Tổng ($)</th></tr>
             </thead>
             <tbody>
               ${data.top_bids.map(b => `<tr><td style="color:var(--accent-green)">$${b.price.toLocaleString()}</td><td>${b.qty}</td><td>$${b.total.toLocaleString()}</td></tr>`).join('')}
@@ -584,10 +587,10 @@ async function openDepthModal(coin) {
         </div>
 
         <div>
-          <h4 style="font-size:0.8rem; color:var(--accent-red); margin-bottom:8px;">🔴 TOP SELL ORDERS (ASKS)</h4>
+          <h4 style="font-size:0.8rem; color:var(--accent-red); margin-bottom:8px;">🔴 TOP LỆNH ĐẶT BÁN (ASKS)</h4>
           <table class="depth-subtable">
             <thead>
-              <tr><th>Price ($)</th><th>Amount</th><th>Total ($)</th></tr>
+              <tr><th>Mức Giá ($)</th><th>Số Lượng</th><th>Tổng ($)</th></tr>
             </thead>
             <tbody>
               ${data.top_asks.map(a => `<tr><td style="color:var(--accent-red)">$${a.price.toLocaleString()}</td><td>${a.qty}</td><td>$${a.total.toLocaleString()}</td></tr>`).join('')}
@@ -598,7 +601,7 @@ async function openDepthModal(coin) {
     `;
 
   } catch (err) {
-    content.innerHTML = `<div class="highlight-red text-center" style="padding:20px;">Network error loading depth: ${err}</div>`;
+    content.innerHTML = `<div class="highlight-red text-center" style="padding:20px;">Lỗi mạng khi tải sổ lệnh: ${err}</div>`;
   }
 }
 
@@ -616,7 +619,7 @@ async function loadMarkets() {
     const markets = await res.json();
 
     if (!markets || markets.length === 0) {
-      feed.innerHTML = `<div class="text-muted text-center">No active markets available.</div>`;
+      feed.innerHTML = `<div class="text-muted text-center">Không có thị trường nào khả dụng.</div>`;
       return;
     }
 
@@ -632,14 +635,14 @@ async function loadMarkets() {
             </div>
           </div>
           <div class="market-odds">
-            <span class="odd-pill odd-yes">YES ${Math.round(m.probability_yes * 100)}%</span>
-            <span class="odd-pill odd-no">NO ${Math.round(m.probability_no * 100)}%</span>
+            <span class="odd-pill odd-yes">CÓ ${Math.round(m.probability_yes * 100)}%</span>
+            <span class="odd-pill odd-no">KHÔNG ${Math.round(m.probability_no * 100)}%</span>
           </div>
         </div>
       `;
     }).join("");
   } catch (err) {
-    feed.innerHTML = `<div class="text-muted text-center">Error loading markets.</div>`;
+    feed.innerHTML = `<div class="text-muted text-center">Lỗi khi tải thị trường.</div>`;
   }
 }
 
@@ -648,7 +651,7 @@ async function triggerManualScan(coin = null) {
   const btn = document.getElementById("btn-scan");
   const origText = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = `<span class="btn-icon">⏳</span> REASONING ON ${coin || 'SWARM'}...`;
+  btn.innerHTML = `<span class="btn-icon">⏳</span> AI ĐANG SUY LUẬN TRÊN ${coin || 'HỆ THỐNG'}...`;
 
   try {
     const body = coin ? JSON.stringify({ coin: coin }) : null;
@@ -661,7 +664,7 @@ async function triggerManualScan(coin = null) {
     await loadPortfolio();
     await loadCryptoWatchlist(true);
   } catch (err) {
-    alert("Error executing swarm scan: " + err);
+    alert("Lỗi khi chạy quét AI: " + err);
   } finally {
     btn.disabled = false;
     btn.innerHTML = origText;
@@ -676,7 +679,7 @@ async function toggleAutoMode() {
     isAutoRunning = data.is_auto_running;
     updateAutoButtonState();
   } catch (err) {
-    alert("Error toggling auto mode: " + err);
+    alert("Lỗi khi bật/tắt chế độ tự động: " + err);
   }
 }
 
@@ -696,21 +699,21 @@ function updateAutoButtonState() {
   const text = document.getElementById("auto-text");
   if (isAutoRunning) {
     dot.className = "status-dot active";
-    text.textContent = "AUTO-LOOP: ON (30s)";
+    text.textContent = "VÒNG TỰ ĐỘNG: BẬT (30s)";
   } else {
     dot.className = "status-dot";
-    text.textContent = "AUTO-LOOP: OFF";
+    text.textContent = "VÒNG TỰ ĐỘNG: TẮT";
   }
 }
 
 // 9. Reset Portfolio
 async function resetPortfolio() {
-  if (!confirm("Are you sure you want to reset mock balance back to $1,000.00?")) return;
+  if (!confirm("Bạn có chắc chắn muốn đặt lại số dư vốn ảo về $1,000.00?")) return;
   try {
     await fetch("/api/portfolio/reset", { method: "POST" });
     await loadPortfolio();
   } catch (err) {
-    alert("Error resetting portfolio: " + err);
+    alert("Lỗi khi đặt lại vốn danh mục: " + err);
   }
 }
 
@@ -723,3 +726,4 @@ function escapeHtml(text) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
+

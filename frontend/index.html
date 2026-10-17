@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QUANT DESK | Autonomous AI Swarm Paper Trading</title>
+  <title>QUANT DESK | Hệ Thống Giao Dịch Mô Phỏng Đa Đặc Vụ AI</title>
   <link rel="stylesheet" href="/static/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,19 +18,19 @@
         <span class="pulse-indicator"></span>
         <span class="logo-text">QUANT<span class="highlight">DESK</span></span>
       </div>
-      <span class="sub-badge">SWARM v1.0 • PAPER TRADING</span>
+      <span class="sub-badge">SWARM v1.0 • GIAO DỊCH MÔ PHỎNG</span>
     </div>
 
     <div class="controls-group">
       <button id="btn-scan" class="btn btn-primary" onclick="triggerManualScan()">
-        <span class="btn-icon">⚡</span> RUN SWARM SCAN NOW
+        <span class="btn-icon">⚡</span> QUÉT THỊ TRƯỜNG NGAY
       </button>
       <button id="btn-auto" class="btn btn-secondary" onclick="toggleAutoMode()">
         <span id="auto-dot" class="status-dot"></span>
-        <span id="auto-text">AUTO-LOOP: OFF</span>
+        <span id="auto-text">VÒNG TỰ ĐỘNG: TẮT</span>
       </button>
       <button id="btn-reset" class="btn btn-danger" onclick="resetPortfolio()">
-        🔄 RESET ($1,000)
+        🔄 ĐẶT LẠI VỐN ($1,000)
       </button>
     </div>
   </header>
@@ -41,49 +41,49 @@
     <!-- KPI Metric Cards (Bento) -->
     <section class="kpi-grid">
       <div class="kpi-card">
-        <div class="kpi-title">TOTAL EQUITY (MOCK)</div>
+        <div class="kpi-title">TỔNG TÀI SẢN (VỐN ẢO)</div>
         <div class="kpi-value highlight-cyan" id="kpi-equity">$1,000.00</div>
-        <div class="kpi-sub" id="kpi-cash">Cash: $1,000.00</div>
+        <div class="kpi-sub" id="kpi-cash">Tiền mặt: $1,000.00</div>
       </div>
 
       <div class="kpi-card">
-        <div class="kpi-title">TOTAL PnL (RETURN)</div>
+        <div class="kpi-title">TỔNG LỜI / LỖ (PnL)</div>
         <div class="kpi-value" id="kpi-pnl">+$0.00 (+0.0%)</div>
-        <div class="kpi-sub" id="kpi-realized">Realized: $0.00 • Unr: $0.00</div>
+        <div class="kpi-sub" id="kpi-realized">Đã chốt: $0.00 • Tạm tính: $0.00</div>
       </div>
 
       <div class="kpi-card">
-        <div class="kpi-title">WIN RATE & STATS</div>
+        <div class="kpi-title">TỶ LỆ THẮNG & THỐNG KÊ</div>
         <div class="kpi-value highlight-gold" id="kpi-winrate">0.0%</div>
-        <div class="kpi-sub" id="kpi-trades">0 Trades • 0 Active Positions</div>
+        <div class="kpi-sub" id="kpi-trades">0 Lệnh • 0 Vị thế mở</div>
       </div>
 
       <div class="kpi-card">
-        <div class="kpi-title">SWARM ENGINE STATUS</div>
-        <div class="kpi-value highlight-green" id="kpi-status">ONLINE</div>
-        <div class="kpi-sub" id="kpi-network">Binance Spot + Google News RSS</div>
+        <div class="kpi-title">TRẠNG THÁI HỆ THỐNG AI</div>
+        <div class="kpi-value highlight-green" id="kpi-status">HOẠT ĐỘNG</div>
+        <div class="kpi-sub" id="kpi-network">Binance Spot + Tin tức Google News</div>
       </div>
     </section>
 
     <!-- Crypto Watchlist & Liquidity Matrix Section -->
     <section class="crypto-panel">
       <div class="panel-header">
-        <h3>🪙 CRYPTO WATCHLIST & 24H LIQUIDITY MATRIX (BINANCE SPOT)</h3>
+        <h3>🪙 DANH SÁCH COIN THEO DÕI & THANH KHOẢN 24H (BINANCE SPOT)</h3>
         <div style="display:flex; gap:10px; align-items:center;">
-          <span class="badge-mini" id="watchlist-count-badge">0 COINS ACTIVE</span>
-          <button class="btn-refresh" onclick="loadCryptoWatchlist(true)">🔄 Refresh</button>
+          <span class="badge-mini" id="watchlist-count-badge">0 COIN ĐANG BẬT AI</span>
+          <button class="btn-refresh" onclick="loadCryptoWatchlist(true)">🔄 Làm mới</button>
         </div>
       </div>
 
       <!-- Controls & Quick Add -->
       <div class="crypto-top-controls">
         <div class="add-coin-form">
-          <input type="text" id="new-coin-input" class="coin-input" placeholder="Symbol (e.g. PEPE, SUI)" onkeydown="if(event.key==='Enter') addNewCoin()" />
-          <button class="btn-add-coin" onclick="addNewCoin()">+ ADD COIN</button>
+          <input type="text" id="new-coin-input" class="coin-input" placeholder="Mã coin (ví dụ: PEPE, SUI)" onkeydown="if(event.key==='Enter') addNewCoin()" />
+          <button class="btn-add-coin" onclick="addNewCoin()">+ THÊM COIN</button>
         </div>
 
         <div class="quick-chips">
-          <span class="chip-label">Quick Add:</span>
+          <span class="chip-label">Thêm nhanh:</span>
           <button class="coin-chip" onclick="quickAdd('BTC')">+ BTC</button>
           <button class="coin-chip" onclick="quickAdd('ETH')">+ ETH</button>
           <button class="coin-chip" onclick="quickAdd('SOL')">+ SOL</button>
@@ -100,19 +100,19 @@
         <table class="data-table">
           <thead>
             <tr>
-              <th>Pair / Asset</th>
-              <th>Real-Time Price</th>
-              <th>24h Change</th>
-              <th>24h Liquidity (USDT Vol)</th>
-              <th>Liquidity Depth Tier</th>
-              <th>Spread (BPS)</th>
-              <th>Auto Swarm</th>
-              <th style="text-align:center">AI Actions</th>
+              <th>Cặp / Tài Sản</th>
+              <th>Giá Thời Gian Thực</th>
+              <th>Biến Động 24h</th>
+              <th>Thanh Khoản 24h (USDT)</th>
+              <th>Cấp Độ Thanh Khoản</th>
+              <th>Độ Lệch Giá (BPS)</th>
+              <th>Bật Quét AI</th>
+              <th style="text-align:center">Thao Tác AI</th>
             </tr>
           </thead>
           <tbody id="crypto-watchlist-tbody">
             <tr>
-              <td colspan="8" class="text-center text-muted">Loading live crypto tickers & liquidity...</td>
+              <td colspan="8" class="text-center text-muted">Đang tải bảng giá & thanh khoản trực tiếp...</td>
             </tr>
           </tbody>
         </table>
@@ -123,20 +123,20 @@
     <section class="panel chart-panel">
       <div class="panel-header">
         <div style="display:flex; align-items:center; gap:12px;">
-          <h3>📈 REAL-TIME CANDLESTICK & VOLUME CHART</h3>
+          <h3>📈 BIỂU ĐỒ NẾN NHẬT & KHỐI LƯỢNG GIAO DỊCH TRỰC TIẾP</h3>
           <span class="badge-mini" id="chart-active-coin-badge">BTC / USDT</span>
         </div>
         <div class="chart-controls">
           <!-- Timeframe selector -->
           <div class="timeframe-group">
-            <button class="btn-tf" id="tf-1s" onclick="changeTimeframe('1s')" title="1 Second Scalp">1S</button>
-            <button class="btn-tf" id="tf-1m" onclick="changeTimeframe('1m')" title="1 Minute">1M</button>
-            <button class="btn-tf" id="tf-3m" onclick="changeTimeframe('3m')" title="3 Minutes">3M</button>
-            <button class="btn-tf" id="tf-5m" onclick="changeTimeframe('5m')" title="5 Minutes">5M</button>
-            <button class="btn-tf" id="tf-15m" onclick="changeTimeframe('15m')" title="15 Minutes">15M</button>
-            <button class="btn-tf active" id="tf-1h" onclick="changeTimeframe('1h')" title="1 Hour">1H</button>
-            <button class="btn-tf" id="tf-4h" onclick="changeTimeframe('4h')" title="4 Hours">4H</button>
-            <button class="btn-tf" id="tf-1d" onclick="changeTimeframe('1d')" title="1 Day">1D</button>
+            <button class="btn-tf" id="tf-1s" onclick="changeTimeframe('1s')" title="1 Giây (Scalping)">1S</button>
+            <button class="btn-tf" id="tf-1m" onclick="changeTimeframe('1m')" title="1 Phút">1M</button>
+            <button class="btn-tf" id="tf-3m" onclick="changeTimeframe('3m')" title="3 Phút">3M</button>
+            <button class="btn-tf" id="tf-5m" onclick="changeTimeframe('5m')" title="5 Phút">5M</button>
+            <button class="btn-tf" id="tf-15m" onclick="changeTimeframe('15m')" title="15 Phút">15M</button>
+            <button class="btn-tf active" id="tf-1h" onclick="changeTimeframe('1h')" title="1 Giờ">1H</button>
+            <button class="btn-tf" id="tf-4h" onclick="changeTimeframe('4h')" title="4 Giờ">4H</button>
+            <button class="btn-tf" id="tf-1d" onclick="changeTimeframe('1d')" title="1 Ngày">1D</button>
           </div>
           <!-- Quick Coin Switcher -->
           <div class="chart-coin-tabs" id="chart-coin-tabs">
@@ -147,12 +147,12 @@
 
       <!-- Live OHLC & Volume stats banner -->
       <div class="chart-stats-banner">
-        <span>Open: <strong id="stat-open">-</strong></span>
-        <span>High: <strong id="stat-high">-</strong></span>
-        <span>Low: <strong id="stat-low">-</strong></span>
-        <span>Close: <strong id="stat-close">-</strong></span>
-        <span>Candle Vol: <strong id="stat-vol" class="highlight-cyan">-</strong></span>
-        <span style="margin-left:auto; font-size:0.7rem; color:var(--text-dim)">⚡ Binance Live Stream &bull; Drag to pan &bull; Scroll to zoom</span>
+        <span>Mở: <strong id="stat-open">-</strong></span>
+        <span>Cao: <strong id="stat-high">-</strong></span>
+        <span>Thấp: <strong id="stat-low">-</strong></span>
+        <span>Đóng: <strong id="stat-close">-</strong></span>
+        <span>Volume Nến: <strong id="stat-vol" class="highlight-cyan">-</strong></span>
+        <span style="margin-left:auto; font-size:0.7rem; color:var(--text-dim)">⚡ Luồng trực tiếp Binance &bull; Kéo chuột để di chuyển &bull; Lăn chuột để phóng to/thu nhỏ</span>
       </div>
 
       <!-- TradingView Lightweight Canvas Container -->
@@ -162,49 +162,47 @@
     <!-- Swarm Grid & Main Workspace -->
     <div class="workspace-grid">
 
-
-
       <!-- Left Column: Swarm Grid & Live Thought Stream -->
       <div class="workspace-col">
 
         <!-- Swarm Cards -->
         <div class="panel">
           <div class="panel-header">
-            <h3>🤖 AGENT SWARM GRID</h3>
-            <span class="badge-mini">4 SPECIALISTS ACTIVE</span>
+            <h3>🤖 MẠNG LƯỚI ĐẶC VỤ AI (SWARM GRID)</h3>
+            <span class="badge-mini">4 CHUYÊN GIA HOẠT ĐỘNG</span>
           </div>
 
           <div class="agent-cards-grid">
             <div class="agent-card">
               <div class="agent-card-header">
                 <span class="agent-name">SPOTTER</span>
-                <span class="agent-status-badge badge-cyan">SCANNING</span>
+                <span class="agent-status-badge badge-cyan">SĂN KÈO</span>
               </div>
-              <p class="agent-desc">Filters liquid binary markets with tradeable spread (12% - 88% odds).</p>
+              <p class="agent-desc">Lọc các đồng coin có thanh khoản sâu và biên độ giao dịch tiềm năng (12% - 88%).</p>
             </div>
 
             <div class="agent-card">
               <div class="agent-card-header">
                 <span class="agent-name">RESEARCHER</span>
-                <span class="agent-status-badge badge-blue">NEWS AGENT</span>
+                <span class="agent-status-badge badge-blue">ĐỌC TIN TỨC</span>
               </div>
-              <p class="agent-desc">Real-time Google News RSS crawler & sentiment context extraction.</p>
+              <p class="agent-desc">Cào tin tức thời gian thực từ Google News RSS & trích xuất ngữ cảnh thị trường.</p>
             </div>
 
             <div class="agent-card">
               <div class="agent-card-header">
                 <span class="agent-name">THE PRICER</span>
-                <span class="agent-status-badge badge-purple">GAUSSIAN</span>
+                <span class="agent-status-badge badge-purple">ĐỊNH GIÁ</span>
               </div>
-              <p class="agent-desc">Evaluates Bayesian distribution, sentiment shift & statistical edge (Δp).</p>
+              <p class="agent-desc">Đánh giá độ sâu sổ lệnh, đà giá và tâm lý tin tức để tính lợi thế thống kê (Δp).</p>
             </div>
 
             <div class="agent-card">
               <div class="agent-card-header">
                 <span class="agent-name">KELLY RISK</span>
-                <span class="agent-status-badge badge-gold">FRACTIONAL</span>
+                <span class="agent-status-badge badge-gold">QUẢN TRỊ RỦI RO</span>
               </div>
-              <p class="agent-desc">Quarter-Kelly stake sizing, capital safety caps (max 5% portfolio risk).</p>
+              <p class="agent-desc">Áp dụng công thức Quarter-Kelly để định cỡ vốn tối ưu (tối đa 5% danh mục).</p>
             </div>
           </div>
         </div>
@@ -212,12 +210,12 @@
         <!-- Live Terminal Thought Stream -->
         <div class="panel">
           <div class="panel-header">
-            <h3>🧠 AGENT REASONING STREAM (LIVE THOUGHTS)</h3>
-            <span class="status-live-indicator">LIVE FEED</span>
+            <h3>🧠 DÒNG SUY NGHĨ CỦA AI (LUỒNG TRỰC TIẾP)</h3>
+            <span class="status-live-indicator">TRỰC TIẾP</span>
           </div>
 
           <div class="terminal-box" id="thought-terminal">
-            <div class="terminal-line"><span class="log-time">[00:00:00]</span> <span class="log-tag tag-sys">[System]</span> Initializing Quant Desk connection...</div>
+            <div class="terminal-line"><span class="log-time">[00:00:00]</span> <span class="log-tag tag-sys">[Hệ Thống]</span> Đang kết nối Quant Desk...</div>
           </div>
         </div>
 
@@ -229,25 +227,25 @@
         <!-- Open Positions Table -->
         <div class="panel">
           <div class="panel-header">
-            <h3>📋 ACTIVE OPEN POSITIONS</h3>
-            <span class="badge-mini" id="open-positions-count">0 ACTIVE</span>
+            <h3>📋 VỊ THẾ ĐANG NẮM GIỮ (ACTIVE POSITIONS)</h3>
+            <span class="badge-mini" id="open-positions-count">0 ĐANG MỞ</span>
           </div>
 
           <div class="table-container">
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>Target Event</th>
-                  <th>Outcome</th>
-                  <th>Shares</th>
-                  <th>Entry Price</th>
-                  <th>Current</th>
-                  <th>PnL</th>
+                  <th>Tài Sản / Kèo</th>
+                  <th>Hướng Lệnh</th>
+                  <th>Khối Lượng</th>
+                  <th>Giá Vào</th>
+                  <th>Giá Hiện Tại</th>
+                  <th>Lời / Lỗ (PnL)</th>
                 </tr>
               </thead>
               <tbody id="positions-tbody">
                 <tr>
-                  <td colspan="6" class="text-center text-muted">No open positions. Run a Swarm Scan to take positions!</td>
+                  <td colspan="6" class="text-center text-muted">Chưa có vị thế nào. Hãy bấm "QUÉT THỊ TRƯỜNG NGAY" để AI vào lệnh!</td>
                 </tr>
               </tbody>
             </table>
@@ -257,12 +255,12 @@
         <!-- Live Prediction Markets Feed -->
         <div class="panel">
           <div class="panel-header">
-            <h3>📊 LIVE PREDICTION MARKETS FEED</h3>
-            <button class="btn-refresh" onclick="loadMarkets()">🔄 Refresh</button>
+            <h3>📊 THỊ TRƯỜNG DỰ ĐOÁN & SỰ KIỆN</h3>
+            <button class="btn-refresh" onclick="loadMarkets()">🔄 Làm mới</button>
           </div>
 
           <div class="market-list" id="market-feed">
-            <div class="loading-spinner">Loading markets from Polymarket & Manifold...</div>
+            <div class="loading-spinner">Đang tải thị trường từ Polymarket & Manifold...</div>
           </div>
         </div>
 
@@ -273,25 +271,25 @@
     <!-- Trade History Section -->
     <section class="panel panel-bottom">
       <div class="panel-header">
-        <h3>📜 RECENT MOCK TRADES AUDIT LOG</h3>
-        <span class="badge-mini">LEDGER VERIFIED</span>
+        <h3>📜 SỔ NHẬT KÝ KHỚP LỆNH MÔ PHỎNG</h3>
+        <span class="badge-mini">XÁC MINH SỔ CÁI</span>
       </div>
       <div class="table-container">
         <table class="data-table">
           <thead>
             <tr>
-              <th>Time</th>
-              <th>Action</th>
-              <th>Event</th>
-              <th>Shares</th>
-              <th>Price</th>
-              <th>Total Cost</th>
-              <th>Agent Reasoning</th>
+              <th>Thời Gian</th>
+              <th>Hành Động</th>
+              <th>Tài Sản</th>
+              <th>Khối Lượng</th>
+              <th>Giá Khớp</th>
+              <th>Tổng Vốn (USD)</th>
+              <th>Lý Do AI Ra Quyết Định</th>
             </tr>
           </thead>
           <tbody id="trades-tbody">
             <tr>
-              <td colspan="7" class="text-center text-muted">No trade history yet.</td>
+              <td colspan="7" class="text-center text-muted">Chưa có lịch sử giao dịch nào.</td>
             </tr>
           </tbody>
         </table>
@@ -304,12 +302,12 @@
   <div id="depth-modal" class="modal-overlay" onclick="if(event.target===this) closeDepthModal()">
     <div class="modal-card">
       <div class="modal-header">
-        <h3 id="modal-coin-title">📊 Real-Time Order Book Depth (Binance L2)</h3>
+        <h3 id="modal-coin-title">📊 Độ Sâu Sổ Lệnh L2 Thời Gian Thực (Binance L2)</h3>
         <button class="modal-close" onclick="closeDepthModal()">&times;</button>
       </div>
 
       <div id="modal-depth-content">
-        <div class="text-center text-muted" style="padding: 20px;">Fetching live order book...</div>
+        <div class="text-center text-muted" style="padding: 20px;">Đang kết nối sổ lệnh L2 Binance...</div>
       </div>
     </div>
   </div>
@@ -318,4 +316,3 @@
   <script src="/static/app.js"></script>
 </body>
 </html>
-

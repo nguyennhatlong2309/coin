@@ -49,7 +49,7 @@ class SwarmEngine:
         self.portfolio.log_thought(
             "Spotter",
             "INFO",
-            f"Locked target: {selected_coin}/USDT | Price: {ticker['price_formatted']} | 24h Liq: {ticker['liquidity_formatted']} ({ticker['tier']}) | Order Book: {depth_sentiment} (Ratio {ratio})"
+            f"Đã khóa mục tiêu: {selected_coin}/USDT | Giá: {ticker['price_formatted']} | Thanh khoản 24h: {ticker['liquidity_formatted']} ({ticker['tier']}) | Sổ lệnh: {depth_sentiment} (Tỷ số {ratio})"
         )
 
         # 2. RESEARCHER AGENT
@@ -57,12 +57,12 @@ class SwarmEngine:
         if articles:
             headlines_summary = " | ".join([f"[{a['source']}] {a['title'][:55]}..." for a in articles[:2]])
         else:
-            headlines_summary = f"No breaking news alerts for {selected_coin} in last 12h."
+            headlines_summary = f"Không có cảnh báo tin tức đột biến cho {selected_coin} trong 12h qua."
 
         self.portfolio.log_thought(
             "Researcher",
             "INFO",
-            f"Ingested {len(articles)} fresh reports for {selected_coin}: {headlines_summary}"
+            f"Đã thu nạp {len(articles)} tin tức mới cho {selected_coin}: {headlines_summary}"
         )
 
         # 3. THE PRICER AGENT
@@ -101,7 +101,7 @@ class SwarmEngine:
         self.portfolio.log_thought(
             "The Pricer",
             "INFO",
-            f"Multivariate Valuation ({selected_coin}): Signal bias={chosen_side} (P_model={int(chosen_prob*100)}% | Edge={edge:+.1%}). OrderBook={ratio:.2f}x, 24hMom={change_24h:+.1f}%"
+            f"Định giá xác suất ({selected_coin}): Tín hiệu={chosen_side} (P_fair={int(chosen_prob*100)}% | Lợi thế={edge:+.1%}). Tỷ số sổ lệnh={ratio:.2f}x, Đà 24h={change_24h:+.1f}%"
         )
 
         # 4. KELLY RISK AGENT
@@ -113,7 +113,7 @@ class SwarmEngine:
             self.portfolio.log_thought(
                 "Kelly Risk",
                 "WARN",
-                f"Statistical Edge ({edge:+.1%}) below execution threshold ({MIN_EDGE_THRESHOLD:.1%}) on {selected_coin}. Holding capital."
+                f"Lợi thế thống kê ({edge:+.1%}) thấp hơn ngưỡng tối thiểu ({MIN_EDGE_THRESHOLD:.1%}) trên {selected_coin}. Giữ nguyên tiền mặt."
             )
             return {
                 "status": "hold",
@@ -136,14 +136,14 @@ class SwarmEngine:
             self.portfolio.log_thought(
                 "Kelly Risk",
                 "WARN",
-                f"Computed stake ${stake_dollars:.2f} insufficient or cash reserves low. Holding."
+                f"Vốn tính toán ${stake_dollars:.2f} không đủ hoặc số dư tiền mặt thấp. Đứng ngoài."
             )
             return {"status": "insufficient_capital"}
 
         reasoning = (
-            f"Alpha Signal: {chosen_side} on {selected_coin} (Edge: {edge:+.1%}). "
-            f"Liquidity: {ticker['liquidity_formatted']}, Depth Ratio: {ratio:.2f}x. "
-            f"Quarter-Kelly allocation: ${stake_dollars:.2f} ({stake_dollars/total_equity:.1%} equity)."
+            f"Tín hiệu Alpha: {chosen_side} trên {selected_coin} (Lợi thế: {edge:+.1%}). "
+            f"Thanh khoản: {ticker['liquidity_formatted']}, Tỷ số sổ lệnh: {ratio:.2f}x. "
+            f"Định cỡ Quarter-Kelly: ${stake_dollars:.2f} ({stake_dollars/total_equity:.1%} vốn)."
         )
 
         success = self.portfolio.execute_trade(
@@ -160,8 +160,9 @@ class SwarmEngine:
             self.portfolio.log_thought(
                 "Executor",
                 "TRADE",
-                f"EXECUTED MOCK FILL: {chosen_side} ${stake_dollars:.2f} of {selected_coin}/USDT @ {ticker['price_formatted']} (24h Vol: {ticker['liquidity_formatted']})"
+                f"KHỚP LỆNH ẢO THÀNH CÔNG: {chosen_side} ${stake_dollars:.2f} của {selected_coin}/USDT @ {ticker['price_formatted']} (Thanh khoản 24h: {ticker['liquidity_formatted']})"
             )
+
 
         return {
             "status": "traded",

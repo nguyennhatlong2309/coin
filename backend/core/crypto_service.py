@@ -82,16 +82,16 @@ class CryptoService:
 
                 # Determine liquidity tier
                 if quote_volume >= 250_000_000:
-                    tier = "MEGA TIER (Top 1% Depth)"
+                    tier = "MEGA TIER (Thanh Khoản Khổng Lồ)"
                     tier_badge = "badge-mega"
                 elif quote_volume >= 50_000_000:
-                    tier = "DEEP TIER (High Liquidity)"
+                    tier = "DEEP TIER (Thanh Khoản Sâu)"
                     tier_badge = "badge-deep"
                 elif quote_volume >= 10_000_000:
-                    tier = "SOLID TIER (Good Depth)"
+                    tier = "SOLID TIER (Thanh Khoản Tốt)"
                     tier_badge = "badge-solid"
                 else:
-                    tier = "LIGHT TIER (Moderate Depth)"
+                    tier = "LIGHT TIER (Thanh Khoản Vừa)"
                     tier_badge = "badge-light"
 
                 # Pretty format liquidity
@@ -135,7 +135,7 @@ class CryptoService:
             with httpx.Client(timeout=4.0) as client:
                 resp = client.get(url)
                 if resp.status_code != 200:
-                    return {"error": "Unable to fetch order book depth"}
+                    return {"error": "Không thể kết nối sổ lệnh L2 Binance"}
                 data = resp.json()
                 
                 bids_raw = data.get("bids", [])
@@ -147,14 +147,15 @@ class CryptoService:
                 ratio = (total_bid_usd / total_ask_usd) if total_ask_usd > 0 else 1.0
                 
                 if ratio >= 1.25:
-                    depth_sentiment = "BULLISH DEPTH (Heavy Buy Orders)"
+                    depth_sentiment = "LỰC MUA ÁP ĐẢO (Bò Gom Hàng)"
                     sentiment_color = "highlight-green"
                 elif ratio <= 0.80:
-                    depth_sentiment = "BEARISH DEPTH (Heavy Sell Wall)"
+                    depth_sentiment = "TƯỜNG BÁN ĐÈ GIÁ (Gấu Xả Hàng)"
                     sentiment_color = "highlight-red"
                 else:
-                    depth_sentiment = "BALANCED DEPTH (Neutral Spread)"
+                    depth_sentiment = "CÂN BẰNG CUNG CẦU (Giằng Co)"
                     sentiment_color = "highlight-gold"
+
 
                 return {
                     "symbol": symbol,
@@ -248,11 +249,11 @@ class CryptoService:
         """Validate coin against Binance, add to watchlist if valid."""
         clean = raw_coin.strip().upper()
         if not clean:
-            return {"success": False, "message": "Coin symbol cannot be empty."}
+            return {"success": False, "message": "Mã coin không được để trống."}
         
         base = self.get_coin_base(clean)
         if base in self.watchlist:
-            return {"success": False, "message": f"{base} is already in your watchlist."}
+            return {"success": False, "message": f"{base} đã có sẵn trong danh sách theo dõi."}
 
         # Check if valid on Binance Spot
         symbol = f"{base}USDT"
@@ -264,11 +265,11 @@ class CryptoService:
                     self.watchlist.append(base)
                     self.active_status[base] = True
                     self.save()
-                    return {"success": True, "message": f"Successfully added {base}/USDT to Watchlist!", "coin": base}
+                    return {"success": True, "message": f"Đã thêm thành công {base}/USDT vào Danh Sách Theo Dõi!", "coin": base}
                 else:
-                    return {"success": False, "message": f"Symbol '{base}' is not traded on Binance Spot (Pair: {symbol})."}
+                    return {"success": False, "message": f"Mã '{base}' không được giao dịch trên Binance Spot (Cặp: {symbol})."}
         except Exception as e:
-            return {"success": False, "message": f"Network error checking Binance: {e}"}
+            return {"success": False, "message": f"Lỗi kết nối sàn Binance: {e}"}
 
     def remove_coin(self, raw_coin: str) -> Dict[str, Any]:
         base = self.get_coin_base(raw_coin.strip().upper())
@@ -277,8 +278,9 @@ class CryptoService:
             if base in self.active_status:
                 del self.active_status[base]
             self.save()
-            return {"success": True, "message": f"Removed {base} from watchlist."}
-        return {"success": False, "message": f"{base} not found in watchlist."}
+            return {"success": True, "message": f"Đã xóa {base} khỏi danh sách theo dõi."}
+        return {"success": False, "message": f"{base} không tìm thấy trong danh sách."}
+
 
     def toggle_coin(self, raw_coin: str) -> Dict[str, Any]:
         base = self.get_coin_base(raw_coin.strip().upper())

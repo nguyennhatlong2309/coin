@@ -5,17 +5,14 @@
     "SOL",
     "BNB",
     "DOGE",
-    "SUI",
-    "NEAR"
+    "PIXEL"
   ],
   "active": {
     "BTC": true,
     "ETH": true,
     "SOL": true,
     "BNB": true,
-    "DOGE": true,
-    "SUI": true,
-    "NEAR": true
+    "DOGE": true
   },
-  "updated_at": 1792262140.2734604
+  "updated_at": 1792263455.5323317
 }
