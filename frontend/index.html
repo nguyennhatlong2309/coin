@@ -22,8 +22,11 @@
     </div>
 
     <div class="controls-group">
+      <button id="btn-open-planner" class="btn btn-primary" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); box-shadow: 0 0 16px rgba(99, 102, 241, 0.4); border-color: #8b5cf6;" onclick="openTradePlannerModal()">
+        <span class="btn-icon">🎯</span> LẬP KẾ HOẠCH & THẨM ĐỊNH AI
+      </button>
       <button id="btn-scan" class="btn btn-primary" onclick="triggerManualScan()">
-        <span class="btn-icon">⚡</span> QUÉT THỊ TRƯỜNG NGAY
+        <span class="btn-icon">⚡</span> QUÉT NHANH
       </button>
       <button id="btn-auto" class="btn btn-secondary" onclick="toggleAutoMode()">
         <span id="auto-dot" class="status-dot"></span>
@@ -312,6 +315,206 @@
 
       <div id="modal-depth-content">
         <div class="text-center text-muted" style="padding: 20px;">Đang kết nối sổ lệnh L2 Binance...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Trade Planner & Risk Committee Negotiation Modal -->
+  <div id="planner-modal" class="modal-overlay" onclick="if(event.target===this) closeTradePlannerModal()">
+    <div class="modal-card planner-modal-card">
+      <div class="modal-header">
+        <div>
+          <h3 style="margin:0; font-size:1.05rem; display:flex; align-items:center; gap:8px;">
+            <span>🎯</span> HỘI ĐỒNG THẨM ĐỊNH RỦI RO & ĐÀM PHÁN LỆNH (AI CO-PILOT)
+          </h3>
+          <span style="font-size:0.72rem; color:var(--text-dim); font-family:var(--font-mono);">
+            Thiết lập hàng rào rủi ro cứng • AI phân tích bẫy quét râu & phê duyệt trước khi vào lệnh
+          </span>
+        </div>
+        <button class="modal-close" onclick="closeTradePlannerModal()">&times;</button>
+      </div>
+
+      <div class="planner-grid">
+        <!-- Left: Plan Input Form -->
+        <div class="planner-form-section">
+          <div style="font-size:0.8rem; font-weight:700; color:var(--accent-cyan); font-family:var(--font-mono); margin-bottom:4px;">
+            1. THIẾT LẬP KẾ HOẠCH GIAO DỊCH
+          </div>
+
+          <div class="form-group-item">
+            <label>ĐỒNG COIN MỤC TIÊU</label>
+            <select id="plan-coin" class="form-input-control" onchange="onPlannerCoinChanged()">
+              <!-- Options populated dynamically -->
+            </select>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <div class="form-group-item">
+              <label>HƯỚNG LỆNH</label>
+              <select id="plan-side" class="form-input-control">
+                <option value="AUTO">🤖 AI Tự Quyết</option>
+                <option value="LONG">🟢 LONG (Đánh Lên)</option>
+                <option value="SHORT">🔴 SHORT (Bán Khống)</option>
+              </select>
+            </div>
+
+            <div class="form-group-item">
+              <label>KHUNG THỜI GIAN</label>
+              <select id="plan-timeframe" class="form-input-control">
+                <option value="SCALP">⚡ Scalp (1m - 5m)</option>
+                <option value="DAY" selected>📅 Day Trade (15m - 1h)</option>
+                <option value="SWING">🌊 Swing (4h - 1d)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <div class="form-group-item">
+              <label>ĐÒN BẨY MARGIN</label>
+              <select id="plan-leverage" class="form-input-control" onchange="recalculatePlannerEstimates()">
+                <option value="1">1x (Spot)</option>
+                <option value="2">2x</option>
+                <option value="3" selected>3x</option>
+                <option value="5">5x</option>
+                <option value="10">10x (Rủi ro cao)</option>
+              </select>
+            </div>
+
+            <div class="form-group-item">
+              <label>TIỀN KÝ QUỸ (USD)</label>
+              <input type="number" id="plan-stake" class="form-input-control" value="50.00" min="5" step="5" oninput="recalculatePlannerEstimates()">
+            </div>
+          </div>
+
+          <div class="form-group-item">
+            <label>
+              <span>GIÁ VÀO THAM CHIẾU ($)</span>
+              <span id="plan-live-price" style="color:var(--accent-cyan); cursor:pointer;" onclick="syncPlannerWithLivePrice()">Lấy giá Live</span>
+            </label>
+            <input type="number" id="plan-price" class="form-input-control" placeholder="0.00" step="any" oninput="recalculatePlannerEstimates()">
+          </div>
+
+          <!-- Hard Stop-Loss -->
+          <div class="form-group-item">
+            <label>
+              <span style="color:#f87171;">🛑 CẮT LỖ CỨNG (STOP-LOSS)</span>
+              <span id="plan-sl-calc" style="color:var(--text-dim); font-size:0.7rem;">-</span>
+            </label>
+            <input type="number" id="plan-stop-loss" class="form-input-control" placeholder="Để trống nếu chấp nhận tất tay" step="any" oninput="onStopLossChanged()">
+            <div class="quick-pct-buttons">
+              <span class="chip-label">Gợi ý SL:</span>
+              <button type="button" class="btn-quick-pct" onclick="applyQuickSL(0.01)">-1%</button>
+              <button type="button" class="btn-quick-pct" onclick="applyQuickSL(0.02)">-2%</button>
+              <button type="button" class="btn-quick-pct" onclick="applyQuickSL(0.03)">-3%</button>
+              <button type="button" class="btn-quick-pct" onclick="applyQuickSL(0.05)">-5%</button>
+            </div>
+          </div>
+
+          <!-- Mandatory Confirmation when No SL -->
+          <div id="box-no-sl-warning" class="checkbox-warning-box">
+            <input type="checkbox" id="chk-no-sl" onchange="onNoSlChecked()">
+            <label for="chk-no-sl">
+              <strong>XÁC NHẬN CHẤP NHẬN TẤT TAY:</strong> Tôi hiểu rằng nếu <strong>KHÔNG ĐẶT CẮT LỖ</strong>, hệ thống sẽ giữ vị thế cho đến khi bị <strong>THANH LÝ MẤT TRẮNG 100% TIỀN CỌC</strong> nếu thị trường đi ngược chiều.
+            </label>
+          </div>
+
+          <!-- Hard Take-Profit -->
+          <div class="form-group-item">
+            <label>
+              <span style="color:#34d399;">🎯 CHỐT LỜI CỨNG (TAKE-PROFIT - TÙY CHỌN)</span>
+              <span id="plan-tp-calc" style="color:var(--text-dim); font-size:0.7rem;">-</span>
+            </label>
+            <input type="number" id="plan-take-profit" class="form-input-control" placeholder="Có thể để trống để gồng lãi" step="any" oninput="recalculatePlannerEstimates()">
+            <div class="quick-pct-buttons">
+              <span class="chip-label">Gợi ý TP:</span>
+              <button type="button" class="btn-quick-pct" onclick="applyQuickTP(0.02)">+2%</button>
+              <button type="button" class="btn-quick-pct" onclick="applyQuickTP(0.04)">+4%</button>
+              <button type="button" class="btn-quick-pct" onclick="applyQuickTP(0.06)">+6%</button>
+              <button type="button" class="btn-quick-pct" onclick="applyQuickTP(0.10)">+10%</button>
+            </div>
+          </div>
+
+          <button id="btn-submit-plan" class="btn btn-primary" style="margin-top:6px; padding:12px; background:linear-gradient(135deg, #6366f1, #8b5cf6); font-weight:700;" onclick="submitPlanForAIValidation()">
+            🧠 GỬI AI THẨM ĐỊNH KẾ HOẠCH
+          </button>
+        </div>
+
+        <!-- Right: AI Co-Pilot Evaluation & Negotiation Loop -->
+        <div class="planner-ai-section">
+          <div class="ai-verdict-header">
+            <div>
+              <div style="font-size:0.8rem; font-weight:700; color:#8b5cf6; font-family:var(--font-mono);">
+                2. HỘI ĐỒNG THẨM ĐỊNH RỦI RO AI
+              </div>
+              <div id="ai-verdict-sub" style="font-size:0.7rem; color:var(--text-dim);">Chờ kế hoạch từ bạn...</div>
+            </div>
+            <div id="ai-verdict-badge" class="badge-verdict" style="display:none;">PENDING</div>
+          </div>
+
+          <!-- Detailed Rationale Box -->
+          <div id="ai-rationale-box" class="ai-rationale-box">
+            Nhập các điều kiện kế hoạch ở bên trái và bấm <strong>"Gửi AI Thẩm Định Kế Hoạch"</strong>. 
+            Hội đồng Rủi ro AI sẽ phân tích:
+            <ul style="margin: 8px 0 0 16px; padding: 0; line-height: 1.6;">
+              <li>Bẫy quét râu nến (Wick sweep) của cá mập</li>
+              <li>Tỷ lệ Lời/Lỗ (Risk:Reward) có lợi thế thống kê không</li>
+              <li>Khoảng cách an toàn tới Giá Thanh Lý</li>
+              <li>Độ sâu sổ lệnh L2 và áp lực mua/bán thực tế</li>
+            </ul>
+          </div>
+
+          <!-- Metrics Row -->
+          <div id="ai-metrics-panel" class="ai-metrics-row" style="display:none;">
+            <div class="ai-metric-item">
+              <div class="metric-lbl">TỶ LỆ LỜI / LỖ (R:R)</div>
+              <div class="metric-val" id="val-rr">-</div>
+            </div>
+            <div class="ai-metric-item">
+              <div class="metric-lbl">GIÁ THANH LÝ (CHÁY)</div>
+              <div class="metric-val" id="val-liq" style="color:#f59e0b">-</div>
+            </div>
+            <div class="ai-metric-item">
+              <div class="metric-lbl">RỦI RO TỐI ĐA ($)</div>
+              <div class="metric-val" id="val-risk" style="color:#ef4444">-</div>
+            </div>
+            <div class="ai-metric-item">
+              <div class="metric-lbl">LỢI NHUẬN KỲ VỌNG ($)</div>
+              <div class="metric-val" id="val-reward" style="color:#10b981">-</div>
+            </div>
+          </div>
+
+          <!-- Negotiation / Suggestion Comparison Box -->
+          <div id="ai-suggestion-box" class="negotiation-comparison" style="display:none;">
+            <div style="font-weight:700; color:#f59e0b; font-size:0.8rem; display:flex; align-items:center; gap:6px;">
+              <span>⚡</span> ĐỀ XUẤT ĐIỀU CHỈNH CỦA AI ĐỂ AN TOÀN
+            </div>
+            <table class="comparison-table">
+              <thead>
+                <tr>
+                  <th>Thông số</th>
+                  <th>Kế hoạch của bạn</th>
+                  <th style="color:#f59e0b">AI Đề xuất tối ưu</th>
+                </tr>
+              </thead>
+              <tbody id="comparison-tbody">
+              </tbody>
+            </table>
+            <button class="btn btn-secondary" style="width:100%; margin-top:10px; font-weight:700; font-size:0.75rem; border-color:#f59e0b; color:#f59e0b;" onclick="applyAiSuggestedParams()">
+              ⚡ ÁP DỤNG ĐỀ XUẤT NÀY VÀO FORM & DUYỆT LẠI
+            </button>
+          </div>
+
+          <!-- Action Buttons Bar -->
+          <div class="planner-action-bar">
+            <button id="btn-execute-approved" class="btn btn-primary" style="flex:1; display:none; background:#10b981; border-color:#10b981; font-weight:700;" onclick="executeApprovedPlan()">
+              🚀 VÀO LỆNH CHÍNH THỨC
+            </button>
+            <button class="btn btn-outline" style="border-color:var(--border-subtle); color:var(--text-muted);" onclick="closeTradePlannerModal()">
+              Đóng
+            </button>
+          </div>
+
+        </div>
       </div>
     </div>
   </div>

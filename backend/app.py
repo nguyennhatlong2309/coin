@@ -11,6 +11,7 @@ from .core.portfolio import PortfolioManager
 from .core.markets import fetch_prediction_markets
 from .core.crypto_service import CryptoService
 from .core.agents import SwarmEngine
+from .core.plan_validator import TradePlanValidator
 from .config import BASE_DIR, AUTO_SCAN_INTERVAL_SECONDS
 
 app = FastAPI(title="Quant Desk - Multi-Agent Mock Trading System")
@@ -18,6 +19,7 @@ app = FastAPI(title="Quant Desk - Multi-Agent Mock Trading System")
 portfolio = PortfolioManager()
 crypto_service = CryptoService()
 swarm = SwarmEngine(portfolio, crypto_service=crypto_service)
+plan_validator = TradePlanValidator(crypto_service, portfolio)
 
 # Background auto-scan flag
 is_auto_running = False
@@ -30,6 +32,26 @@ class ScanRequest(BaseModel):
 
 class ClosePositionRequest(BaseModel):
     position_id: str
+
+class PlanValidationRequest(BaseModel):
+    coin: str
+    side: str = "AUTO"
+    timeframe: str = "SCALP"
+    leverage: int = 3
+    stake_amount: float = 50.0
+    stop_loss: Optional[float] = None
+    take_profit: Optional[float] = None
+    no_sl_confirmed: bool = False
+
+class ExecutePlannedTradeRequest(BaseModel):
+    coin: str
+    side: str
+    leverage: int = 3
+    stake_amount: float = 50.0
+    price: float
+    stop_loss: Optional[float] = None
+    take_profit: Optional[float] = None
+    reasoning: Optional[str] = "Lệnh đã qua thẩm định Hội đồng Rủi ro AI"
 
 @app.get("/api/portfolio")
 def get_portfolio():
@@ -115,6 +137,56 @@ def trigger_scan(req: Optional[ScanRequest] = None):
     result = swarm.run_cycle(markets=markets, target_coin=target_coin)
     return {
         "cycle_result": result,
+        "portfolio": portfolio.get_summary()
+    }
+
+@app.post("/api/ai/validate-plan")
+def validate_trade_plan(req: PlanValidationRequest):
+    return plan_validator.validate_plan(
+        coin=req.coin,
+        side=req.side,
+        timeframe=req.timeframe,
+        leverage=req.leverage,
+        stake_amount=req.stake_amount,
+        stop_loss=req.stop_loss,
+        take_profit=req.take_profit,
+        no_sl_confirmed=req.no_sl_confirmed
+    )
+
+@app.post("/api/ai/execute-planned-trade")
+def execute_planned_trade(req: ExecutePlannedTradeRequest):
+    clean_coin = req.coin.upper().replace("USDT", "").strip()
+    ticker = crypto_service.fetch_coin_ticker(clean_coin)
+    exec_price = req.price if req.price > 0 else (ticker["price"] if ticker else 0.0)
+
+    if exec_price <= 0:
+        return {"success": False, "message": "Không thể lấy giá vào lệnh hợp lệ."}
+
+    success = portfolio.execute_trade(
+        market_id=f"crypto_{clean_coin}USDT",
+        question=f"{clean_coin}/USDT ({req.side})",
+        outcome=req.side,
+        price=exec_price,
+        stake_amount=req.stake_amount,
+        reasoning=req.reasoning or "Lệnh thủ công đã qua Hội đồng Rủi ro AI thẩm định",
+        asset_type="crypto",
+        leverage=req.leverage,
+        stop_loss=req.stop_loss,
+        take_profit=req.take_profit,
+        symbol=clean_coin
+    )
+
+    if success:
+        sl_text = f"${req.stop_loss:,.4f}" if req.stop_loss else "TẤT TAY (KHÔNG SL)"
+        tp_text = f"${req.take_profit:,.4f}" if req.take_profit else "GỒNG LÃI TỰ DO"
+        portfolio.log_thought(
+            "Executor",
+            "TRADE",
+            f"VÀO LỆNH THEO KẾ HOẠCH: {req.side} {req.leverage}x ${req.stake_amount:.2f} của {clean_coin}/USDT @ ${exec_price:,.4f} | SL: {sl_text} | TP: {tp_text}"
+        )
+
+    return {
+        "success": success,
         "portfolio": portfolio.get_summary()
     }
 

@@ -893,3 +893,403 @@ function escapeHtml(text) {
     .replace(/'/g, "&#039;");
 }
 
+// ============================================================
+// 10. AI TRADE PLANNER & RISK COMMITTEE NEGOTIATION
+// ============================================================
+
+let currentPlannerValidationResult = null;
+let lastSuggestedParams = null;
+
+async function openTradePlannerModal(preselectCoin = null) {
+  const modal = document.getElementById("planner-modal");
+  if (!modal) return;
+
+  const targetCoin = (preselectCoin || currentChartCoin || "BTC").toUpperCase();
+
+  // Populate coin selector from watchlist
+  const coinSelect = document.getElementById("plan-coin");
+  if (coinSelect) {
+    try {
+      const res = await fetch("/api/crypto/watchlist");
+      const data = await res.json();
+      if (data.tickers && data.tickers.length > 0) {
+        coinSelect.innerHTML = data.tickers.map(t => {
+          const selected = t.coin.toUpperCase() === targetCoin ? "selected" : "";
+          return `<option value="${t.coin}" ${selected}>${t.coin}/USDT - $${formatPriceNum(t.price)}</option>`;
+        }).join("");
+      }
+    } catch (e) {}
+  }
+
+  // Reset results display
+  resetPlannerAiDisplay();
+
+  // Show modal
+  modal.style.display = "flex";
+
+  // Sync live price & defaults
+  await syncPlannerWithLivePrice();
+}
+
+function closeTradePlannerModal() {
+  const modal = document.getElementById("planner-modal");
+  if (modal) modal.style.display = "none";
+}
+
+function resetPlannerAiDisplay() {
+  currentPlannerValidationResult = null;
+  lastSuggestedParams = null;
+
+  const badge = document.getElementById("ai-verdict-badge");
+  const sub = document.getElementById("ai-verdict-sub");
+  const rationale = document.getElementById("ai-rationale-box");
+  const metrics = document.getElementById("ai-metrics-panel");
+  const suggestionBox = document.getElementById("ai-suggestion-box");
+  const btnExec = document.getElementById("btn-execute-approved");
+
+  if (badge) badge.style.display = "none";
+  if (sub) sub.textContent = "Chờ kế hoạch từ bạn...";
+  if (rationale) {
+    rationale.innerHTML = `
+      Nhập các điều kiện kế hoạch ở bên trái và bấm <strong>"Gửi AI Thẩm Định Kế Hoạch"</strong>.<br/>
+      Hội đồng Rủi ro AI sẽ phân tích:
+      <ul style="margin: 8px 0 0 16px; padding: 0; line-height: 1.6;">
+        <li>Bẫy quét râu nến (Wick sweep) của cá mập</li>
+        <li>Tỷ lệ Lời/Lỗ (Risk:Reward) có lợi thế thống kê không</li>
+        <li>Khoảng cách an toàn tới Giá Thanh Lý</li>
+        <li>Độ sâu sổ lệnh L2 và áp lực mua/bán thực tế</li>
+      </ul>
+    `;
+  }
+  if (metrics) metrics.style.display = "none";
+  if (suggestionBox) suggestionBox.style.display = "none";
+  if (btnExec) btnExec.style.display = "none";
+}
+
+async function syncPlannerWithLivePrice() {
+  const coinSelect = document.getElementById("plan-coin");
+  const priceInput = document.getElementById("plan-price");
+  if (!coinSelect || !priceInput) return;
+
+  const coin = coinSelect.value || "BTC";
+  try {
+    const res = await fetch(`/api/crypto/klines/${coin}?interval=1m&limit=1`);
+    const data = await res.json();
+    if (data.candles && data.candles.length > 0) {
+      const lastPrice = data.candles[data.candles.length - 1].close;
+      priceInput.value = lastPrice;
+
+      // Auto set default SL (-2%) and TP (+4%) if empty
+      const slInput = document.getElementById("plan-stop-loss");
+      const tpInput = document.getElementById("plan-take-profit");
+      const side = document.getElementById("plan-side").value || "LONG";
+
+      if (slInput && !slInput.value) {
+        slInput.value = (side === "SHORT" ? lastPrice * 1.02 : lastPrice * 0.98).toFixed(lastPrice < 1 ? 6 : 4);
+      }
+      if (tpInput && !tpInput.value) {
+        tpInput.value = (side === "SHORT" ? lastPrice * 0.96 : lastPrice * 1.04).toFixed(lastPrice < 1 ? 6 : 4);
+      }
+
+      onStopLossChanged();
+      recalculatePlannerEstimates();
+    }
+  } catch (e) {
+    console.error("Error syncing planner price:", e);
+  }
+}
+
+function onPlannerCoinChanged() {
+  syncPlannerWithLivePrice();
+}
+
+function onStopLossChanged() {
+  const slInput = document.getElementById("plan-stop-loss");
+  const warningBox = document.getElementById("box-no-sl-warning");
+  const chkNoSl = document.getElementById("chk-no-sl");
+
+  if (!slInput || !warningBox) return;
+
+  const val = parseFloat(slInput.value);
+  if (isNaN(val) || val <= 0) {
+    warningBox.style.display = "flex";
+  } else {
+    warningBox.style.display = "none";
+    if (chkNoSl) chkNoSl.checked = false;
+  }
+  recalculatePlannerEstimates();
+}
+
+function onNoSlChecked() {
+  recalculatePlannerEstimates();
+}
+
+function applyQuickSL(pct) {
+  const priceInput = document.getElementById("plan-price");
+  const slInput = document.getElementById("plan-stop-loss");
+  const side = document.getElementById("plan-side").value || "LONG";
+  if (!priceInput || !slInput) return;
+
+  const p = parseFloat(priceInput.value);
+  if (isNaN(p) || p <= 0) return;
+
+  if (side === "SHORT") {
+    slInput.value = (p * (1.0 + pct)).toFixed(p < 1 ? 6 : 4);
+  } else {
+    slInput.value = (p * (1.0 - pct)).toFixed(p < 1 ? 6 : 4);
+  }
+  onStopLossChanged();
+}
+
+function applyQuickTP(pct) {
+  const priceInput = document.getElementById("plan-price");
+  const tpInput = document.getElementById("plan-take-profit");
+  const side = document.getElementById("plan-side").value || "LONG";
+  if (!priceInput || !tpInput) return;
+
+  const p = parseFloat(priceInput.value);
+  if (isNaN(p) || p <= 0) return;
+
+  if (side === "SHORT") {
+    tpInput.value = (p * (1.0 - pct)).toFixed(p < 1 ? 6 : 4);
+  } else {
+    tpInput.value = (p * (1.0 + pct)).toFixed(p < 1 ? 6 : 4);
+  }
+  recalculatePlannerEstimates();
+}
+
+function recalculatePlannerEstimates() {
+  const priceInput = document.getElementById("plan-price");
+  const slInput = document.getElementById("plan-stop-loss");
+  const tpInput = document.getElementById("plan-take-profit");
+  const slCalc = document.getElementById("plan-sl-calc");
+  const tpCalc = document.getElementById("plan-tp-calc");
+
+  const p = parseFloat(priceInput ? priceInput.value : 0);
+  const sl = parseFloat(slInput ? slInput.value : 0);
+  const tp = parseFloat(tpInput ? tpInput.value : 0);
+
+  if (slCalc) {
+    if (!isNaN(p) && p > 0 && !isNaN(sl) && sl > 0) {
+      const diffPct = ((sl - p) / p) * 100;
+      slCalc.textContent = `${diffPct >= 0 ? '+' : ''}${diffPct.toFixed(2)}% so với giá vào`;
+    } else {
+      slCalc.textContent = "Chưa đặt (Tất tay)";
+    }
+  }
+
+  if (tpCalc) {
+    if (!isNaN(p) && p > 0 && !isNaN(tp) && tp > 0) {
+      const diffPct = ((tp - p) / p) * 100;
+      tpCalc.textContent = `${diffPct >= 0 ? '+' : ''}${diffPct.toFixed(2)}% so với giá vào`;
+    } else {
+      tpCalc.textContent = "Gồng lãi tự do";
+    }
+  }
+}
+
+async function submitPlanForAIValidation() {
+  const coin = document.getElementById("plan-coin").value;
+  const side = document.getElementById("plan-side").value;
+  const timeframe = document.getElementById("plan-timeframe").value;
+  const leverage = parseInt(document.getElementById("plan-leverage").value) || 3;
+  const stake = parseFloat(document.getElementById("plan-stake").value) || 50.0;
+  const price = parseFloat(document.getElementById("plan-price").value) || 0.0;
+  const slVal = parseFloat(document.getElementById("plan-stop-loss").value);
+  const tpVal = parseFloat(document.getElementById("plan-take-profit").value);
+  const chkNoSl = document.getElementById("chk-no-sl");
+  const noSlConfirmed = chkNoSl ? chkNoSl.checked : false;
+
+  const btnSubmit = document.getElementById("btn-submit-plan");
+  if (btnSubmit) {
+    btnSubmit.disabled = true;
+    btnSubmit.innerHTML = `⏳ ĐANG THẨM ĐỊNH RỦI RO...`;
+  }
+
+  try {
+    const payload = {
+      coin: coin,
+      side: side,
+      timeframe: timeframe,
+      leverage: leverage,
+      stake_amount: stake,
+      stop_loss: !isNaN(slVal) && slVal > 0 ? slVal : null,
+      take_profit: !isNaN(tpVal) && tpVal > 0 ? tpVal : null,
+      no_sl_confirmed: noSlConfirmed
+    };
+
+    const res = await fetch("/api/ai/validate-plan", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+    currentPlannerValidationResult = data;
+    renderAiValidationVerdict(data);
+
+  } catch (err) {
+    alert("Lỗi khi gửi thẩm định AI: " + err);
+  } finally {
+    if (btnSubmit) {
+      btnSubmit.disabled = false;
+      btnSubmit.innerHTML = `🧠 GỬI AI THẨM ĐỊNH KẾ HOẠCH`;
+    }
+  }
+}
+
+function renderAiValidationVerdict(res) {
+  const badge = document.getElementById("ai-verdict-badge");
+  const sub = document.getElementById("ai-verdict-sub");
+  const rationale = document.getElementById("ai-rationale-box");
+  const metrics = document.getElementById("ai-metrics-panel");
+  const suggestionBox = document.getElementById("ai-suggestion-box");
+  const btnExec = document.getElementById("btn-execute-approved");
+
+  if (!badge || !rationale) return;
+
+  badge.style.display = "inline-block";
+  badge.className = `badge-verdict badge-verdict-${res.verdict.toLowerCase().includes('approved') ? 'approved' : (res.verdict === 'SUGGEST_ADJUSTMENT' ? 'suggest' : 'rejected')}`;
+  badge.textContent = res.verdict === 'APPROVED' ? 'ĐÃ DUYỆT (APPROVED)' : (res.verdict === 'SUGGEST_ADJUSTMENT' ? 'CẦN ĐIỀU CHỈNH' : 'TỪ CHỐI (REJECTED)');
+
+  if (sub) sub.textContent = res.title || "";
+
+  rationale.innerHTML = `<strong>Đánh giá của Hội Đồng AI:</strong><br/>${escapeHtml(res.analysis)}`;
+
+  // Metrics
+  if (metrics) {
+    metrics.style.display = "grid";
+    const m = res.metrics || {};
+    const valRR = document.getElementById("val-rr");
+    const valLiq = document.getElementById("val-liq");
+    const valRisk = document.getElementById("val-risk");
+    const valReward = document.getElementById("val-reward");
+
+    if (valRR) valRR.textContent = m.rr_ratio > 0 ? `1 : ${m.rr_ratio.toFixed(2)}` : "Không xác định";
+    if (valLiq) valLiq.textContent = m.liq_price ? `$${formatPriceNum(m.liq_price)}` : "-";
+    if (valRisk) valRisk.textContent = m.risk_dollars !== undefined ? `$${m.risk_dollars.toFixed(2)}` : "-";
+    if (valReward) valReward.textContent = m.reward_dollars !== undefined && m.reward_dollars > 0 ? `+$${m.reward_dollars.toFixed(2)}` : "Mở (Gồng lãi)";
+  }
+
+  // Suggestion comparison
+  if (res.verdict === "SUGGEST_ADJUSTMENT" && res.suggested_params && suggestionBox) {
+    suggestionBox.style.display = "block";
+    lastSuggestedParams = res.suggested_params;
+
+    const tbody = document.getElementById("comparison-tbody");
+    if (tbody) {
+      const userLev = document.getElementById("plan-leverage").value;
+      const userSl = document.getElementById("plan-stop-loss").value || "Tất tay";
+      const userTp = document.getElementById("plan-take-profit").value || "Gồng lãi";
+
+      tbody.innerHTML = `
+        <tr>
+          <td>Đòn bẩy:</td>
+          <td>${userLev}x</td>
+          <td style="color:#f59e0b; font-weight:700">${res.suggested_params.leverage}x</td>
+        </tr>
+        <tr>
+          <td>Cắt lỗ (SL):</td>
+          <td>${userSl !== "Tất tay" ? '$' + formatPriceNum(parseFloat(userSl)) : 'Tất tay'}</td>
+          <td style="color:#10b981; font-weight:700">${res.suggested_params.stop_loss ? '$' + formatPriceNum(res.suggested_params.stop_loss) : '-'}</td>
+        </tr>
+        <tr>
+          <td>Chốt lời (TP):</td>
+          <td>${userTp !== "Gồng lãi" ? '$' + formatPriceNum(parseFloat(userTp)) : 'Gồng lãi'}</td>
+          <td style="color:#10b981; font-weight:700">${res.suggested_params.take_profit ? '$' + formatPriceNum(res.suggested_params.take_profit) : '-'}</td>
+        </tr>
+      `;
+    }
+  } else if (suggestionBox) {
+    suggestionBox.style.display = "none";
+  }
+
+  // Action button
+  if (btnExec) {
+    if (res.verdict === "APPROVED") {
+      btnExec.style.display = "block";
+      btnExec.textContent = `🚀 XÁC NHẬN VÀO LỆNH NGAY`;
+    } else {
+      btnExec.style.display = "none";
+    }
+  }
+}
+
+function applyAiSuggestedParams() {
+  if (!lastSuggestedParams) return;
+
+  if (lastSuggestedParams.side) {
+    const sideEl = document.getElementById("plan-side");
+    if (sideEl) sideEl.value = lastSuggestedParams.side;
+  }
+  if (lastSuggestedParams.leverage) {
+    const levEl = document.getElementById("plan-leverage");
+    if (levEl) levEl.value = lastSuggestedParams.leverage;
+  }
+  if (lastSuggestedParams.stop_loss) {
+    const slEl = document.getElementById("plan-stop-loss");
+    if (slEl) slEl.value = lastSuggestedParams.stop_loss;
+    onStopLossChanged();
+  }
+  if (lastSuggestedParams.take_profit) {
+    const tpEl = document.getElementById("plan-take-profit");
+    if (tpEl) tpEl.value = lastSuggestedParams.take_profit;
+  }
+
+  recalculatePlannerEstimates();
+
+  // Re-submit for AI approval automatically
+  submitPlanForAIValidation();
+}
+
+async function executeApprovedPlan() {
+  const coin = document.getElementById("plan-coin").value;
+  const side = document.getElementById("plan-side").value;
+  const leverage = parseInt(document.getElementById("plan-leverage").value) || 3;
+  const stake = parseFloat(document.getElementById("plan-stake").value) || 50.0;
+  const price = parseFloat(document.getElementById("plan-price").value) || 0.0;
+  const slVal = parseFloat(document.getElementById("plan-stop-loss").value);
+  const tpVal = parseFloat(document.getElementById("plan-take-profit").value);
+
+  const payload = {
+    coin: coin,
+    side: side === "AUTO" ? (currentPlannerValidationResult?.suggested_params?.side || "LONG") : side,
+    leverage: leverage,
+    stake_amount: stake,
+    price: price,
+    stop_loss: !isNaN(slVal) && slVal > 0 ? slVal : null,
+    take_profit: !isNaN(tpVal) && tpVal > 0 ? tpVal : null,
+    reasoning: `Lệnh đã qua Hội đồng Rủi ro AI thẩm định (Verdict: APPROVED)`
+  };
+
+  const btnExec = document.getElementById("btn-execute-approved");
+  if (btnExec) {
+    btnExec.disabled = true;
+    btnExec.textContent = "⏳ ĐANG KHỚP LỆNH...";
+  }
+
+  try {
+    const res = await fetch("/api/ai/execute-planned-trade", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (data.success) {
+      closeTradePlannerModal();
+      await loadPortfolio();
+      // Switch chart to this coin to see the lines!
+      changeChartCoin(coin, true);
+    } else {
+      alert("Khớp lệnh không thành công: " + (data.message || "Vui lòng kiểm tra lại số dư"));
+    }
+  } catch (err) {
+    alert("Lỗi khi khớp lệnh: " + err);
+  } finally {
+    if (btnExec) {
+      btnExec.disabled = false;
+      btnExec.textContent = "🚀 XÁC NHẬN VÀO LỆNH NGAY";
+    }
+  }
+}
+

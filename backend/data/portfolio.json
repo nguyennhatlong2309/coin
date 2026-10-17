@@ -1,84 +1,510 @@
 {
-  "cash_balance": 1010.09,
-  "realized_pnl": 10.09,
-  "open_positions": {},
+  "cash_balance": 950.08,
+  "realized_pnl": 0.08,
+  "open_positions": {
+    "crypto_PIXELUSDT_LONG": {
+      "id": "crypto_PIXELUSDT_LONG",
+      "market_id": "crypto_PIXELUSDT",
+      "question": "PIXEL/USDT (LONG)",
+      "asset_type": "crypto",
+      "outcome": "LONG",
+      "shares": 5111.52,
+      "entry_price": 0.00538,
+      "current_price": 0.00538,
+      "cost_basis": 27.5,
+      "opened_at": "2026-10-18 01:57:46"
+    },
+    "crypto_DOGEUSDT_LONG": {
+      "id": "crypto_DOGEUSDT_LONG",
+      "market_id": "crypto_DOGEUSDT",
+      "symbol": "DOGE",
+      "question": "DOGE/USDT (LONG)",
+      "asset_type": "crypto",
+      "outcome": "LONG",
+      "leverage": 2,
+      "shares": 559.7,
+      "entry_price": 0.0804,
+      "current_price": 0.0804,
+      "margin": 22.5,
+      "cost_basis": 22.5,
+      "position_size": 45.0,
+      "stop_loss": 0.078792,
+      "take_profit": 0.083616,
+      "liquidation_price": 0.04221,
+      "opened_at": "2026-10-18 04:06:32"
+    }
+  },
   "trades_history": [
     {
-      "timestamp": "04:03:20",
-      "action": "CLOSE_LONG",
-      "market_id": "crypto_BTCUSDT",
-      "symbol": "BTC",
+      "timestamp": "04:06:32",
+      "action": "OPEN_LONG_2X",
+      "market_id": "crypto_DOGEUSDT",
+      "symbol": "DOGE",
       "asset_type": "crypto",
-      "question": "BTC/USDT (LONG)",
-      "shares": 0.003062,
-      "entry_price": 81656.27,
-      "exit_price": 84950.0,
-      "margin": 50.0,
-      "pnl": 10.09,
-      "pnl_percent": 20.17,
-      "reason": "TAKE_PROFIT"
+      "question": "DOGE/USDT (LONG)",
+      "shares": 559.7,
+      "price": 0.0804,
+      "leverage": 2,
+      "margin": 22.5,
+      "total_amount": 22.5,
+      "stop_loss": 0.078792,
+      "take_profit": 0.083616,
+      "liquidation_price": 0.04221,
+      "reasoning": "Tín hiệu Alpha: LONG 2x trên DOGE (Lợi thế: +4.5%). Ký quỹ Quarter-Kelly: $22.50 (Vị thế: $45.00). SL: $0.0788 | TP: $0.0836"
     },
     {
-      "timestamp": "04:03:04",
-      "action": "OPEN_LONG_5X",
+      "timestamp": "04:05:13",
+      "action": "CLOSE_LONG",
       "market_id": "crypto_BTCUSDT",
-      "symbol": "BTC",
+      "symbol": "crypto_BTCUSDT",
       "asset_type": "crypto",
       "question": "BTC/USDT (LONG)",
-      "shares": 0.003062,
-      "price": 81656.27,
-      "leverage": 5,
-      "margin": 50.0,
-      "total_amount": 50.0,
-      "stop_loss": 80023.1446,
-      "take_profit": 84922.5208,
-      "liquidation_price": 66141.5787,
-      "reasoning": "Tín hiệu Alpha: LONG 5x trên BTC (Lợi thế: +35.0%). Ký quỹ Quarter-Kelly: $50.00 (Vị thế: $250.00). SL: $80,023.1446 | TP: $84,922.5208"
+      "shares": 0.000613,
+      "entry_price": 81547.6,
+      "exit_price": 81680.0,
+      "margin": 49.99,
+      "pnl": 0.08,
+      "pnl_percent": 0.16,
+      "reason": "MANUAL"
+    },
+    {
+      "timestamp": "01:57:46",
+      "action": "BUY_LONG",
+      "market_id": "crypto_PIXELUSDT",
+      "asset_type": "crypto",
+      "question": "PIXEL/USDT (LONG)",
+      "shares": 5111.52,
+      "price": 0.00538,
+      "total_amount": 27.5,
+      "reasoning": "Tín hiệu Alpha: LONG trên PIXEL (Lợi thế: +5.5%). Thanh khoản: $173K USDT, Tỷ số sổ lệnh: 1.58x. Định cỡ Quarter-Kelly: $27.50 (2.7% vốn)."
+    },
+    {
+      "timestamp": "01:53:21",
+      "action": "BUY_LONG",
+      "market_id": "crypto_BTCUSDT",
+      "asset_type": "crypto",
+      "question": "BTC/USDT (LONG)",
+      "shares": 0.000613,
+      "price": 81547.6,
+      "total_amount": 49.99,
+      "reasoning": "Alpha Signal: LONG on BTC (Edge: +35.0%). Liquidity: $585.2M USDT, Depth Ratio: 8.28x. Quarter-Kelly allocation: $50.00 (5.0% equity)."
     }
   ],
   "thought_logs": [
     {
-      "timestamp": "04:03:20",
-      "agent": "Portfolio",
-      "level": "SUCCESS",
-      "message": "[CHỐT LỜI THÀNH CÔNG (TP)] BTC (LONG 5x): Đóng tại $84,950.0000. PnL: +10.09 USD (+20.2%), Hoàn vốn: $60.09"
+      "timestamp": "04:14:32",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
     },
     {
-      "timestamp": "04:03:04",
+      "timestamp": "04:14:18",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "04:14:04",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "04:06:32",
       "agent": "Executor",
       "level": "TRADE",
-      "message": "KHỚP LỆNH MARGIN THÀNH CÔNG: LONG 5x $50.00 của BTC/USDT @ $81,656.27 (Vị thế: $250.00 | SL: $80,023.1446 | TP: $84,922.5208)"
+      "message": "KHỚP LỆNH MARGIN THÀNH CÔNG: LONG 2x $22.50 của DOGE/USDT @ $0.080400 (Vị thế: $45.00 | SL: $0.0788 | TP: $0.0836)"
     },
     {
-      "timestamp": "04:03:04",
+      "timestamp": "04:06:32",
       "agent": "Kelly Risk",
       "level": "INFO",
-      "message": "Quản trị Rủi ro (BTC): Đòn bẩy 5x | Ký quỹ: $50.00 | Cắt lỗ (SL): $80,023.1446 (-2.0%) | Chốt lời (TP): $84,922.5208 (+4.0%) | Giá thanh lý: $66,141.5787"
+      "message": "Quản trị Rủi ro (DOGE): Đòn bẩy 2x | Ký quỹ: $22.50 | Cắt lỗ (SL): $0.0788 (-2.0%) | Chốt lời (TP): $0.0836 (+4.0%) | Giá thanh lý: $0.0422"
     },
     {
-      "timestamp": "04:03:04",
+      "timestamp": "04:06:32",
       "agent": "The Pricer",
       "level": "INFO",
-      "message": "Định giá xác suất (BTC): Tín hiệu=LONG (P_fair=85% | Lợi thế=+35.0%). Tỷ số sổ lệnh=6.73x, Đà 24h=+0.0%"
+      "message": "Định giá xác suất (DOGE): Tín hiệu=LONG (P_fair=54% | Lợi thế=+4.5%). Tỷ số sổ lệnh=1.42x, Đà 24h=+0.2%"
     },
     {
-      "timestamp": "04:03:04",
+      "timestamp": "04:06:32",
       "agent": "Researcher",
       "level": "INFO",
-      "message": "Đã thu nạp 3 tin tức mới cho BTC: [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:... | [TradingView] Here’s why the crypto market is going down today (Oct. ..."
+      "message": "Đã thu nạp 3 tin tức mới cho DOGE: [24/7 Wall St.] Dogecoin (DOGE) Is Nearing Its First Death Cross of 202... | [Robinhood] Dogecoin price on Oct 17, 2026 at 2pm EDT Crypto Predic..."
     },
     {
-      "timestamp": "04:03:03",
+      "timestamp": "04:06:31",
       "agent": "Spotter",
       "level": "INFO",
-      "message": "Đã khóa mục tiêu: BTC/USDT | Giá: $81,656.27 | Thanh khoản 24h: $560.3M USDT (MEGA TIER (Thanh Khoản Khổng Lồ)) | Sổ lệnh: LỰC MUA ÁP ĐẢO (Bò Gom Hàng) (Tỷ số 6.73)"
+      "message": "Đã khóa mục tiêu: DOGE/USDT | Giá: $0.080400 | Thanh khoản 24h: $36.4M USDT (SOLID TIER (Thanh Khoản Tốt)) | Sổ lệnh: LỰC MUA ÁP ĐẢO (Bò Gom Hàng) (Tỷ số 1.42)"
     },
     {
-      "timestamp": "04:03:00",
-      "agent": "System",
+      "timestamp": "04:05:13",
+      "agent": "Portfolio",
       "level": "SUCCESS",
-      "message": "Đã nâng cấp hệ thống: Hỗ trợ Đòn bẩy Margin (2x-5x), Cắt Lỗ tự động (SL -2%), Chốt Lời tự động (TP +4%), và Bảo vệ Thanh Lý."
+      "message": "[ĐÓNG LỆNH THỦ CÔNG] crypto_BTCUSDT (LONG 1x): Đóng tại $81,680.0000. PnL: +0.08 USD (+0.2%), Hoàn vốn: $50.07"
+    },
+    {
+      "timestamp": "04:04:43",
+      "agent": "Kelly Risk",
+      "level": "WARN",
+      "message": "Lợi thế thống kê (+1.3%) thấp hơn ngưỡng tối thiểu (4.0%) trên SOL. Giữ nguyên tiền mặt."
+    },
+    {
+      "timestamp": "04:04:43",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá xác suất (SOL): Tín hiệu=SHORT (P_fair=51% | Lợi thế=+1.3%). Tỷ số sổ lệnh=1.10x, Đà 24h=+0.3%"
+    },
+    {
+      "timestamp": "04:04:43",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho SOL: [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:... | [TradingView] Here’s why the crypto market is going down today (Oct. ..."
+    },
+    {
+      "timestamp": "04:04:42",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: SOL/USDT | Giá: $104.300 | Thanh khoản 24h: $83.2M USDT (DEEP TIER (Thanh Khoản Sâu)) | Sổ lệnh: CÂN BẰNG CUNG CẦU (Giằng Co) (Tỷ số 1.1)"
+    },
+    {
+      "timestamp": "04:04:37",
+      "agent": "Kelly Risk",
+      "level": "WARN",
+      "message": "Lợi thế thống kê (+2.9%) thấp hơn ngưỡng tối thiểu (4.0%) trên SOL. Giữ nguyên tiền mặt."
+    },
+    {
+      "timestamp": "04:04:37",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá xác suất (SOL): Tín hiệu=LONG (P_fair=52% | Lợi thế=+2.9%). Tỷ số sổ lệnh=1.07x, Đà 24h=+0.3%"
+    },
+    {
+      "timestamp": "04:04:37",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho SOL: [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:... | [TradingView] Here’s why the crypto market is going down today (Oct. ..."
+    },
+    {
+      "timestamp": "04:04:36",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: SOL/USDT | Giá: $104.310 | Thanh khoản 24h: $83.2M USDT (DEEP TIER (Thanh Khoản Sâu)) | Sổ lệnh: CÂN BẰNG CUNG CẦU (Giằng Co) (Tỷ số 1.07)"
+    },
+    {
+      "timestamp": "04:01:20",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "04:01:18",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "04:01:00",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "04:00:46",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "04:00:23",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "03:59:49",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "03:59:35",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "01:57:46",
+      "agent": "Executor",
+      "level": "TRADE",
+      "message": "KHỚP LỆNH ẢO THÀNH CÔNG: LONG $27.50 của PIXEL/USDT @ $0.005380 (Thanh khoản 24h: $173K USDT)"
+    },
+    {
+      "timestamp": "01:57:46",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá xác suất (PIXEL): Tín hiệu=LONG (P_fair=55% | Lợi thế=+5.5%). Tỷ số sổ lệnh=1.58x, Đà 24h=-1.6%"
+    },
+    {
+      "timestamp": "01:57:46",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho PIXEL: [CoinMarketCap] Ronin-based Game PIXEL Enters Top Ten Most-Traded Token... | [CoinDCX] Pixels Price Prediction 2026-2031: Can PIXEL Reach $0.0..."
+    },
+    {
+      "timestamp": "01:57:45",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: PIXEL/USDT | Giá: $0.005380 | Thanh khoản 24h: $173K USDT (LIGHT TIER (Thanh Khoản Vừa)) | Sổ lệnh: LỰC MUA ÁP ĐẢO (Bò Gom Hàng) (Tỷ số 1.58)"
+    },
+    {
+      "timestamp": "01:57:35",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Removed PIXEL from watchlist."
+    },
+    {
+      "timestamp": "01:57:27",
+      "agent": "Spotter",
+      "level": "SUCCESS",
+      "message": "Added PIXEL/USDT to active trading watchlist."
+    },
+    {
+      "timestamp": "01:57:27",
+      "agent": "Spotter",
+      "level": "SUCCESS",
+      "message": "Added PIXEL/USDT to active trading watchlist."
+    },
+    {
+      "timestamp": "01:57:19",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Removed SUI from watchlist."
+    },
+    {
+      "timestamp": "01:57:15",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "01:57:08",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Removed NEAR from watchlist."
+    },
+    {
+      "timestamp": "01:54:59",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "01:54:50",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "01:53:21",
+      "agent": "Executor",
+      "level": "TRADE",
+      "message": "EXECUTED MOCK FILL: LONG $50.00 of BTC/USDT @ $81,547.60 (24h Vol: $585.2M USDT)"
+    },
+    {
+      "timestamp": "01:53:21",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Multivariate Valuation (BTC): Signal bias=LONG (P_model=85% | Edge=+35.0%). OrderBook=8.28x, 24hMom=+0.7%"
+    },
+    {
+      "timestamp": "01:53:21",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Ingested 3 fresh reports for BTC: [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:... | [TradingView] Here’s why the crypto market is going down today (Oct. ..."
+    },
+    {
+      "timestamp": "01:53:19",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Locked target: BTC/USDT | Price: $81,547.60 | 24h Liq: $585.2M USDT (MEGA TIER (Top 1% Depth)) | Order Book: BULLISH DEPTH (Heavy Buy Orders) (Ratio 8.28)"
+    },
+    {
+      "timestamp": "01:46:11",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "01:41:16",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "01:41:06",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "01:38:22",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "01:35:43",
+      "agent": "Kelly Risk",
+      "level": "WARN",
+      "message": "Statistical Edge (+1.2%) below execution threshold (4.0%) on SOL. Holding capital."
+    },
+    {
+      "timestamp": "01:35:43",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Multivariate Valuation (SOL): Signal bias=LONG (P_model=51% | Edge=+1.2%). OrderBook=1.02x, 24hMom=-0.1%"
+    },
+    {
+      "timestamp": "01:35:43",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Ingested 3 fresh reports for SOL: [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:... | [TradingView] Here’s why the crypto market is going down today (Oct. ..."
+    },
+    {
+      "timestamp": "01:35:42",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Locked target: SOL/USDT | Price: $103.900 | 24h Liq: $100.5M USDT (DEEP TIER (High Liquidity)) | Order Book: BALANCED DEPTH (Neutral Spread) (Ratio 1.02)"
+    },
+    {
+      "timestamp": "01:35:40",
+      "agent": "Spotter",
+      "level": "SUCCESS",
+      "message": "Added NEAR/USDT to active trading watchlist."
+    },
+    {
+      "timestamp": "01:33:41",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "01:33:25",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized. Ready for simulation."
+    },
+    {
+      "timestamp": "01:32:57",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized. Ready for simulation."
+    },
+    {
+      "timestamp": "01:31:58",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized. Ready for simulation."
+    },
+    {
+      "timestamp": "01:31:40",
+      "agent": "Kelly Risk",
+      "level": "WARN",
+      "message": "Edge (+0.8%) below execution threshold (4.0%). No trade triggered."
+    },
+    {
+      "timestamp": "01:31:40",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Gaussian Density Evaluation: Fair Value YES = 69% vs Market 69% (Edge: +0.8%)"
+    },
+    {
+      "timestamp": "01:31:40",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Ingested 3 fresh news reports: [Benzinga] Saylor Sees Bitcoin Above $100,000—So Why Is Strategy Willin... | [Stocktwits] Michael Saylor Says Bitcoin Has Bottomed And Should Get Back..."
+    },
+    {
+      "timestamp": "01:31:39",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Locked target: 'Will Bitcoin trade above $100,000 before Q4?' (Market Odds: YES 69% | NO 30% | Vol: $12,890,340)"
+    },
+    {
+      "timestamp": "01:31:09",
+      "agent": "Kelly Risk",
+      "level": "WARN",
+      "message": "Edge (+3.0%) below execution threshold (4.0%). No trade triggered."
+    },
+    {
+      "timestamp": "01:31:09",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Gaussian Density Evaluation: Fair Value YES = 33% vs Market 30% (Edge: +3.0%)"
+    },
+    {
+      "timestamp": "01:31:09",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Ingested 3 fresh news reports: [CoinMarketCap] Hong Kong Approves Solana ETF Ahead of United States - CoinM... | [MEXC] What Is a Solana ETF? Spot Funds, Staking, and SEC Approval ..."
+    },
+    {
+      "timestamp": "01:31:08",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Locked target: 'Will the SEC approve the first spot Solana ETF this year?' (Market Odds: YES 30% | NO 70% | Vol: $5,891,175)"
+    },
+    {
+      "timestamp": "01:30:37",
+      "agent": "Kelly Risk",
+      "level": "WARN",
+      "message": "Edge (+1.6%) below execution threshold (4.0%). No trade triggered."
+    },
+    {
+      "timestamp": "01:30:37",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Gaussian Density Evaluation: Fair Value YES = 65% vs Market 67% (Edge: -1.6%)"
+    },
+    {
+      "timestamp": "01:30:37",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Ingested 3 fresh news reports: [Benzinga] Saylor Sees Bitcoin Above $100,000—So Why Is Strategy Willin... | [Stocktwits] Michael Saylor Says Bitcoin Has Bottomed And Should Get Back..."
+    },
+    {
+      "timestamp": "01:30:36",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Locked target: 'Will Bitcoin trade above $100,000 before Q4?' (Market Odds: YES 67% | NO 32% | Vol: $12,890,355)"
+    },
+    {
+      "timestamp": "01:30:06",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Autonomous Swarm Loop ENABLED (Active every 30s)."
+    },
+    {
+      "timestamp": "01:24:05",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized. Ready for simulation."
+    },
+    {
+      "timestamp": "01:23:18",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized. Ready for simulation."
+    },
+    {
+      "timestamp": "01:15:27",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Portfolio reset successfully. Initial capital established at $1,000.00 USD."
     }
   ],
-  "last_updated": 1792271000.808648
+  "last_updated": 1792271672.1693492
 }
