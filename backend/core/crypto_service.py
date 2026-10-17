@@ -176,9 +176,9 @@ class CryptoService:
         Fetch OHLCV candlestick data and volume for charts from Binance public API.
         Intervals: 15m, 1h, 4h, 1d
         """
-        valid_intervals = {"15m", "1h", "4h", "1d"}
+        valid_intervals = {"1s", "1m", "3m", "5m", "15m", "30m", "1h", "4h", "1d"}
         if interval not in valid_intervals:
-            interval = "1h"
+            interval = "1m"
 
         symbol = self.normalize_symbol(coin)
         base = self.get_coin_base(symbol)

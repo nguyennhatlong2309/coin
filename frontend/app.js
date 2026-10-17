@@ -27,10 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
     loadCryptoWatchlist(false);
   }, 4000);
 
-  // Periodic active chart refresh (every 8 seconds)
-  setInterval(() => {
-    refreshActiveChartCandle();
-  }, 8000);
+  // Periodic active chart refresh (managed dynamically in loadChartData)
+  startChartAutoRefresh();
 
   // Periodic market refresh (every 30 seconds)
   setInterval(() => {
@@ -149,8 +147,22 @@ async function loadChartData(coin, interval = "1h") {
     }
   });
 
+  // Adjust timeScale precision for seconds (1s) vs minutes/hours
+  if (chartInstance) {
+    chartInstance.applyOptions({
+      timeScale: {
+        timeVisible: true,
+        secondsVisible: (interval === "1s")
+      }
+    });
+  }
+
+  // Adjust refresh frequency
+  startChartAutoRefresh();
+
   try {
-    const res = await fetch(`/api/crypto/klines/${currentChartCoin}?interval=${currentChartInterval}&limit=120`);
+    const limit = (interval === "1s") ? 150 : 120;
+    const res = await fetch(`/api/crypto/klines/${currentChartCoin}?interval=${currentChartInterval}&limit=${limit}`);
     const data = await res.json();
 
     if (data.error || !data.candles || data.candles.length === 0) {
@@ -175,6 +187,23 @@ async function loadChartData(coin, interval = "1h") {
   }
 }
 
+let chartRefreshTimer = null;
+
+function startChartAutoRefresh() {
+  if (chartRefreshTimer) clearInterval(chartRefreshTimer);
+
+  let delay = 5000;
+  if (currentChartInterval === "1s") {
+    delay = 1000; // 1 second live tick
+  } else if (currentChartInterval === "1m" || currentChartInterval === "3m" || currentChartInterval === "5m") {
+    delay = 2000; // 2 seconds tick
+  }
+
+  chartRefreshTimer = setInterval(() => {
+    refreshActiveChartCandle();
+  }, delay);
+}
+
 async function refreshActiveChartCandle() {
   if (!candleSeries || !volumeSeries) return;
   try {
@@ -185,9 +214,13 @@ async function refreshActiveChartCandle() {
         candleSeries.update(data.candles[i]);
         volumeSeries.update(data.volumes[i]);
       }
+      const last = data.candles[data.candles.length - 1];
+      const lastVol = data.volumes[data.volumes.length - 1];
+      updateStatsBanner(last.open, last.high, last.low, last.close, lastVol ? lastVol.value : 0);
     }
   } catch (e) {}
 }
+
 
 function updateStatsBanner(o, h, l, c, volUsdt) {
   const elO = document.getElementById("stat-open");
