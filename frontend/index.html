@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QUANT DESK | Autonomous AI Swarm Paper Trading</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Top Bar / Header -->
+  <header class="top-bar">
+    <div class="brand">
+      <div class="logo-badge">
+        <span class="pulse-indicator"></span>
+        <span class="logo-text">QUANT<span class="highlight">DESK</span></span>
+      </div>
+      <span class="sub-badge">SWARM v1.0 • PAPER TRADING</span>
+    </div>
+
+    <div class="controls-group">
+      <button id="btn-scan" class="btn btn-primary" onclick="triggerManualScan()">
+        <span class="btn-icon">⚡</span> RUN SWARM SCAN NOW
+      </button>
+      <button id="btn-auto" class="btn btn-secondary" onclick="toggleAutoMode()">
+        <span id="auto-dot" class="status-dot"></span>
+        <span id="auto-text">AUTO-LOOP: OFF</span>
+      </button>
+      <button id="btn-reset" class="btn btn-danger" onclick="resetPortfolio()">
+        🔄 RESET ($1,000)
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="dashboard-container">
+
+    <!-- KPI Metric Cards (Bento) -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-title">TOTAL EQUITY (MOCK)</div>
+        <div class="kpi-value highlight-cyan" id="kpi-equity">$1,000.00</div>
+        <div class="kpi-sub" id="kpi-cash">Cash: $1,000.00</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-title">TOTAL PnL (RETURN)</div>
+        <div class="kpi-value" id="kpi-pnl">+$0.00 (+0.0%)</div>
+        <div class="kpi-sub" id="kpi-realized">Realized: $0.00 • Unr: $0.00</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-title">WIN RATE & STATS</div>
+        <div class="kpi-value highlight-gold" id="kpi-winrate">0.0%</div>
+        <div class="kpi-sub" id="kpi-trades">0 Trades • 0 Active Positions</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-title">SWARM ENGINE STATUS</div>
+        <div class="kpi-value highlight-green" id="kpi-status">ONLINE</div>
+        <div class="kpi-sub" id="kpi-network">Polymarket + Manifold + Google News</div>
+      </div>
+    </section>
+
+    <!-- Swarm Grid & Main Workspace -->
+    <div class="workspace-grid">
+
+      <!-- Left Column: Swarm Grid & Live Thought Stream -->
+      <div class="workspace-col">
+
+        <!-- Swarm Cards -->
+        <div class="panel">
+          <div class="panel-header">
+            <h3>🤖 AGENT SWARM GRID</h3>
+            <span class="badge-mini">4 SPECIALISTS ACTIVE</span>
+          </div>
+
+          <div class="agent-cards-grid">
+            <div class="agent-card">
+              <div class="agent-card-header">
+                <span class="agent-name">SPOTTER</span>
+                <span class="agent-status-badge badge-cyan">SCANNING</span>
+              </div>
+              <p class="agent-desc">Filters liquid binary markets with tradeable spread (12% - 88% odds).</p>
+            </div>
+
+            <div class="agent-card">
+              <div class="agent-card-header">
+                <span class="agent-name">RESEARCHER</span>
+                <span class="agent-status-badge badge-blue">NEWS AGENT</span>
+              </div>
+              <p class="agent-desc">Real-time Google News RSS crawler & sentiment context extraction.</p>
+            </div>
+
+            <div class="agent-card">
+              <div class="agent-card-header">
+                <span class="agent-name">THE PRICER</span>
+                <span class="agent-status-badge badge-purple">GAUSSIAN</span>
+              </div>
+              <p class="agent-desc">Evaluates Bayesian distribution, sentiment shift & statistical edge (Δp).</p>
+            </div>
+
+            <div class="agent-card">
+              <div class="agent-card-header">
+                <span class="agent-name">KELLY RISK</span>
+                <span class="agent-status-badge badge-gold">FRACTIONAL</span>
+              </div>
+              <p class="agent-desc">Quarter-Kelly stake sizing, capital safety caps (max 5% portfolio risk).</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Terminal Thought Stream -->
+        <div class="panel">
+          <div class="panel-header">
+            <h3>🧠 AGENT REASONING STREAM (LIVE THOUGHTS)</h3>
+            <span class="status-live-indicator">LIVE FEED</span>
+          </div>
+
+          <div class="terminal-box" id="thought-terminal">
+            <div class="terminal-line"><span class="log-time">[00:00:00]</span> <span class="log-tag tag-sys">[System]</span> Initializing Quant Desk connection...</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Prediction Markets & Open Positions -->
+      <div class="workspace-col">
+
+        <!-- Open Positions Table -->
+        <div class="panel">
+          <div class="panel-header">
+            <h3>📋 ACTIVE OPEN POSITIONS</h3>
+            <span class="badge-mini" id="open-positions-count">0 ACTIVE</span>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Target Event</th>
+                  <th>Outcome</th>
+                  <th>Shares</th>
+                  <th>Entry Price</th>
+                  <th>Current</th>
+                  <th>PnL</th>
+                </tr>
+              </thead>
+              <tbody id="positions-tbody">
+                <tr>
+                  <td colspan="6" class="text-center text-muted">No open positions. Run a Swarm Scan to take positions!</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Live Prediction Markets Feed -->
+        <div class="panel">
+          <div class="panel-header">
+            <h3>📊 LIVE PREDICTION MARKETS FEED</h3>
+            <button class="btn-refresh" onclick="loadMarkets()">🔄 Refresh</button>
+          </div>
+
+          <div class="market-list" id="market-feed">
+            <div class="loading-spinner">Loading markets from Polymarket & Manifold...</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Trade History Section -->
+    <section class="panel panel-bottom">
+      <div class="panel-header">
+        <h3>📜 RECENT MOCK TRADES AUDIT LOG</h3>
+        <span class="badge-mini">LEDGER VERIFIED</span>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Action</th>
+              <th>Event</th>
+              <th>Shares</th>
+              <th>Price</th>
+              <th>Total Cost</th>
+              <th>Agent Reasoning</th>
+            </tr>
+          </thead>
+          <tbody id="trades-tbody">
+            <tr>
+              <td colspan="7" class="text-center text-muted">No trade history yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
