@@ -169,10 +169,16 @@ class PortfolioManager:
             tp_price = take_profit if take_profit else round(price * (1.0 + DEFAULT_TP_PERCENT), 6 if price < 1 else 4)
 
         clean_symbol = symbol or question.split("/")[0].replace("crypto_", "").strip()
-        position_key = f"{market_id}_{outcome}"
+        # Generate unique ticket ID for each position to prevent accidental overwriting
+        ticket_id = f"{market_id}_{outcome}_{int(datetime.now().timestamp())}"
+        counter = 1
+        base_ticket = ticket_id
+        while ticket_id in self.state["open_positions"]:
+            ticket_id = f"{base_ticket}_{counter}"
+            counter += 1
 
-        self.state["open_positions"][position_key] = {
-            "id": position_key,
+        self.state["open_positions"][ticket_id] = {
+            "id": ticket_id,
             "market_id": market_id,
             "symbol": clean_symbol,
             "question": question,
@@ -217,10 +223,17 @@ class PortfolioManager:
         Closes an open position, realizes PnL, refunds margin, and logs outcome.
         Reasons: 'TAKE_PROFIT', 'STOP_LOSS', 'LIQUIDATION', 'MANUAL', 'EMERGENCY'
         """
-        if position_key not in self.state["open_positions"]:
+        target_key = position_key
+        if target_key not in self.state["open_positions"]:
+            for k, v in self.state["open_positions"].items():
+                if v.get("id") == position_key or k.startswith(position_key) or v.get("market_id") == position_key:
+                    target_key = k
+                    break
+
+        if target_key not in self.state["open_positions"]:
             return False
 
-        pos = self.state["open_positions"].pop(position_key)
+        pos = self.state["open_positions"].pop(target_key)
         outcome = pos.get("outcome", "LONG")
         shares = pos.get("shares", 0.0)
         entry_p = pos.get("entry_price", 0.0)

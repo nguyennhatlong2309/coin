@@ -1,18 +1,25 @@
 {
-  "cash_balance": 950.08,
+  "cash_balance": 939.58,
   "realized_pnl": 0.08,
   "open_positions": {
     "crypto_PIXELUSDT_LONG": {
       "id": "crypto_PIXELUSDT_LONG",
       "market_id": "crypto_PIXELUSDT",
+      "symbol": "PIXEL",
       "question": "PIXEL/USDT (LONG)",
       "asset_type": "crypto",
       "outcome": "LONG",
-      "shares": 5111.52,
-      "entry_price": 0.00538,
-      "current_price": 0.00538,
-      "cost_basis": 27.5,
-      "opened_at": "2026-10-18 01:57:46"
+      "leverage": 3,
+      "shares": 21111.11,
+      "entry_price": 0.0054,
+      "current_price": 0.0054,
+      "margin": 38.0,
+      "cost_basis": 38.0,
+      "position_size": 114.0,
+      "stop_loss": 0.005292,
+      "take_profit": 0.005616,
+      "liquidation_price": 0.00369,
+      "opened_at": "2026-10-18 04:18:23"
     },
     "crypto_DOGEUSDT_LONG": {
       "id": "crypto_DOGEUSDT_LONG",
@@ -35,6 +42,23 @@
     }
   },
   "trades_history": [
+    {
+      "timestamp": "04:18:23",
+      "action": "OPEN_LONG_3X",
+      "market_id": "crypto_PIXELUSDT",
+      "symbol": "PIXEL",
+      "asset_type": "crypto",
+      "question": "PIXEL/USDT (LONG)",
+      "shares": 21111.11,
+      "price": 0.0054,
+      "leverage": 3,
+      "margin": 38.0,
+      "total_amount": 38.0,
+      "stop_loss": 0.005292,
+      "take_profit": 0.005616,
+      "liquidation_price": 0.00369,
+      "reasoning": "Tín hiệu Alpha: LONG 3x trên PIXEL (Lợi thế: +7.6%). Ký quỹ Quarter-Kelly: $38.00 (Vị thế: $114.00). SL: $0.0053 | TP: $0.0056"
+    },
     {
       "timestamp": "04:06:32",
       "action": "OPEN_LONG_2X",
@@ -91,6 +115,78 @@
     }
   ],
   "thought_logs": [
+    {
+      "timestamp": "04:28:46",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "04:27:35",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "04:26:39",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "04:18:39",
+      "agent": "Kelly Risk",
+      "level": "WARN",
+      "message": "Lợi thế thống kê (+3.2%) thấp hơn ngưỡng tối thiểu (4.0%) trên SOL. Giữ nguyên tiền mặt."
+    },
+    {
+      "timestamp": "04:18:39",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá xác suất (SOL): Tín hiệu=SHORT (P_fair=53% | Lợi thế=+3.2%). Tỷ số sổ lệnh=0.50x, Đà 24h=-0.4%"
+    },
+    {
+      "timestamp": "04:18:39",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho SOL: [TradingView] Here’s why the crypto market is going down today (Oct. ... | [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:..."
+    },
+    {
+      "timestamp": "04:18:37",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: SOL/USDT | Giá: $103.990 | Thanh khoản 24h: $82.8M USDT (DEEP TIER (Thanh Khoản Sâu)) | Sổ lệnh: TƯỜNG BÁN ĐÈ GIÁ (Gấu Xả Hàng) (Tỷ số 0.5)"
+    },
+    {
+      "timestamp": "04:18:23",
+      "agent": "Executor",
+      "level": "TRADE",
+      "message": "KHỚP LỆNH MARGIN THÀNH CÔNG: LONG 3x $38.00 của PIXEL/USDT @ $0.005400 (Vị thế: $114.00 | SL: $0.0053 | TP: $0.0056)"
+    },
+    {
+      "timestamp": "04:18:23",
+      "agent": "Kelly Risk",
+      "level": "INFO",
+      "message": "Quản trị Rủi ro (PIXEL): Đòn bẩy 3x | Ký quỹ: $38.00 | Cắt lỗ (SL): $0.0053 (-2.0%) | Chốt lời (TP): $0.0056 (+4.0%) | Giá thanh lý: $0.0037"
+    },
+    {
+      "timestamp": "04:18:23",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá xác suất (PIXEL): Tín hiệu=LONG (P_fair=57% | Lợi thế=+7.6%). Tỷ số sổ lệnh=1.61x, Đà 24h=-2.0%"
+    },
+    {
+      "timestamp": "04:18:23",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho PIXEL: [CoinMarketCap] Ronin-based Game PIXEL Enters Top Ten Most-Traded Token... | [CoinDCX] Pixels Price Prediction 2026-2031: Can PIXEL Reach $0.0..."
+    },
+    {
+      "timestamp": "04:18:22",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: PIXEL/USDT | Giá: $0.005400 | Thanh khoản 24h: $179K USDT (LIGHT TIER (Thanh Khoản Vừa)) | Sổ lệnh: LỰC MUA ÁP ĐẢO (Bò Gom Hàng) (Tỷ số 1.61)"
+    },
     {
       "timestamp": "04:14:32",
       "agent": "System",
@@ -506,5 +602,5 @@
       "message": "Portfolio reset successfully. Initial capital established at $1,000.00 USD."
     }
   ],
-  "last_updated": 1792271672.1693492
+  "last_updated": 1792272526.2604976
 }

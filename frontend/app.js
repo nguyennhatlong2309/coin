@@ -266,8 +266,8 @@ function updateChartPositionLines() {
 
   if (!currentOpenPositions || currentOpenPositions.length === 0) return;
 
-  // Find position matching currentChartCoin
-  const matchingPos = currentOpenPositions.find(p => {
+  // Find latest position matching currentChartCoin
+  const matchingPos = currentOpenPositions.slice().reverse().find(p => {
     const sym = (p.symbol || p.question || "").toUpperCase();
     return sym.includes(currentChartCoin.toUpperCase());
   });
