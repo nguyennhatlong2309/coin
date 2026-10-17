@@ -87,6 +87,10 @@ def toggle_watchlist_coin(req: CoinRequest):
 def get_coin_depth(coin: str):
     return crypto_service.fetch_coin_depth(coin)
 
+@app.get("/api/crypto/klines/{coin}")
+def get_coin_klines(coin: str, interval: str = "1h", limit: int = 100):
+    return crypto_service.fetch_klines(coin, interval=interval, limit=limit)
+
 # ----------------- SWARM SCAN & AUTO-LOOP -----------------
 
 @app.post("/api/scan")

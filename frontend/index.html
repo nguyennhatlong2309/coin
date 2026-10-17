@@ -119,8 +119,45 @@
       </div>
     </section>
 
+    <!-- Real-Time Candlestick & Liquidity Chart Section -->
+    <section class="panel chart-panel">
+      <div class="panel-header">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <h3>📈 REAL-TIME CANDLESTICK & VOLUME CHART</h3>
+          <span class="badge-mini" id="chart-active-coin-badge">BTC / USDT</span>
+        </div>
+        <div class="chart-controls">
+          <!-- Timeframe selector -->
+          <div class="timeframe-group">
+            <button class="btn-tf" id="tf-15m" onclick="changeTimeframe('15m')">15M</button>
+            <button class="btn-tf active" id="tf-1h" onclick="changeTimeframe('1h')">1H</button>
+            <button class="btn-tf" id="tf-4h" onclick="changeTimeframe('4h')">4H</button>
+            <button class="btn-tf" id="tf-1d" onclick="changeTimeframe('1d')">1D</button>
+          </div>
+          <!-- Quick Coin Switcher -->
+          <div class="chart-coin-tabs" id="chart-coin-tabs">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Live OHLC & Volume stats banner -->
+      <div class="chart-stats-banner">
+        <span>Open: <strong id="stat-open">-</strong></span>
+        <span>High: <strong id="stat-high">-</strong></span>
+        <span>Low: <strong id="stat-low">-</strong></span>
+        <span>Close: <strong id="stat-close">-</strong></span>
+        <span>Candle Vol: <strong id="stat-vol" class="highlight-cyan">-</strong></span>
+        <span style="margin-left:auto; font-size:0.7rem; color:var(--text-dim)">⚡ Binance Live Stream &bull; Drag to pan &bull; Scroll to zoom</span>
+      </div>
+
+      <!-- TradingView Lightweight Canvas Container -->
+      <div id="tv-chart-container" class="chart-container"></div>
+    </section>
+
     <!-- Swarm Grid & Main Workspace -->
     <div class="workspace-grid">
+
 
 
       <!-- Left Column: Swarm Grid & Live Thought Stream -->
@@ -273,6 +310,7 @@
     </div>
   </div>
 
+  <script src="/static/lightweight-charts.js"></script>
   <script src="/static/app.js"></script>
 </body>
 </html>

@@ -171,6 +171,63 @@ class CryptoService:
             logger.warning(f"Error fetching depth for {symbol}: {e}")
             return {"error": str(e)}
 
+    def fetch_klines(self, coin: str, interval: str = "1h", limit: int = 100) -> Dict[str, Any]:
+        """
+        Fetch OHLCV candlestick data and volume for charts from Binance public API.
+        Intervals: 15m, 1h, 4h, 1d
+        """
+        valid_intervals = {"15m", "1h", "4h", "1d"}
+        if interval not in valid_intervals:
+            interval = "1h"
+
+        symbol = self.normalize_symbol(coin)
+        base = self.get_coin_base(symbol)
+        url = f"https://api.binance.com/api/v3/klines?symbol={symbol}&interval={interval}&limit={min(limit, 300)}"
+
+        try:
+            with httpx.Client(timeout=6.0) as client:
+                resp = client.get(url)
+                if resp.status_code != 200:
+                    return {"error": f"Failed to fetch klines from Binance: HTTP {resp.status_code}"}
+                raw = resp.json()
+
+                candles = []
+                volumes = []
+                for item in raw:
+                    t_sec = int(item[0]) // 1000
+                    o = float(item[1])
+                    h = float(item[2])
+                    l = float(item[3])
+                    c = float(item[4])
+                    quote_vol = float(item[7]) # Quote volume in USDT (liquidity)
+
+                    is_bull = c >= o
+                    candles.append({
+                        "time": t_sec,
+                        "open": o,
+                        "high": h,
+                        "low": l,
+                        "close": c
+                    })
+                    volumes.append({
+                        "time": t_sec,
+                        "value": quote_vol,
+                        "color": "rgba(16, 185, 129, 0.5)" if is_bull else "rgba(239, 68, 68, 0.5)"
+                    })
+
+                return {
+                    "coin": base,
+                    "symbol": symbol,
+                    "interval": interval,
+                    "candles": candles,
+                    "volumes": volumes,
+                    "last_price": candles[-1]["close"] if candles else 0,
+                    "count": len(candles)
+                }
+        except Exception as e:
+            logger.warning(f"Error fetching klines for {symbol}: {e}")
+            return {"error": str(e)}
+
     def fetch_all_watchlist(self, force_refresh: bool = False) -> List[Dict[str, Any]]:
         """Fetch tickers for all coins in user's watchlist (with 2-sec caching)."""
         now = time.time()

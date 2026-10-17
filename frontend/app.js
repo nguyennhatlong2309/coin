@@ -1,10 +1,19 @@
 let isAutoRunning = false;
 let autoStatusInterval = null;
 
+// Chart State
+let chartInstance = null;
+let candleSeries = null;
+let volumeSeries = null;
+let currentChartCoin = "BTC";
+let currentChartInterval = "1h";
+
 // Initialize Dashboard
 document.addEventListener("DOMContentLoaded", () => {
   loadPortfolio();
   loadCryptoWatchlist(true);
+  initChart();
+  loadChartData(currentChartCoin, currentChartInterval);
   loadMarkets();
   checkAutoStatus();
 
@@ -18,13 +27,227 @@ document.addEventListener("DOMContentLoaded", () => {
     loadCryptoWatchlist(false);
   }, 4000);
 
+  // Periodic active chart refresh (every 8 seconds)
+  setInterval(() => {
+    refreshActiveChartCandle();
+  }, 8000);
+
   // Periodic market refresh (every 30 seconds)
   setInterval(() => {
     loadMarkets();
   }, 30000);
 });
 
-// 1. Fetch & Render Portfolio Metrics, Positions, Logs, Trades
+// ============================================================
+// 1. TRADINGVIEW LIGHTWEIGHT CHARTS ENGINE
+// ============================================================
+function initChart() {
+  const container = document.getElementById("tv-chart-container");
+  if (!container) return;
+
+  if (typeof LightweightCharts === "undefined") {
+    container.innerHTML = `<div class="text-center text-muted" style="padding:40px;">LightweightCharts library not loaded.</div>`;
+    return;
+  }
+
+  container.innerHTML = "";
+
+  chartInstance = LightweightCharts.createChart(container, {
+    width: container.clientWidth,
+    height: 380,
+    layout: {
+      background: { type: 'solid', color: '#090d16' },
+      textColor: '#94a3b8',
+      fontSize: 11,
+      fontFamily: "'JetBrains Mono', monospace"
+    },
+    grid: {
+      vertLines: { color: 'rgba(255, 255, 255, 0.04)' },
+      horzLines: { color: 'rgba(255, 255, 255, 0.04)' }
+    },
+    crosshair: {
+      mode: LightweightCharts.CrosshairMode.Normal,
+      vertLine: {
+        color: '#00f0ff',
+        width: 1,
+        style: 3,
+        labelBackgroundColor: '#00f0ff'
+      },
+      horzLine: {
+        color: '#00f0ff',
+        width: 1,
+        style: 3,
+        labelBackgroundColor: '#00f0ff'
+      }
+    },
+    rightPriceScale: {
+      borderColor: 'rgba(255, 255, 255, 0.1)',
+      autoScale: true
+    },
+    timeScale: {
+      borderColor: 'rgba(255, 255, 255, 0.1)',
+      timeVisible: true,
+      secondsVisible: false
+    }
+  });
+
+  // Candlestick Series
+  candleSeries = chartInstance.addCandlestickSeries({
+    upColor: '#10b981',
+    downColor: '#ef4444',
+    borderUpColor: '#10b981',
+    borderDownColor: '#ef4444',
+    wickUpColor: '#10b981',
+    wickDownColor: '#ef4444'
+  });
+
+  // Volume Histogram Series
+  volumeSeries = chartInstance.addHistogramSeries({
+    priceFormat: {
+      type: 'volume'
+    },
+    priceScaleId: '', // Set as overlay
+    scaleMargins: {
+      top: 0.8,
+      bottom: 0
+    }
+  });
+
+  // Crosshair move listener to update stats banner
+  chartInstance.subscribeCrosshairMove(param => {
+    if (!param || !param.time || !param.seriesData) return;
+    const candle = param.seriesData.get(candleSeries);
+    const vol = param.seriesData.get(volumeSeries);
+    if (candle) {
+      updateStatsBanner(candle.open, candle.high, candle.low, candle.close, vol ? vol.value : 0);
+    }
+  });
+
+  // Responsive resize
+  window.addEventListener("resize", () => {
+    if (chartInstance && container) {
+      chartInstance.applyOptions({ width: container.clientWidth });
+    }
+  });
+}
+
+async function loadChartData(coin, interval = "1h") {
+  currentChartCoin = coin.toUpperCase();
+  currentChartInterval = interval;
+
+  const badge = document.getElementById("chart-active-coin-badge");
+  if (badge) {
+    badge.textContent = `${currentChartCoin} / USDT (${interval.toUpperCase()})`;
+  }
+
+  // Update tabs active state
+  document.querySelectorAll(".chart-tab").forEach(tab => {
+    if (tab.dataset.coin === currentChartCoin) {
+      tab.classList.add("active");
+    } else {
+      tab.classList.remove("active");
+    }
+  });
+
+  try {
+    const res = await fetch(`/api/crypto/klines/${currentChartCoin}?interval=${currentChartInterval}&limit=120`);
+    const data = await res.json();
+
+    if (data.error || !data.candles || data.candles.length === 0) {
+      console.warn("Could not load klines:", data.error);
+      return;
+    }
+
+    if (candleSeries && volumeSeries) {
+      candleSeries.setData(data.candles);
+      volumeSeries.setData(data.volumes);
+
+      // Fit content nicely
+      chartInstance.timeScale().fitContent();
+
+      // Update banner with last candle
+      const last = data.candles[data.candles.length - 1];
+      const lastVol = data.volumes[data.volumes.length - 1];
+      updateStatsBanner(last.open, last.high, last.low, last.close, lastVol ? lastVol.value : 0);
+    }
+  } catch (err) {
+    console.error("Error fetching chart data:", err);
+  }
+}
+
+async function refreshActiveChartCandle() {
+  if (!candleSeries || !volumeSeries) return;
+  try {
+    const res = await fetch(`/api/crypto/klines/${currentChartCoin}?interval=${currentChartInterval}&limit=3`);
+    const data = await res.json();
+    if (data.candles && data.candles.length > 0) {
+      for (let i = 0; i < data.candles.length; i++) {
+        candleSeries.update(data.candles[i]);
+        volumeSeries.update(data.volumes[i]);
+      }
+    }
+  } catch (e) {}
+}
+
+function updateStatsBanner(o, h, l, c, volUsdt) {
+  const elO = document.getElementById("stat-open");
+  const elH = document.getElementById("stat-high");
+  const elL = document.getElementById("stat-low");
+  const elC = document.getElementById("stat-close");
+  const elV = document.getElementById("stat-vol");
+
+  if (elO) elO.textContent = formatPriceNum(o);
+  if (elH) elH.textContent = formatPriceNum(h);
+  if (elL) elL.textContent = formatPriceNum(l);
+  if (elC) {
+    elC.textContent = formatPriceNum(c);
+    elC.className = c >= o ? "highlight-green" : "highlight-red";
+  }
+  if (elV) {
+    elV.textContent = volUsdt >= 1e6 ? `$${(volUsdt / 1e6).toFixed(2)}M` : `$${(volUsdt / 1e3).toFixed(1)}K`;
+  }
+}
+
+function changeTimeframe(tf) {
+  currentChartInterval = tf;
+  document.querySelectorAll(".btn-tf").forEach(btn => btn.classList.remove("active"));
+  const activeBtn = document.getElementById(`tf-${tf}`);
+  if (activeBtn) activeBtn.classList.add("active");
+  loadChartData(currentChartCoin, tf);
+}
+
+function changeChartCoin(coin, scrollToChart = false) {
+  loadChartData(coin, currentChartInterval);
+  if (scrollToChart) {
+    const chartEl = document.querySelector(".chart-panel");
+    if (chartEl) {
+      chartEl.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }
+}
+
+function renderChartCoinTabs(coins) {
+  const container = document.getElementById("chart-coin-tabs");
+  if (!container || !coins || coins.length === 0) return;
+
+  const topCoins = coins.slice(0, 6);
+  container.innerHTML = topCoins.map(coin => {
+    const active = coin.toUpperCase() === currentChartCoin ? "active" : "";
+    return `<button class="chart-tab ${active}" data-coin="${coin}" onclick="changeChartCoin('${coin}')">${coin}</button>`;
+  }).join("");
+}
+
+function formatPriceNum(num) {
+  if (num === undefined || num === null) return "-";
+  if (num >= 1000) return `$${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  if (num >= 1) return `$${num.toFixed(3)}`;
+  if (num >= 0.001) return `$${num.toFixed(6)}`;
+  return `$${num.toFixed(8)}`;
+}
+
+// ============================================================
+// 2. PORTFOLIO & SWARM ENGINE STATS
+// ============================================================
 async function loadPortfolio() {
   try {
     const res = await fetch("/api/portfolio");
@@ -137,7 +360,9 @@ async function loadPortfolio() {
   }
 }
 
-// 2. Fetch & Render Crypto Watchlist & Liquidity
+// ============================================================
+// 3. CRYPTO WATCHLIST & LIQUIDITY MATRIX
+// ============================================================
 async function loadCryptoWatchlist(force = false) {
   try {
     const res = await fetch("/api/crypto/watchlist");
@@ -149,6 +374,11 @@ async function loadCryptoWatchlist(force = false) {
     if (countBadge) {
       const activeCount = data.tickers.filter(t => t.is_active).length;
       countBadge.textContent = `${activeCount}/${data.tickers.length} ACTIVE IN SWARM`;
+    }
+
+    // Render coin selector tabs above the chart
+    if (data.tickers && data.tickers.length > 0) {
+      renderChartCoinTabs(data.tickers.map(t => t.coin));
     }
 
     if (!data.tickers || data.tickers.length === 0) {
@@ -186,6 +416,7 @@ async function loadCryptoWatchlist(force = false) {
           <td style="text-align:center">
             <div class="row-actions" style="justify-content:center;">
               <button class="btn-table-action btn-scan-coin" onclick="triggerManualScan('${t.coin}')" title="Scan this coin with AI Swarm">⚡ Scan</button>
+              <button class="btn-table-action" onclick="changeChartCoin('${t.coin}', true)" title="Open Candlestick Chart">📈 Chart</button>
               <button class="btn-table-action" onclick="openDepthModal('${t.coin}')" title="View Order Book Depth">📊 Depth</button>
               <button class="btn-table-action btn-del-coin" onclick="removeCoin('${t.coin}')" title="Remove coin">✕</button>
             </div>
@@ -199,7 +430,7 @@ async function loadCryptoWatchlist(force = false) {
   }
 }
 
-// 3. Add & Remove Coins
+// 4. Add & Remove Coins
 async function addNewCoin() {
   const input = document.getElementById("new-coin-input");
   const raw = input.value.trim();
@@ -270,7 +501,7 @@ async function toggleCoin(coin) {
   }
 }
 
-// 4. Order Book Depth Modal
+// 5. Order Book Depth Modal
 async function openDepthModal(coin) {
   const modal = document.getElementById("depth-modal");
   const title = document.getElementById("modal-coin-title");
@@ -343,7 +574,7 @@ function closeDepthModal() {
   modal.classList.remove("open");
 }
 
-// 5. Fetch & Render Prediction Markets Feed
+// 6. Fetch & Render Prediction Markets Feed
 async function loadMarkets() {
   const feed = document.getElementById("market-feed");
   try {
@@ -379,7 +610,7 @@ async function loadMarkets() {
   }
 }
 
-// 6. Trigger Swarm Scan Manual Run (supports target coin or global)
+// 7. Trigger Swarm Scan Manual Run (supports target coin or global)
 async function triggerManualScan(coin = null) {
   const btn = document.getElementById("btn-scan");
   const origText = btn.innerHTML;
@@ -404,7 +635,7 @@ async function triggerManualScan(coin = null) {
   }
 }
 
-// 7. Toggle Auto-Scan Mode
+// 8. Toggle Auto-Scan Mode
 async function toggleAutoMode() {
   try {
     const res = await fetch("/api/auto/toggle", { method: "POST" });
@@ -439,7 +670,7 @@ function updateAutoButtonState() {
   }
 }
 
-// 8. Reset Portfolio
+// 9. Reset Portfolio
 async function resetPortfolio() {
   if (!confirm("Are you sure you want to reset mock balance back to $1,000.00?")) return;
   try {
