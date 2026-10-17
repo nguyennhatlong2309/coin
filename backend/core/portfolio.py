@@ -68,14 +68,24 @@ class PortfolioManager:
         unrealized_pnl = 0.0
 
         for pos in self.state["open_positions"].values():
-            val = pos["shares"] * pos["current_price"]
+            asset_type = pos.get("asset_type", "prediction")
+            outcome = pos.get("outcome", "YES")
+            shares = pos["shares"]
+            curr_p = pos["current_price"]
+            entry_p = pos["entry_price"]
+            cost = pos.get("cost_basis", shares * entry_p)
+
+            if asset_type == "crypto" and outcome == "SHORT":
+                val = cost + (entry_p - curr_p) * shares
+            else:
+                val = shares * curr_p
+
             positions_value += val
-            cost = pos["shares"] * pos["entry_price"]
             unrealized_pnl += (val - cost)
 
         total_equity = cash + positions_value
         total_pnl = (total_equity - INITIAL_CAPITAL)
-        pnl_percent = (total_pnl / INITIAL_CAPITAL) * 100
+        pnl_percent = (total_pnl / INITIAL_CAPITAL) * 100 if INITIAL_CAPITAL > 0 else 0.0
 
         trades = self.state["trades_history"]
         win_count = sum(1 for t in trades if t.get("pnl", 0) > 0)
@@ -94,40 +104,63 @@ class PortfolioManager:
             "total_open_count": len(self.state["open_positions"]),
             "trades_count": len(trades),
             "win_rate": round(win_rate, 1),
-            "recent_trades": trades[:10],
-            "thought_logs": self.state["thought_logs"][:25]
+            "recent_trades": trades[:15],
+            "thought_logs": self.state["thought_logs"][:30]
         }
 
-    def execute_trade(self, market_id: str, question: str, outcome: str, price: float, stake_amount: float, reasoning: str) -> bool:
+    def execute_trade(
+        self,
+        market_id: str,
+        question: str,
+        outcome: str,
+        price: float,
+        stake_amount: float,
+        reasoning: str,
+        asset_type: str = "prediction"
+    ) -> bool:
         """
-        Executes a mock trade: buys shares of YES or NO.
+        Executes a mock trade for Prediction Market (YES/NO) or Crypto (LONG/SHORT/BUY).
         """
-        if stake_amount <= 0 or stake_amount > self.state["cash_balance"]:
+        if stake_amount <= 0 or stake_amount > self.state["cash_balance"] or price <= 0:
             return False
 
-        shares = round(stake_amount / price, 2)
+        # Precision handling
+        if asset_type == "crypto":
+            if price > 100:
+                shares = round(stake_amount / price, 6)
+            elif price > 1:
+                shares = round(stake_amount / price, 4)
+            else:
+                shares = round(stake_amount / price, 2)
+        else:
+            shares = round(stake_amount / price, 2)
+
         cost = round(shares * price, 2)
-
         if cost > self.state["cash_balance"]:
-            cost = self.state["cash_balance"]
-            shares = round(cost / price, 2)
+            cost = round(self.state["cash_balance"], 2)
+            shares = round(cost / price, 6 if asset_type == "crypto" else 2)
 
-        self.state["cash_balance"] -= cost
+        if cost <= 0:
+            return False
+
+        self.state["cash_balance"] = round(self.state["cash_balance"] - cost, 2)
 
         position_key = f"{market_id}_{outcome}"
         if position_key in self.state["open_positions"]:
             pos = self.state["open_positions"][position_key]
             total_shares = pos["shares"] + shares
             avg_price = (pos["shares"] * pos["entry_price"] + cost) / total_shares
-            pos["shares"] = round(total_shares, 2)
-            pos["entry_price"] = round(avg_price, 3)
+            pos["shares"] = round(total_shares, 6 if asset_type == "crypto" else 2)
+            pos["entry_price"] = round(avg_price, 4)
             pos["current_price"] = price
+            pos["cost_basis"] = round(pos.get("cost_basis", 0) + cost, 2)
         else:
             self.state["open_positions"][position_key] = {
                 "id": position_key,
                 "market_id": market_id,
                 "question": question,
-                "outcome": outcome, # YES / NO
+                "asset_type": asset_type,
+                "outcome": outcome, # YES/NO or LONG/SHORT
                 "shares": shares,
                 "entry_price": price,
                 "current_price": price,
@@ -135,10 +168,12 @@ class PortfolioManager:
                 "opened_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             }
 
+        action_name = f"BUY_{outcome}" if not outcome.startswith("BUY") else outcome
         trade_record = {
             "timestamp": datetime.now().strftime("%H:%M:%S"),
-            "action": f"BUY_{outcome}",
+            "action": action_name,
             "market_id": market_id,
+            "asset_type": asset_type,
             "question": question,
             "shares": shares,
             "price": price,
@@ -149,16 +184,35 @@ class PortfolioManager:
         self.save()
         return True
 
-    def update_position_prices(self, markets_map: Dict[str, Dict[str, Any]]):
-        """Updates open position prices based on latest market odds."""
+    def update_position_prices(
+        self,
+        markets_map: Optional[Dict[str, Dict[str, Any]]] = None,
+        crypto_prices: Optional[Dict[str, float]] = None
+    ):
+        """Updates open position prices based on prediction odds and crypto live prices."""
         updated = False
+        markets_map = markets_map or {}
+        crypto_prices = crypto_prices or {}
+
         for pos_key, pos in list(self.state["open_positions"].items()):
             m_id = pos["market_id"]
-            if m_id in markets_map:
+            asset_type = pos.get("asset_type", "prediction")
+
+            if asset_type == "crypto":
+                # Match symbol e.g. crypto_BTCUSDT -> BTCUSDT or BTC
+                clean_sym = m_id.replace("crypto_", "")
+                if clean_sym in crypto_prices:
+                    new_p = crypto_prices[clean_sym]
+                    if pos["current_price"] != new_p:
+                        pos["current_price"] = new_p
+                        updated = True
+            elif m_id in markets_map:
                 market = markets_map[m_id]
                 new_price = market["probability_yes"] if pos["outcome"] == "YES" else market["probability_no"]
                 if pos["current_price"] != new_price:
                     pos["current_price"] = new_price
                     updated = True
+
         if updated:
             self.save()
+

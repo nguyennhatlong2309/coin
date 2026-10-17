@@ -61,12 +61,67 @@
       <div class="kpi-card">
         <div class="kpi-title">SWARM ENGINE STATUS</div>
         <div class="kpi-value highlight-green" id="kpi-status">ONLINE</div>
-        <div class="kpi-sub" id="kpi-network">Polymarket + Manifold + Google News</div>
+        <div class="kpi-sub" id="kpi-network">Binance Spot + Google News RSS</div>
+      </div>
+    </section>
+
+    <!-- Crypto Watchlist & Liquidity Matrix Section -->
+    <section class="crypto-panel">
+      <div class="panel-header">
+        <h3>🪙 CRYPTO WATCHLIST & 24H LIQUIDITY MATRIX (BINANCE SPOT)</h3>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <span class="badge-mini" id="watchlist-count-badge">0 COINS ACTIVE</span>
+          <button class="btn-refresh" onclick="loadCryptoWatchlist(true)">🔄 Refresh</button>
+        </div>
+      </div>
+
+      <!-- Controls & Quick Add -->
+      <div class="crypto-top-controls">
+        <div class="add-coin-form">
+          <input type="text" id="new-coin-input" class="coin-input" placeholder="Symbol (e.g. PEPE, SUI)" onkeydown="if(event.key==='Enter') addNewCoin()" />
+          <button class="btn-add-coin" onclick="addNewCoin()">+ ADD COIN</button>
+        </div>
+
+        <div class="quick-chips">
+          <span class="chip-label">Quick Add:</span>
+          <button class="coin-chip" onclick="quickAdd('BTC')">+ BTC</button>
+          <button class="coin-chip" onclick="quickAdd('ETH')">+ ETH</button>
+          <button class="coin-chip" onclick="quickAdd('SOL')">+ SOL</button>
+          <button class="coin-chip" onclick="quickAdd('BNB')">+ BNB</button>
+          <button class="coin-chip" onclick="quickAdd('DOGE')">+ DOGE</button>
+          <button class="coin-chip" onclick="quickAdd('SUI')">+ SUI</button>
+          <button class="coin-chip" onclick="quickAdd('PEPE')">+ PEPE</button>
+          <button class="coin-chip" onclick="quickAdd('XRP')">+ XRP</button>
+        </div>
+      </div>
+
+      <!-- Crypto Table -->
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Pair / Asset</th>
+              <th>Real-Time Price</th>
+              <th>24h Change</th>
+              <th>24h Liquidity (USDT Vol)</th>
+              <th>Liquidity Depth Tier</th>
+              <th>Spread (BPS)</th>
+              <th>Auto Swarm</th>
+              <th style="text-align:center">AI Actions</th>
+            </tr>
+          </thead>
+          <tbody id="crypto-watchlist-tbody">
+            <tr>
+              <td colspan="8" class="text-center text-muted">Loading live crypto tickers & liquidity...</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
     <!-- Swarm Grid & Main Workspace -->
     <div class="workspace-grid">
+
 
       <!-- Left Column: Swarm Grid & Live Thought Stream -->
       <div class="workspace-col">
@@ -204,6 +259,21 @@
 
   </main>
 
+  <!-- Real-Time Order Book Depth Modal -->
+  <div id="depth-modal" class="modal-overlay" onclick="if(event.target===this) closeDepthModal()">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-coin-title">📊 Real-Time Order Book Depth (Binance L2)</h3>
+        <button class="modal-close" onclick="closeDepthModal()">&times;</button>
+      </div>
+
+      <div id="modal-depth-content">
+        <div class="text-center text-muted" style="padding: 20px;">Fetching live order book...</div>
+      </div>
+    </div>
+  </div>
+
   <script src="/static/app.js"></script>
 </body>
 </html>
+

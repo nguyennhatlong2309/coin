@@ -4,13 +4,19 @@ let autoStatusInterval = null;
 // Initialize Dashboard
 document.addEventListener("DOMContentLoaded", () => {
   loadPortfolio();
+  loadCryptoWatchlist(true);
   loadMarkets();
   checkAutoStatus();
 
-  // Periodic status poll (every 3 seconds)
+  // Periodic portfolio poll (every 3 seconds)
   setInterval(() => {
     loadPortfolio();
   }, 3000);
+
+  // Periodic crypto watchlist poll (every 4 seconds)
+  setInterval(() => {
+    loadCryptoWatchlist(false);
+  }, 4000);
 
   // Periodic market refresh (every 30 seconds)
   setInterval(() => {
@@ -53,18 +59,38 @@ async function loadPortfolio() {
       posTbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">No open positions. Run a Swarm Scan to take positions!</td></tr>`;
     } else {
       posTbody.innerHTML = data.open_positions.map(pos => {
-        const pnl = (pos.shares * pos.current_price) - (pos.shares * pos.entry_price);
-        const pnlPct = ((pos.current_price - pos.entry_price) / pos.entry_price) * 100;
+        const isCrypto = pos.asset_type === "crypto";
+        let pnl = 0;
+        let pnlPct = 0;
+
+        if (isCrypto && pos.outcome === "SHORT") {
+          pnl = (pos.entry_price - pos.current_price) * pos.shares;
+          pnlPct = ((pos.entry_price - pos.current_price) / pos.entry_price) * 100;
+        } else {
+          pnl = (pos.current_price - pos.entry_price) * pos.shares;
+          pnlPct = ((pos.current_price - pos.entry_price) / pos.entry_price) * 100;
+        }
+
         const pnlClass = pnl >= 0 ? "highlight-green" : "highlight-red";
-        const tagClass = pos.outcome === "YES" ? "tag-outcome-yes" : "tag-outcome-no";
+        let tagClass = "tag-outcome-yes";
+        if (pos.outcome === "NO" || pos.outcome === "SHORT") {
+          tagClass = "tag-outcome-no";
+        }
+
+        const sharesStr = isCrypto ? (pos.shares < 1 ? pos.shares.toFixed(4) : pos.shares.toFixed(2)) : pos.shares.toFixed(1);
+        const entryStr = isCrypto && pos.entry_price >= 1 ? `$${pos.entry_price.toLocaleString('en-US', {minimumFractionDigits: 2})}` : `$${pos.entry_price}`;
+        const currentStr = isCrypto && pos.current_price >= 1 ? `$${pos.current_price.toLocaleString('en-US', {minimumFractionDigits: 2})}` : `$${pos.current_price}`;
 
         return `
           <tr>
-            <td><strong>${escapeHtml(pos.question)}</strong></td>
+            <td>
+              <strong>${escapeHtml(pos.question)}</strong>
+              ${isCrypto ? '<span class="sub-badge" style="margin-left:6px; font-size:0.65rem">CRYPTO</span>' : '<span class="sub-badge" style="margin-left:6px; font-size:0.65rem">PREDICTION</span>'}
+            </td>
             <td><span class="${tagClass}">${pos.outcome}</span></td>
-            <td>${pos.shares.toFixed(1)}</td>
-            <td>$${pos.entry_price.toFixed(2)}</td>
-            <td>$${pos.current_price.toFixed(2)}</td>
+            <td>${sharesStr}</td>
+            <td>${entryStr}</td>
+            <td>${currentStr}</td>
             <td class="${pnlClass}">${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)} (${pnlPct.toFixed(1)}%)</td>
           </tr>
         `;
@@ -92,13 +118,14 @@ async function loadPortfolio() {
     const tradesTbody = document.getElementById("trades-tbody");
     if (data.recent_trades && data.recent_trades.length > 0) {
       tradesTbody.innerHTML = data.recent_trades.map(t => {
+        const isBuy = t.action.includes("BUY") || t.action.includes("LONG") || t.action.includes("YES");
         return `
           <tr>
             <td class="text-muted">${t.timestamp}</td>
-            <td><span class="${t.action.includes('YES') ? 'tag-outcome-yes' : 'tag-outcome-no'}">${t.action}</span></td>
+            <td><span class="${isBuy ? 'tag-outcome-yes' : 'tag-outcome-no'}">${t.action}</span></td>
             <td>${escapeHtml(t.question)}</td>
-            <td>${t.shares.toFixed(1)}</td>
-            <td>$${t.price.toFixed(2)}</td>
+            <td>${t.shares}</td>
+            <td>$${Number(t.price).toLocaleString()}</td>
             <td>$${t.total_amount.toFixed(2)}</td>
             <td class="text-muted" style="font-size:0.75rem">${escapeHtml(t.reasoning)}</td>
           </tr>
@@ -110,7 +137,213 @@ async function loadPortfolio() {
   }
 }
 
-// 2. Fetch & Render Live Markets
+// 2. Fetch & Render Crypto Watchlist & Liquidity
+async function loadCryptoWatchlist(force = false) {
+  try {
+    const res = await fetch("/api/crypto/watchlist");
+    if (!res.ok) return;
+    const data = await res.json();
+
+    const tbody = document.getElementById("crypto-watchlist-tbody");
+    const countBadge = document.getElementById("watchlist-count-badge");
+    if (countBadge) {
+      const activeCount = data.tickers.filter(t => t.is_active).length;
+      countBadge.textContent = `${activeCount}/${data.tickers.length} ACTIVE IN SWARM`;
+    }
+
+    if (!data.tickers || data.tickers.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted">No coins in watchlist. Use the bar above to add coins (e.g. BTC, ETH, SOL)!</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = data.tickers.map(t => {
+      const changeClass = t.change_24h >= 0 ? "highlight-green" : "highlight-red";
+      const changeSign = t.change_24h >= 0 ? "+" : "";
+
+      return `
+        <tr>
+          <td>
+            <div class="coin-cell">
+              <span class="coin-badge">${t.coin}</span>
+              <span style="font-size:0.8rem; color:var(--text-muted)">/USDT</span>
+            </div>
+          </td>
+          <td><strong style="font-family:var(--font-mono)">${t.price_formatted}</strong></td>
+          <td class="${changeClass}" style="font-family:var(--font-mono)"><strong>${changeSign}${t.change_24h}%</strong></td>
+          <td>
+            <div style="font-family:var(--font-mono); font-weight:700; color:var(--accent-cyan)">
+              ${t.liquidity_formatted}
+            </div>
+          </td>
+          <td><span class="tier-badge ${t.tier_badge}">${t.tier}</span></td>
+          <td class="text-muted" style="font-family:var(--font-mono)">${t.spread_bps} bps</td>
+          <td>
+            <div class="switch-wrapper">
+              <input type="checkbox" class="toggle-input" ${t.is_active ? 'checked' : ''} onchange="toggleCoin('${t.coin}')" title="Enable/disable for Swarm scanning" />
+              <span style="font-size:0.7rem; color:var(--text-dim)">${t.is_active ? 'Active' : 'Off'}</span>
+            </div>
+          </td>
+          <td style="text-align:center">
+            <div class="row-actions" style="justify-content:center;">
+              <button class="btn-table-action btn-scan-coin" onclick="triggerManualScan('${t.coin}')" title="Scan this coin with AI Swarm">⚡ Scan</button>
+              <button class="btn-table-action" onclick="openDepthModal('${t.coin}')" title="View Order Book Depth">📊 Depth</button>
+              <button class="btn-table-action btn-del-coin" onclick="removeCoin('${t.coin}')" title="Remove coin">✕</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join("");
+
+  } catch (err) {
+    console.error("Error loading crypto watchlist:", err);
+  }
+}
+
+// 3. Add & Remove Coins
+async function addNewCoin() {
+  const input = document.getElementById("new-coin-input");
+  const raw = input.value.trim();
+  if (!raw) return;
+
+  try {
+    const res = await fetch("/api/crypto/watchlist/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ coin: raw })
+    });
+    const result = await res.json();
+    if (result.success) {
+      input.value = "";
+      await loadCryptoWatchlist(true);
+      await loadPortfolio();
+    } else {
+      alert("Notice: " + result.message);
+    }
+  } catch (err) {
+    alert("Error adding coin: " + err);
+  }
+}
+
+async function quickAdd(coin) {
+  try {
+    const res = await fetch("/api/crypto/watchlist/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ coin: coin })
+    });
+    const result = await res.json();
+    if (result.success) {
+      await loadCryptoWatchlist(true);
+      await loadPortfolio();
+    } else {
+      alert(result.message);
+    }
+  } catch (err) {
+    console.error("Error quick adding:", err);
+  }
+}
+
+async function removeCoin(coin) {
+  if (!confirm(`Remove ${coin} from trading watchlist?`)) return;
+  try {
+    await fetch("/api/crypto/watchlist/remove", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ coin: coin })
+    });
+    await loadCryptoWatchlist(true);
+  } catch (err) {
+    console.error("Error removing coin:", err);
+  }
+}
+
+async function toggleCoin(coin) {
+  try {
+    await fetch("/api/crypto/watchlist/toggle", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ coin: coin })
+    });
+    await loadCryptoWatchlist(true);
+  } catch (err) {
+    console.error("Error toggling coin:", err);
+  }
+}
+
+// 4. Order Book Depth Modal
+async function openDepthModal(coin) {
+  const modal = document.getElementById("depth-modal");
+  const title = document.getElementById("modal-coin-title");
+  const content = document.getElementById("modal-depth-content");
+
+  title.textContent = `📊 ${coin}/USDT Real-Time Order Book Depth (Binance L2)`;
+  content.innerHTML = `<div class="text-center text-muted" style="padding: 25px;">Connecting to Binance Order Book L2 for ${coin}...</div>`;
+  modal.classList.add("open");
+
+  try {
+    const res = await fetch(`/api/crypto/depth/${coin}`);
+    const data = await res.json();
+    if (data.error) {
+      content.innerHTML = `<div class="highlight-red text-center" style="padding:20px;">Error: ${data.error}</div>`;
+      return;
+    }
+
+    const bidPct = Math.round((data.total_bid_usd / (data.total_bid_usd + data.total_ask_usd)) * 100);
+    const askPct = 100 - bidPct;
+
+    content.innerHTML = `
+      <div class="depth-ratio-bar">
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span>Buyers (Bids): <strong>$${data.total_bid_usd.toLocaleString()}</strong> (${bidPct}%)</span>
+          <span class="${data.sentiment_color}"><strong>${data.depth_sentiment}</strong></span>
+          <span>Sellers (Asks): <strong>$${data.total_ask_usd.toLocaleString()}</strong> (${askPct}%)</span>
+        </div>
+        <div style="width:100%; height:8px; background:var(--accent-red); border-radius:4px; overflow:hidden; display:flex;">
+          <div style="width:${bidPct}%; height:100%; background:var(--accent-green);"></div>
+        </div>
+        <div style="text-align:center; margin-top:6px; font-size:0.72rem; color:var(--text-dim)">
+          Order Book Bid/Ask Ratio: <strong>${data.bid_ask_ratio}x</strong> (Above 1.15x indicates bullish absorption)
+        </div>
+      </div>
+
+      <div class="depth-grid">
+        <div>
+          <h4 style="font-size:0.8rem; color:var(--accent-green); margin-bottom:8px;">🟢 TOP BUY ORDERS (BIDS)</h4>
+          <table class="depth-subtable">
+            <thead>
+              <tr><th>Price ($)</th><th>Amount</th><th>Total ($)</th></tr>
+            </thead>
+            <tbody>
+              ${data.top_bids.map(b => `<tr><td style="color:var(--accent-green)">$${b.price.toLocaleString()}</td><td>${b.qty}</td><td>$${b.total.toLocaleString()}</td></tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <h4 style="font-size:0.8rem; color:var(--accent-red); margin-bottom:8px;">🔴 TOP SELL ORDERS (ASKS)</h4>
+          <table class="depth-subtable">
+            <thead>
+              <tr><th>Price ($)</th><th>Amount</th><th>Total ($)</th></tr>
+            </thead>
+            <tbody>
+              ${data.top_asks.map(a => `<tr><td style="color:var(--accent-red)">$${a.price.toLocaleString()}</td><td>${a.qty}</td><td>$${a.total.toLocaleString()}</td></tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+  } catch (err) {
+    content.innerHTML = `<div class="highlight-red text-center" style="padding:20px;">Network error loading depth: ${err}</div>`;
+  }
+}
+
+function closeDepthModal() {
+  const modal = document.getElementById("depth-modal");
+  modal.classList.remove("open");
+}
+
+// 5. Fetch & Render Prediction Markets Feed
 async function loadMarkets() {
   const feed = document.getElementById("market-feed");
   try {
@@ -146,17 +379,23 @@ async function loadMarkets() {
   }
 }
 
-// 3. Trigger Swarm Scan Manual Run
-async function triggerManualScan() {
+// 6. Trigger Swarm Scan Manual Run (supports target coin or global)
+async function triggerManualScan(coin = null) {
   const btn = document.getElementById("btn-scan");
   const origText = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = `<span class="btn-icon">⏳</span> SWARM REASONING...`;
+  btn.innerHTML = `<span class="btn-icon">⏳</span> REASONING ON ${coin || 'SWARM'}...`;
 
   try {
-    const res = await fetch("/api/scan", { method: "POST" });
+    const body = coin ? JSON.stringify({ coin: coin }) : null;
+    const res = await fetch("/api/scan", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: body
+    });
     const data = await res.json();
     await loadPortfolio();
+    await loadCryptoWatchlist(true);
   } catch (err) {
     alert("Error executing swarm scan: " + err);
   } finally {
@@ -165,7 +404,7 @@ async function triggerManualScan() {
   }
 }
 
-// 4. Toggle Auto-Scan Mode
+// 7. Toggle Auto-Scan Mode
 async function toggleAutoMode() {
   try {
     const res = await fetch("/api/auto/toggle", { method: "POST" });
@@ -200,7 +439,7 @@ function updateAutoButtonState() {
   }
 }
 
-// 5. Reset Portfolio
+// 8. Reset Portfolio
 async function resetPortfolio() {
   if (!confirm("Are you sure you want to reset mock balance back to $1,000.00?")) return;
   try {
