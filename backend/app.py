@@ -305,33 +305,63 @@ def execute_planned_trade(req: ExecutePlannedTradeRequest):
         "portfolio": portfolio.get_summary()
     }
 
+auto_execute_mode = "PROPOSAL" # "PROPOSAL" or "AUTONOMOUS"
+
+class AutoToggleRequest(BaseModel):
+    execution_mode: Optional[str] = None
+
 @app.get("/api/auto/status")
 def get_auto_status():
-    global is_auto_running
-    return {"is_auto_running": is_auto_running, "interval_seconds": AUTO_SCAN_INTERVAL_SECONDS}
+    global is_auto_running, auto_execute_mode
+    return {
+        "is_auto_running": is_auto_running,
+        "interval_seconds": AUTO_SCAN_INTERVAL_SECONDS,
+        "execution_mode": auto_execute_mode
+    }
 
 @app.post("/api/auto/toggle")
-def toggle_auto(background_tasks: BackgroundTasks):
-    global is_auto_running
+def toggle_auto(req: Optional[AutoToggleRequest] = None):
+    global is_auto_running, auto_execute_mode
+    if req and req.execution_mode:
+        auto_execute_mode = req.execution_mode.upper()
     is_auto_running = not is_auto_running
+    mode_text = "TỰ ĐỘNG KHỚP LỆNH QUA ĐÊM (Autonomous)" if auto_execute_mode == "AUTONOMOUS" else "TẠO ĐỀ XUẤT CHỜ DUYỆT (Proposal)"
     portfolio.log_thought(
         "System",
         "INFO",
-        f"Autonomous Swarm Loop {'ENABLED (Scanning active coins & markets every 30s)' if is_auto_running else 'PAUSED (Manual Mode)'}."
+        f"Autonomous Swarm Loop {'ĐÃ BẬT [' + mode_text + ']' if is_auto_running else 'TẠM DỪNG (Manual Mode)'}."
     )
-    return {"is_auto_running": is_auto_running}
+    return {"is_auto_running": is_auto_running, "execution_mode": auto_execute_mode}
 
-# Background auto-scan worker
+# Background auto-scan & position risk manager worker
 async def background_scanner():
-    global is_auto_running
+    global is_auto_running, auto_execute_mode
+    loop_count = 0
     while True:
-        await asyncio.sleep(AUTO_SCAN_INTERVAL_SECONDS)
-        if is_auto_running:
-            try:
+        await asyncio.sleep(5) # Fast 5-second risk heartbeat
+        loop_count += 1
+        try:
+            # 1. ALWAYS monitor live prices for open positions every 5s to trigger TP / SL / Liquidation
+            open_positions = portfolio.state.get("open_positions", {})
+            if open_positions:
+                crypto_prices = {}
+                for pos in open_positions.values():
+                    if pos.get("asset_type") == "crypto":
+                        sym = pos.get("symbol") or pos["market_id"].replace("crypto_", "").replace("USDT", "")
+                        t = crypto_service.fetch_coin_ticker(sym)
+                        if t:
+                            crypto_prices[sym] = t["price"]
+                markets = fetch_prediction_markets(limit=10)
+                markets_map = {m["id"]: m for m in markets}
+                portfolio.update_position_prices(markets_map, crypto_prices)
+
+            # 2. Run AI Swarm Scan every 30s (6 x 5s loops) if auto-running is ON
+            if is_auto_running and loop_count % 6 == 0:
                 markets = fetch_prediction_markets(limit=20)
-                swarm.run_cycle(markets=markets)
-            except Exception as e:
-                portfolio.log_thought("System", "WARN", f"Auto-scan background iteration error: {e}")
+                as_prop = (auto_execute_mode != "AUTONOMOUS")
+                swarm.run_cycle(markets=markets, as_proposal=as_prop)
+        except Exception as e:
+            portfolio.log_thought("System", "WARN", f"Auto-scan background iteration error: {e}")
 
 @app.on_event("startup")
 async def startup_event():

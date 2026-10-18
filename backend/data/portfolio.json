@@ -1,161 +1,152 @@
 {
-  "cash_balance": 711.62,
-  "realized_pnl": -5.32,
-  "open_positions": {
-    "crypto_BNBUSDT_LONG_1792283359": {
-      "id": "crypto_BNBUSDT_LONG_1792283359",
-      "market_id": "crypto_BNBUSDT",
-      "symbol": "BNB",
-      "question": "BNB/USDT (LONG)",
-      "asset_type": "crypto",
-      "outcome": "LONG",
-      "leverage": 3,
-      "shares": 0.133779,
-      "entry_price": 717.6,
-      "current_price": 719.45,
-      "margin": 32.0,
-      "cost_basis": 32.0,
-      "position_size": 96.0,
-      "stop_loss": 698.7106,
-      "take_profit": 741.4888,
-      "liquidation_price": 490.36,
-      "opened_at": "2026-10-18 07:29:19"
-    },
-    "crypto_BTCUSDT_SHORT_1792283361": {
-      "id": "crypto_BTCUSDT_SHORT_1792283361",
+  "cash_balance": 992.19,
+  "realized_pnl": -7.81,
+  "open_positions": {},
+  "trades_history": [
+    {
+      "timestamp": "09:00:22",
+      "action": "CLOSE_LONG",
       "market_id": "crypto_BTCUSDT",
       "symbol": "BTC",
-      "question": "BTC/USDT (SHORT)",
       "asset_type": "crypto",
-      "outcome": "SHORT",
-      "leverage": 3,
-      "shares": 0.001337,
-      "entry_price": 81454.67,
-      "current_price": 81682.34,
-      "margin": 36.31,
-      "cost_basis": 36.31,
-      "position_size": 108.93,
-      "stop_loss": 82851.4176,
-      "take_profit": 77977.8048,
-      "liquidation_price": 107248.6488,
-      "opened_at": "2026-10-18 07:29:21"
+      "question": "BTC/USDT (LONG)",
+      "shares": 0.003033,
+      "price": 81658.44,
+      "entry_price": 81889.68,
+      "exit_price": 81658.44,
+      "margin": 49.68,
+      "total_amount": 49.68,
+      "pnl": -0.7,
+      "pnl_percent": -1.41,
+      "reason": "MANUAL",
+      "reasoning": "Đóng vị thế (MANUAL): PnL -0.70 USD (-1.4%)"
     },
-    "crypto_ETHUSDT_SHORT_1792285140": {
-      "id": "crypto_ETHUSDT_SHORT_1792285140",
-      "market_id": "crypto_ETHUSDT",
-      "symbol": "ETH",
-      "question": "ETH/USDT (SHORT)",
+    {
+      "timestamp": "09:00:21",
+      "action": "CLOSE_LONG",
+      "market_id": "crypto_DOGEUSDT",
+      "symbol": "DOGE",
       "asset_type": "crypto",
-      "outcome": "SHORT",
-      "leverage": 3,
-      "shares": 0.034656,
-      "entry_price": 2405.65,
-      "current_price": 2408.68,
-      "margin": 27.79,
-      "cost_basis": 27.79,
-      "position_size": 83.37,
-      "stop_loss": 2455.9968,
-      "take_profit": 2311.5264,
-      "liquidation_price": 3167.4392,
-      "opened_at": "2026-10-18 07:59:00"
+      "question": "DOGE/USDT (LONG)",
+      "shares": 610.96,
+      "price": 0.07936,
+      "entry_price": 0.07971,
+      "exit_price": 0.07936,
+      "margin": 24.35,
+      "total_amount": 24.35,
+      "pnl": -0.21,
+      "pnl_percent": -0.88,
+      "reason": "MANUAL",
+      "reasoning": "Đóng vị thế (MANUAL): PnL -0.21 USD (-0.9%)"
     },
-    "crypto_SOLUSDT_SHORT_1792285227": {
-      "id": "crypto_SOLUSDT_SHORT_1792285227",
+    {
+      "timestamp": "09:00:20",
+      "action": "CLOSE_LONG",
+      "market_id": "crypto_BNBUSDT",
+      "symbol": "BNB",
+      "asset_type": "crypto",
+      "question": "BNB/USDT (LONG)",
+      "shares": 0.344323,
+      "price": 719.38,
+      "entry_price": 721.56,
+      "exit_price": 719.38,
+      "margin": 49.69,
+      "total_amount": 49.69,
+      "pnl": -0.75,
+      "pnl_percent": -1.51,
+      "reason": "MANUAL",
+      "reasoning": "Đóng vị thế (MANUAL): PnL -0.75 USD (-1.5%)"
+    },
+    {
+      "timestamp": "09:00:18",
+      "action": "CLOSE_LONG",
+      "market_id": "crypto_DOGEUSDT",
+      "symbol": "DOGE",
+      "asset_type": "crypto",
+      "question": "DOGE/USDT (LONG)",
+      "shares": 1365.62,
+      "price": 0.07937,
+      "entry_price": 0.0797,
+      "exit_price": 0.07937,
+      "margin": 36.28,
+      "total_amount": 36.28,
+      "pnl": -0.45,
+      "pnl_percent": -1.24,
+      "reason": "MANUAL",
+      "reasoning": "Đóng vị thế (MANUAL): PnL -0.45 USD (-1.2%)"
+    },
+    {
+      "timestamp": "09:00:17",
+      "action": "CLOSE_SHORT",
       "market_id": "crypto_SOLUSDT",
       "symbol": "SOL",
+      "asset_type": "crypto",
       "question": "SOL/USDT (SHORT)",
-      "asset_type": "crypto",
-      "outcome": "SHORT",
-      "leverage": 5,
       "shares": 1.303549,
+      "price": 103.6,
       "entry_price": 103.41,
-      "current_price": 103.73,
+      "exit_price": 103.6,
       "margin": 26.96,
-      "cost_basis": 26.96,
-      "position_size": 134.8,
-      "stop_loss": 105.4782,
-      "take_profit": 99.2736,
-      "liquidation_price": 123.0579,
-      "opened_at": "2026-10-18 08:00:27"
+      "total_amount": 26.96,
+      "pnl": -0.25,
+      "pnl_percent": -0.92,
+      "reason": "MANUAL",
+      "reasoning": "Đóng vị thế (MANUAL): PnL -0.25 USD (-0.9%)"
     },
-    "crypto_DOGEUSDT_LONG_1792287748": {
-      "id": "crypto_DOGEUSDT_LONG_1792287748",
-      "market_id": "crypto_DOGEUSDT",
-      "symbol": "DOGE",
-      "question": "DOGE/USDT (LONG)",
+    {
+      "timestamp": "09:00:15",
+      "action": "CLOSE_SHORT",
+      "market_id": "crypto_ETHUSDT",
+      "symbol": "ETH",
       "asset_type": "crypto",
-      "outcome": "LONG",
-      "leverage": 3,
-      "shares": 1365.62,
-      "entry_price": 0.0797,
-      "current_price": 0.07941,
-      "margin": 36.28,
-      "cost_basis": 36.28,
-      "position_size": 108.84,
-      "stop_loss": 0.077871,
-      "take_profit": 0.082638,
-      "liquidation_price": 0.054462,
-      "opened_at": "2026-10-18 08:42:28"
+      "question": "ETH/USDT (SHORT)",
+      "shares": 0.034656,
+      "price": 2408.67,
+      "entry_price": 2405.65,
+      "exit_price": 2408.67,
+      "margin": 27.79,
+      "total_amount": 27.79,
+      "pnl": -0.1,
+      "pnl_percent": -0.38,
+      "reason": "MANUAL",
+      "reasoning": "Đóng vị thế (MANUAL): PnL -0.10 USD (-0.4%)"
     },
-    "crypto_BNBUSDT_LONG_1792287750": {
-      "id": "crypto_BNBUSDT_LONG_1792287750",
-      "market_id": "crypto_BNBUSDT",
-      "symbol": "BNB",
-      "question": "BNB/USDT (LONG)",
-      "asset_type": "crypto",
-      "outcome": "LONG",
-      "leverage": 5,
-      "shares": 0.344323,
-      "entry_price": 721.56,
-      "current_price": 719.45,
-      "margin": 49.69,
-      "cost_basis": 49.69,
-      "position_size": 248.45,
-      "stop_loss": 705.992,
-      "take_profit": 749.216,
-      "liquidation_price": 584.4636,
-      "opened_at": "2026-10-18 08:42:30"
-    },
-    "crypto_DOGEUSDT_LONG_1792287753": {
-      "id": "crypto_DOGEUSDT_LONG_1792287753",
-      "market_id": "crypto_DOGEUSDT",
-      "symbol": "DOGE",
-      "question": "DOGE/USDT (LONG)",
-      "asset_type": "crypto",
-      "outcome": "LONG",
-      "leverage": 2,
-      "shares": 610.96,
-      "entry_price": 0.07971,
-      "current_price": 0.07941,
-      "margin": 24.35,
-      "cost_basis": 24.35,
-      "position_size": 48.7,
-      "stop_loss": 0.077959,
-      "take_profit": 0.082732,
-      "liquidation_price": 0.041848,
-      "opened_at": "2026-10-18 08:42:33"
-    },
-    "crypto_BTCUSDT_LONG_1792287755": {
-      "id": "crypto_BTCUSDT_LONG_1792287755",
+    {
+      "timestamp": "09:00:14",
+      "action": "CLOSE_SHORT",
       "market_id": "crypto_BTCUSDT",
       "symbol": "BTC",
-      "question": "BTC/USDT (LONG)",
       "asset_type": "crypto",
-      "outcome": "LONG",
-      "leverage": 5,
-      "shares": 0.003033,
-      "entry_price": 81889.68,
-      "current_price": 81682.34,
-      "margin": 49.68,
-      "cost_basis": 49.68,
-      "position_size": 248.4,
-      "stop_loss": 80161.6284,
-      "take_profit": 85069.4832,
-      "liquidation_price": 66330.6408,
-      "opened_at": "2026-10-18 08:42:35"
-    }
-  },
-  "trades_history": [
+      "question": "BTC/USDT (SHORT)",
+      "shares": 0.001337,
+      "price": 81665.28,
+      "entry_price": 81454.67,
+      "exit_price": 81665.28,
+      "margin": 36.31,
+      "total_amount": 36.31,
+      "pnl": -0.28,
+      "pnl_percent": -0.78,
+      "reason": "MANUAL",
+      "reasoning": "Đóng vị thế (MANUAL): PnL -0.28 USD (-0.8%)"
+    },
+    {
+      "timestamp": "09:00:12",
+      "action": "CLOSE_LONG",
+      "market_id": "crypto_BNBUSDT",
+      "symbol": "BNB",
+      "asset_type": "crypto",
+      "question": "BNB/USDT (LONG)",
+      "shares": 0.133779,
+      "price": 719.46,
+      "entry_price": 717.6,
+      "exit_price": 719.46,
+      "margin": 32.0,
+      "total_amount": 32.0,
+      "pnl": 0.25,
+      "pnl_percent": 0.78,
+      "reason": "MANUAL",
+      "reasoning": "Đóng vị thế (MANUAL): PnL +0.25 USD (+0.8%)"
+    },
     {
       "timestamp": "08:42:35",
       "action": "OPEN_LONG_5X",
@@ -491,6 +482,66 @@
     }
   ],
   "thought_logs": [
+    {
+      "timestamp": "09:02:51",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "09:00:22",
+      "agent": "Portfolio",
+      "level": "WARN",
+      "message": "[ĐÓNG LỆNH THỦ CÔNG] BTC (LONG 5x): Đóng tại $81,658.4400. PnL: -0.70 USD (-1.4%), Hoàn vốn: $48.98"
+    },
+    {
+      "timestamp": "09:00:21",
+      "agent": "Portfolio",
+      "level": "WARN",
+      "message": "[ĐÓNG LỆNH THỦ CÔNG] DOGE (LONG 2x): Đóng tại $0.0794. PnL: -0.21 USD (-0.9%), Hoàn vốn: $24.14"
+    },
+    {
+      "timestamp": "09:00:20",
+      "agent": "Portfolio",
+      "level": "WARN",
+      "message": "[ĐÓNG LỆNH THỦ CÔNG] BNB (LONG 5x): Đóng tại $719.3800. PnL: -0.75 USD (-1.5%), Hoàn vốn: $48.94"
+    },
+    {
+      "timestamp": "09:00:18",
+      "agent": "Portfolio",
+      "level": "WARN",
+      "message": "[ĐÓNG LỆNH THỦ CÔNG] DOGE (LONG 3x): Đóng tại $0.0794. PnL: -0.45 USD (-1.2%), Hoàn vốn: $35.83"
+    },
+    {
+      "timestamp": "09:00:17",
+      "agent": "Portfolio",
+      "level": "WARN",
+      "message": "[ĐÓNG LỆNH THỦ CÔNG] SOL (SHORT 5x): Đóng tại $103.6000. PnL: -0.25 USD (-0.9%), Hoàn vốn: $26.71"
+    },
+    {
+      "timestamp": "09:00:15",
+      "agent": "Portfolio",
+      "level": "WARN",
+      "message": "[ĐÓNG LỆNH THỦ CÔNG] ETH (SHORT 3x): Đóng tại $2,408.6700. PnL: -0.10 USD (-0.4%), Hoàn vốn: $27.69"
+    },
+    {
+      "timestamp": "09:00:14",
+      "agent": "Portfolio",
+      "level": "WARN",
+      "message": "[ĐÓNG LỆNH THỦ CÔNG] BTC (SHORT 3x): Đóng tại $81,665.2800. PnL: -0.28 USD (-0.8%), Hoàn vốn: $36.03"
+    },
+    {
+      "timestamp": "09:00:12",
+      "agent": "Portfolio",
+      "level": "SUCCESS",
+      "message": "[ĐÓNG LỆNH THỦ CÔNG] BNB (LONG 3x): Đóng tại $719.4600. PnL: +0.25 USD (+0.8%), Hoàn vốn: $32.25"
+    },
+    {
+      "timestamp": "09:00:10",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Đã xóa sạch hàng đợi đề xuất giao dịch."
+    },
     {
       "timestamp": "08:59:14",
       "agent": "Spotter",
@@ -1030,67 +1081,7 @@
       "agent": "Researcher",
       "level": "INFO",
       "message": "Đã thu nạp 3 tin tức mới cho BNB: [TradingView] Here’s why the crypto market is going down today (Oct. ... | [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:..."
-    },
-    {
-      "timestamp": "08:43:17",
-      "agent": "Spotter",
-      "level": "INFO",
-      "message": "Đã khóa mục tiêu: BNB/USDT | Giá: $721.300 | Thanh khoản 24h: $53.1M USDT (DEEP TIER (Thanh Khoản Sâu)) | Sổ lệnh: LỰC MUA ÁP ĐẢO (Bò Gom Hàng) (Tỷ số 2.01)"
-    },
-    {
-      "timestamp": "08:42:45",
-      "agent": "Kelly Risk",
-      "level": "SUCCESS",
-      "message": "ĐÃ TẠO ĐỀ XUẤT CHỜ DUYỆT: LONG 5x $49.66 của ETH/USDT @ $2,416.40 (SL: $2,368.0720 | TP: $2,513.0560)"
-    },
-    {
-      "timestamp": "08:42:45",
-      "agent": "Kelly Risk",
-      "level": "INFO",
-      "message": "Quản trị Rủi ro (ETH): Đòn bẩy 5x | Ký quỹ: $49.66 | Cắt lỗ (SL): $2,368.0720 (-2.0%) | Chốt lời (TP): $2,513.0560 (+4.0%) | Giá thanh lý: $1,957.2840"
-    },
-    {
-      "timestamp": "08:42:45",
-      "agent": "The Pricer",
-      "level": "INFO",
-      "message": "Định giá xác suất (ETH): Tín hiệu=LONG (P_fair=62% | Lợi thế=+12.2%). Tỷ số sổ lệnh=1.93x, Đà 24h=-0.1%"
-    },
-    {
-      "timestamp": "08:42:45",
-      "agent": "Researcher",
-      "level": "INFO",
-      "message": "Đã thu nạp 3 tin tức mới cho ETH: [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:... | [TradingView] Here’s why the crypto market is going down today (Oct. ..."
-    },
-    {
-      "timestamp": "08:42:44",
-      "agent": "Spotter",
-      "level": "INFO",
-      "message": "Đã khóa mục tiêu: ETH/USDT | Giá: $2,416.40 | Thanh khoản 24h: $319.9M USDT (MEGA TIER (Thanh Khoản Khổng Lồ)) | Sổ lệnh: LỰC MUA ÁP ĐẢO (Bò Gom Hàng) (Tỷ số 1.93)"
-    },
-    {
-      "timestamp": "08:42:35",
-      "agent": "User",
-      "level": "SUCCESS",
-      "message": "ĐÃ PHÊ DUYỆT ĐỀ XUẤT: LONG 5x BTC/USDT @ $81,889.6800"
-    },
-    {
-      "timestamp": "08:42:33",
-      "agent": "User",
-      "level": "SUCCESS",
-      "message": "ĐÃ PHÊ DUYỆT ĐỀ XUẤT: LONG 2x DOGE/USDT @ $0.0797"
-    },
-    {
-      "timestamp": "08:42:30",
-      "agent": "User",
-      "level": "SUCCESS",
-      "message": "ĐÃ PHÊ DUYỆT ĐỀ XUẤT: LONG 5x BNB/USDT @ $721.5600"
-    },
-    {
-      "timestamp": "08:42:28",
-      "agent": "User",
-      "level": "SUCCESS",
-      "message": "ĐÃ PHÊ DUYỆT ĐỀ XUẤT: LONG 3x DOGE/USDT @ $0.0797"
     }
   ],
-  "last_updated": 1792288754.2641578
+  "last_updated": 1792288971.0379677
 }
