@@ -151,6 +151,19 @@ class PortfolioManager:
         if stake_amount <= 0 or stake_amount > self.state["cash_balance"] or price <= 0:
             return False
 
+        clean_symbol = (symbol or question.split("/")[0].replace("crypto_", "").strip()).upper()
+
+        # Hard Risk Guard: Prevent duplicate positions for the same crypto symbol
+        if asset_type == "crypto":
+            for existing_pos in self.state["open_positions"].values():
+                if existing_pos.get("symbol", "").upper() == clean_symbol:
+                    self.log_thought(
+                        "Risk Guard",
+                        "WARN",
+                        f"Từ chối mở lệnh: Đồng {clean_symbol} hiện đã có vị thế mở ({existing_pos.get('outcome')} {existing_pos.get('leverage')}x). Chặn mở trùng vị thế để bảo toàn vốn."
+                    )
+                    return False
+
         leverage = max(1, min(10, leverage))
         margin = round(stake_amount, 2)
         position_size = round(margin * leverage, 2)

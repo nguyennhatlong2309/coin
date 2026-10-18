@@ -49,10 +49,68 @@ class SwarmEngine:
         if not active_coins:
             active_coins = watchlist
 
+        # Identify coins that already have active open positions
+        open_positions = self.portfolio.state.get("open_positions", {})
+        open_symbols = {
+            pos.get("symbol", "").upper()
+            for pos in open_positions.values()
+            if pos.get("symbol")
+        }
+
+        # Identify coins that already have pending proposals
+        pending_symbols = set()
+        if self.proposal_manager:
+            pending_symbols = {
+                p.get("coin", "").upper()
+                for p in self.proposal_manager.get_pending()
+                if p.get("coin")
+            }
+
+        occupied_symbols = open_symbols | pending_symbols
+
         if target_coin and target_coin.upper() in [c.upper() for c in watchlist]:
             selected_coin = target_coin.upper()
+            # If user explicitly scanned a coin that is already active
+            if selected_coin in open_symbols:
+                existing_pos = next(
+                    (p for p in open_positions.values() if p.get("symbol", "").upper() == selected_coin),
+                    None
+                )
+                side_info = f"{existing_pos['outcome']} {existing_pos.get('leverage', 1)}x" if existing_pos else "ĐANG MỞ"
+                self.portfolio.log_thought(
+                    "Spotter",
+                    "WARN",
+                    f"Từ chối quét {selected_coin}: Đồng coin này hiện đã có vị thế mở ({side_info}). Tuân thủ nguyên tắc Quản trị rủi ro Một Vị Thế (Single Position Policy) để chống dồn rủi ro."
+                )
+                return {
+                    "status": "position_already_open",
+                    "coin": selected_coin,
+                    "existing_position": existing_pos
+                }
+            if selected_coin in pending_symbols:
+                self.portfolio.log_thought(
+                    "Spotter",
+                    "WARN",
+                    f"Đồng {selected_coin} hiện đã có một đề xuất giao dịch nằm trong danh sách chờ duyệt. Vui lòng phê duyệt hoặc từ chối đề xuất cũ trước khi quét mới."
+                )
+                return {
+                    "status": "pending_proposal_exists",
+                    "coin": selected_coin
+                }
         else:
-            selected_coin = random.choice(active_coins)
+            # Auto-scan mode: Prioritize coins that DO NOT have an open position or pending proposal
+            available_coins = [c for c in active_coins if c.upper() not in occupied_symbols]
+            if not available_coins:
+                self.portfolio.log_thought(
+                    "Spotter",
+                    "INFO",
+                    f"Tất cả {len(active_coins)} đồng coin trong danh mục đều đã có vị thế mở ({len(open_symbols)}) hoặc đề xuất chờ duyệt ({len(pending_symbols)}). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+                )
+                return {
+                    "status": "all_coins_occupied",
+                    "occupied_symbols": list(occupied_symbols)
+                }
+            selected_coin = random.choice(available_coins)
 
         ticker = self.crypto_service.fetch_coin_ticker(selected_coin)
         if not ticker:

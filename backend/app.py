@@ -189,7 +189,15 @@ def approve_proposal(req: ProposalActionRequest):
     if prop.get("status") != "PENDING":
         return {"success": False, "message": "Đề xuất này đã được xử lý trước đó."}
 
-    coin = prop["coin"]
+    coin = prop["coin"].upper()
+    # Check if coin already has an active open position
+    for existing_pos in portfolio.state.get("open_positions", {}).values():
+        if existing_pos.get("symbol", "").upper() == coin:
+            return {
+                "success": False,
+                "message": f"Không thể duyệt: Đồng {coin} hiện đã có vị thế mở ({existing_pos.get('outcome')} {existing_pos.get('leverage')}x @ ${existing_pos.get('entry_price'):,.4f}). Hãy đóng vị thế cũ trước khi mở thêm!"
+            }
+
     ticker = crypto_service.fetch_coin_ticker(coin)
     exec_price = ticker["price"] if ticker else prop["price"]
 
@@ -254,6 +262,15 @@ def validate_trade_plan(req: PlanValidationRequest):
 @app.post("/api/ai/execute-planned-trade")
 def execute_planned_trade(req: ExecutePlannedTradeRequest):
     clean_coin = req.coin.upper().replace("USDT", "").strip()
+
+    # Check if coin already has an active open position
+    for existing_pos in portfolio.state.get("open_positions", {}).values():
+        if existing_pos.get("symbol", "").upper() == clean_coin:
+            return {
+                "success": False,
+                "message": f"Cảnh báo rủi ro: Đồng {clean_coin} hiện đang có vị thế mở ({existing_pos.get('outcome')} {existing_pos.get('leverage')}x). Không thể mở thêm vị thế trùng lặp!"
+            }
+
     ticker = crypto_service.fetch_coin_ticker(clean_coin)
     exec_price = req.price if req.price > 0 else (ticker["price"] if ticker else 0.0)
 
