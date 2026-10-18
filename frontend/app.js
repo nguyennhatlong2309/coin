@@ -1771,17 +1771,26 @@ window.tweakProposalInPlanner = tweakProposalInPlanner;
 window.scrollToProposals = scrollToProposals;
 window.scrollToTrades = scrollToTrades;
 
+let currentAutoMode = "AUTONOMOUS";
+let currentAutoTimeframe = "4h";
+
 // 8. Toggle Auto-Scan Mode
 async function toggleAutoMode() {
   try {
-    const res = await fetch("/api/auto/toggle", { method: "POST" });
+    const res = await fetch("/api/auto/toggle", { 
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ execution_mode: "AUTONOMOUS", timeframe: "4h" })
+    });
     const data = await res.json();
     isAutoRunning = data.is_auto_running;
+    currentAutoMode = data.execution_mode || "AUTONOMOUS";
+    currentAutoTimeframe = data.timeframe || "4h";
     updateAutoButtonState();
     showNotification({
       type: isAutoRunning ? "success" : "info",
-      title: isAutoRunning ? "Vòng Lặp Tự Động: ĐÃ BẬT" : "Vòng Lặp Tự Động: ĐÃ TẮT",
-      message: isAutoRunning ? "AI Swarm đang quét và thẩm định tự động định kỳ 30 giây." : "Đã tạm dừng chế độ giao dịch tự động.",
+      title: isAutoRunning ? "Tự Động Khớp Lệnh 4H: ĐÃ BẬT" : "Vòng Tự Động: ĐÃ TẮT",
+      message: isAutoRunning ? "AI Swarm quét 6 coin trên khung nến 4 Tiếng (4H) và tự động vào lệnh trực tiếp qua đêm." : "Đã tạm dừng chế độ giao dịch tự động.",
       duration: 5000
     });
   } catch (err) {
@@ -1800,6 +1809,8 @@ async function checkAutoStatus() {
     if (res.ok) {
       const data = await res.json();
       isAutoRunning = data.is_auto_running;
+      currentAutoMode = data.execution_mode || "AUTONOMOUS";
+      currentAutoTimeframe = data.timeframe || "4h";
       updateAutoButtonState();
     }
   } catch (e) {}
@@ -1808,9 +1819,10 @@ async function checkAutoStatus() {
 function updateAutoButtonState() {
   const dot = document.getElementById("auto-dot");
   const text = document.getElementById("auto-text");
+  if (!dot || !text) return;
   if (isAutoRunning) {
     dot.className = "status-dot active";
-    text.textContent = "VÒNG TỰ ĐỘNG: BẬT (30s)";
+    text.textContent = `TỰ ĐỘNG KHỚP LỆNH: BẬT (${currentAutoTimeframe.toUpperCase()})`;
   } else {
     dot.className = "status-dot";
     text.textContent = "VÒNG TỰ ĐỘNG: TẮT";

@@ -88,6 +88,7 @@ def get_portfolio():
 
 @app.post("/api/portfolio/reset")
 def reset_portfolio():
+    proposal_manager.clear_all()
     return portfolio.reset()
 
 @app.post("/api/portfolio/close")
@@ -305,37 +306,47 @@ def execute_planned_trade(req: ExecutePlannedTradeRequest):
         "portfolio": portfolio.get_summary()
     }
 
-auto_execute_mode = "PROPOSAL" # "PROPOSAL" or "AUTONOMOUS"
+auto_execute_mode = "AUTONOMOUS" # Direct autonomous trade execution (no manual wait)
+auto_timeframe = "4h" # 4-Hour swing timeframe for clean institutional trend reading
 
 class AutoToggleRequest(BaseModel):
     execution_mode: Optional[str] = None
+    timeframe: Optional[str] = "4h"
 
 @app.get("/api/auto/status")
 def get_auto_status():
-    global is_auto_running, auto_execute_mode
+    global is_auto_running, auto_execute_mode, auto_timeframe
     return {
         "is_auto_running": is_auto_running,
         "interval_seconds": AUTO_SCAN_INTERVAL_SECONDS,
-        "execution_mode": auto_execute_mode
+        "execution_mode": auto_execute_mode,
+        "timeframe": auto_timeframe
     }
 
 @app.post("/api/auto/toggle")
 def toggle_auto(req: Optional[AutoToggleRequest] = None):
-    global is_auto_running, auto_execute_mode
-    if req and req.execution_mode:
-        auto_execute_mode = req.execution_mode.upper()
+    global is_auto_running, auto_execute_mode, auto_timeframe
+    if req:
+        if req.execution_mode:
+            auto_execute_mode = req.execution_mode.upper()
+        if req.timeframe:
+            auto_timeframe = req.timeframe.lower()
     is_auto_running = not is_auto_running
-    mode_text = "TỰ ĐỘNG KHỚP LỆNH QUA ĐÊM (Autonomous)" if auto_execute_mode == "AUTONOMOUS" else "TẠO ĐỀ XUẤT CHỜ DUYỆT (Proposal)"
+    mode_text = f"TỰ ĐỘNG KHỚP LỆNH TRỰC TIẾP ({auto_timeframe.upper()})" if auto_execute_mode == "AUTONOMOUS" else f"TẠO ĐỀ XUẤT ({auto_timeframe.upper()})"
     portfolio.log_thought(
         "System",
         "INFO",
-        f"Autonomous Swarm Loop {'ĐÃ BẬT [' + mode_text + ']' if is_auto_running else 'TẠM DỪNG (Manual Mode)'}."
+        f"Autonomous Swarm Loop {'ĐÃ BẬT [' + mode_text + ' - Quét 6 coin định kỳ 30s]' if is_auto_running else 'TẠM DỪNG (Manual Mode)'}."
     )
-    return {"is_auto_running": is_auto_running, "execution_mode": auto_execute_mode}
+    return {
+        "is_auto_running": is_auto_running,
+        "execution_mode": auto_execute_mode,
+        "timeframe": auto_timeframe
+    }
 
 # Background auto-scan & position risk manager worker
 async def background_scanner():
-    global is_auto_running, auto_execute_mode
+    global is_auto_running, auto_execute_mode, auto_timeframe
     loop_count = 0
     while True:
         await asyncio.sleep(5) # Fast 5-second risk heartbeat
@@ -359,7 +370,7 @@ async def background_scanner():
             if is_auto_running and loop_count % 6 == 0:
                 markets = fetch_prediction_markets(limit=20)
                 as_prop = (auto_execute_mode != "AUTONOMOUS")
-                swarm.run_cycle(markets=markets, as_proposal=as_prop)
+                swarm.run_cycle(markets=markets, timeframe=auto_timeframe, as_proposal=as_prop)
         except Exception as e:
             portfolio.log_thought("System", "WARN", f"Auto-scan background iteration error: {e}")
 
