@@ -66,18 +66,22 @@ class ExecutePlannedTradeRequest(BaseModel):
 
 @app.get("/api/portfolio")
 def get_portfolio():
-    # Sync current prices for prediction markets
+    # Sync current prices for prediction markets (cached 30s)
     markets = fetch_prediction_markets(limit=25)
     markets_map = {m["id"]: m for m in markets}
 
-    # Sync live prices for any open crypto positions
+    # Sync live prices for any open crypto positions using batch cache
     crypto_prices: Dict[str, float] = {}
-    for pos in portfolio.state["open_positions"].values():
-        if pos.get("asset_type") == "crypto":
-            sym = pos["market_id"].replace("crypto_", "")
-            t = crypto_service.fetch_coin_ticker(sym)
-            if t:
-                crypto_prices[sym] = t["price"]
+    open_positions = portfolio.state.get("open_positions", {})
+    if open_positions:
+        # Pre-fetch or ensure watchlist cache is populated
+        crypto_service.fetch_all_watchlist()
+        for pos in open_positions.values():
+            if pos.get("asset_type") == "crypto":
+                sym = pos.get("symbol") or pos["market_id"].replace("crypto_", "")
+                t = crypto_service.fetch_coin_ticker(sym)
+                if t:
+                    crypto_prices[sym] = t["price"]
 
     portfolio.update_position_prices(markets_map, crypto_prices)
     return portfolio.get_summary()

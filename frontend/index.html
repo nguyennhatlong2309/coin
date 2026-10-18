@@ -35,6 +35,9 @@
         <span id="auto-dot" class="status-dot"></span>
         <span id="auto-text">VÒNG TỰ ĐỘNG: TẮT</span>
       </button>
+      <button id="btn-notifications" class="btn btn-secondary notify-toggle-btn" onclick="toggleNotificationDrawer()" title="Xem trung tâm thông báo hệ thống">
+        <span class="btn-icon">🔔</span> THÔNG BÁO <span id="notify-badge" class="notify-badge">0</span>
+      </button>
       <button id="btn-reset" class="btn btn-danger" onclick="resetPortfolio()">
         🔄 ĐẶT LẠI VỐN ($1,000)
       </button>
@@ -179,36 +182,56 @@
           </div>
 
           <div class="agent-cards-grid">
-            <div class="agent-card">
+            <div class="agent-card" id="agent-card-spotter">
+              <div class="agent-scan-beam"></div>
               <div class="agent-card-header">
                 <span class="agent-name">SPOTTER</span>
-                <span class="agent-status-badge badge-cyan">SĂN KÈO</span>
+                <span class="agent-status-badge badge-cyan" id="agent-badge-spotter">SĂN KÈO</span>
               </div>
               <p class="agent-desc">Lọc các đồng coin có thanh khoản sâu và biên độ giao dịch tiềm năng (12% - 88%).</p>
+              <div class="agent-live-status" id="agent-status-spotter">
+                <span class="agent-pulse-dot"></span>
+                <span class="agent-status-text">SẴN SÀNG</span>
+              </div>
             </div>
 
-            <div class="agent-card">
+            <div class="agent-card" id="agent-card-researcher">
+              <div class="agent-scan-beam"></div>
               <div class="agent-card-header">
                 <span class="agent-name">RESEARCHER</span>
-                <span class="agent-status-badge badge-blue">ĐỌC TIN TỨC</span>
+                <span class="agent-status-badge badge-blue" id="agent-badge-researcher">ĐỌC TIN TỨC</span>
               </div>
               <p class="agent-desc">Cào tin tức thời gian thực từ Google News RSS & trích xuất ngữ cảnh thị trường.</p>
+              <div class="agent-live-status" id="agent-status-researcher">
+                <span class="agent-pulse-dot"></span>
+                <span class="agent-status-text">SẴN SÀNG</span>
+              </div>
             </div>
 
-            <div class="agent-card">
+            <div class="agent-card" id="agent-card-pricer">
+              <div class="agent-scan-beam"></div>
               <div class="agent-card-header">
                 <span class="agent-name">THE PRICER</span>
-                <span class="agent-status-badge badge-purple">ĐỊNH GIÁ</span>
+                <span class="agent-status-badge badge-purple" id="agent-badge-pricer">ĐỊNH GIÁ</span>
               </div>
               <p class="agent-desc">Đánh giá độ sâu sổ lệnh, đà giá và tâm lý tin tức để tính lợi thế thống kê (Δp).</p>
+              <div class="agent-live-status" id="agent-status-pricer">
+                <span class="agent-pulse-dot"></span>
+                <span class="agent-status-text">SẴN SÀNG</span>
+              </div>
             </div>
 
-            <div class="agent-card">
+            <div class="agent-card" id="agent-card-kelly">
+              <div class="agent-scan-beam"></div>
               <div class="agent-card-header">
                 <span class="agent-name">KELLY RISK</span>
-                <span class="agent-status-badge badge-gold">QUẢN TRỊ RỦI RO</span>
+                <span class="agent-status-badge badge-gold" id="agent-badge-kelly">QUẢN TRỊ RỦI RO</span>
               </div>
               <p class="agent-desc">Áp dụng công thức Quarter-Kelly để định cỡ vốn tối ưu (tối đa 5% danh mục).</p>
+              <div class="agent-live-status" id="agent-status-kelly">
+                <span class="agent-pulse-dot"></span>
+                <span class="agent-status-text">SẴN SÀNG</span>
+              </div>
             </div>
           </div>
         </div>
@@ -661,6 +684,41 @@
       </div>
     </div>
   </div>
+
+  <!-- Floating Toast Notifications Container with Running Countdown Bar -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Slide-out Notification Drawer / History Panel -->
+  <div id="notification-backdrop" class="notification-backdrop" onclick="closeNotificationDrawer()"></div>
+  <aside id="notification-drawer" class="notification-drawer" aria-label="Trung tâm thông báo hệ thống">
+    <div class="notify-drawer-header">
+      <div class="notify-drawer-title">
+        <span class="notify-bell-icon">🔔</span>
+        <div>
+          <h3>TRUNG TÂM THÔNG BÁO</h3>
+          <span class="notify-drawer-subtitle">Lịch sử tín hiệu & phản hồi AI</span>
+        </div>
+      </div>
+      <div class="notify-drawer-actions">
+        <button class="btn-notify-action" onclick="markAllNotificationsRead()" title="Đánh dấu tất cả là đã đọc">✓ Đã đọc</button>
+        <button class="btn-notify-action btn-notify-clear" onclick="clearAllNotifications()" title="Xóa toàn bộ thông báo">🗑️ Xóa hết</button>
+        <button class="btn-notify-close" onclick="closeNotificationDrawer()" title="Đóng bảng thông báo">✕</button>
+      </div>
+    </div>
+    
+    <div class="notify-drawer-status-bar">
+      <span id="notify-drawer-count-badge" class="badge-mini">0 THÔNG BÁO</span>
+      <span style="font-size: 0.72rem; color: var(--text-dim);">Lưu trữ cục bộ • Tự động đồng bộ</span>
+    </div>
+
+    <div id="notification-list" class="notification-list">
+      <div class="notify-empty-state">
+        <span style="font-size: 2rem;">🔕</span>
+        <div style="font-weight: 600; margin-top: 8px;">Chưa có thông báo nào</div>
+        <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">Các cập nhật lệnh, kết quả quét AI và cảnh báo rủi ro sẽ hiển thị tại đây.</div>
+      </div>
+    </div>
+  </aside>
 
   <script src="/static/lightweight-charts.js"></script>
   <script src="/static/app.js"></script>

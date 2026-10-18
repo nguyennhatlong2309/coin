@@ -1,8 +1,81 @@
 {
-  "cash_balance": 994.68,
+  "cash_balance": 926.37,
   "realized_pnl": -5.32,
-  "open_positions": {},
+  "open_positions": {
+    "crypto_BNBUSDT_LONG_1792283359": {
+      "id": "crypto_BNBUSDT_LONG_1792283359",
+      "market_id": "crypto_BNBUSDT",
+      "symbol": "BNB",
+      "question": "BNB/USDT (LONG)",
+      "asset_type": "crypto",
+      "outcome": "LONG",
+      "leverage": 3,
+      "shares": 0.133779,
+      "entry_price": 717.6,
+      "current_price": 717.78,
+      "margin": 32.0,
+      "cost_basis": 32.0,
+      "position_size": 96.0,
+      "stop_loss": 698.7106,
+      "take_profit": 741.4888,
+      "liquidation_price": 490.36,
+      "opened_at": "2026-10-18 07:29:19"
+    },
+    "crypto_BTCUSDT_SHORT_1792283361": {
+      "id": "crypto_BTCUSDT_SHORT_1792283361",
+      "market_id": "crypto_BTCUSDT",
+      "symbol": "BTC",
+      "question": "BTC/USDT (SHORT)",
+      "asset_type": "crypto",
+      "outcome": "SHORT",
+      "leverage": 3,
+      "shares": 0.001337,
+      "entry_price": 81454.67,
+      "current_price": 81506.62,
+      "margin": 36.31,
+      "cost_basis": 36.31,
+      "position_size": 108.93,
+      "stop_loss": 82851.4176,
+      "take_profit": 77977.8048,
+      "liquidation_price": 107248.6488,
+      "opened_at": "2026-10-18 07:29:21"
+    }
+  },
   "trades_history": [
+    {
+      "timestamp": "07:29:21",
+      "action": "OPEN_SHORT_3X",
+      "market_id": "crypto_BTCUSDT",
+      "symbol": "BTC",
+      "asset_type": "crypto",
+      "question": "BTC/USDT (SHORT)",
+      "shares": 0.001337,
+      "price": 81454.67,
+      "leverage": 3,
+      "margin": 36.31,
+      "total_amount": 36.31,
+      "stop_loss": 82851.4176,
+      "take_profit": 77977.8048,
+      "liquidation_price": 107248.6488,
+      "reasoning": "Duyệt đề xuất AI: Tín hiệu Alpha: SHORT 3x trên BTC (Lợi thế: +7.3%). Ký quỹ: $36.31 (Vị thế: $108.93). SL: $82,851.4176 | TP: $77,977.8048"
+    },
+    {
+      "timestamp": "07:29:19",
+      "action": "OPEN_LONG_3X",
+      "market_id": "crypto_BNBUSDT",
+      "symbol": "BNB",
+      "asset_type": "crypto",
+      "question": "BNB/USDT (LONG)",
+      "shares": 0.133779,
+      "price": 717.6,
+      "leverage": 3,
+      "margin": 32.0,
+      "total_amount": 32.0,
+      "stop_loss": 698.7106,
+      "take_profit": 741.4888,
+      "liquidation_price": 490.36,
+      "reasoning": "Duyệt đề xuất AI: Tín hiệu Alpha: LONG 3x trên BNB (Lợi thế: +6.4%). Ký quỹ: $32.00 (Vị thế: $96.00). SL: $698.7106 | TP: $741.4888"
+    },
     {
       "timestamp": "04:45:35",
       "action": "CLOSE_LONG",
@@ -202,6 +275,66 @@
     }
   ],
   "thought_logs": [
+    {
+      "timestamp": "07:40:04",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "07:35:12",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "07:35:04",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "07:29:21",
+      "agent": "User",
+      "level": "SUCCESS",
+      "message": "ĐÃ PHÊ DUYỆT ĐỀ XUẤT: SHORT 3x BTC/USDT @ $81,454.6700"
+    },
+    {
+      "timestamp": "07:29:19",
+      "agent": "User",
+      "level": "SUCCESS",
+      "message": "ĐÃ PHÊ DUYỆT ĐỀ XUẤT: LONG 3x BNB/USDT @ $717.6000"
+    },
+    {
+      "timestamp": "07:29:05",
+      "agent": "Kelly Risk",
+      "level": "WARN",
+      "message": "Lợi thế thống kê (+0.9%) thấp hơn ngưỡng tối thiểu (4.0%) trên PIXEL. Giữ nguyên tiền mặt."
+    },
+    {
+      "timestamp": "07:29:05",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá xác suất (PIXEL): Tín hiệu=SHORT (P_fair=50% | Lợi thế=+0.9%). Tỷ số sổ lệnh=1.04x, Đà 24h=-4.1%"
+    },
+    {
+      "timestamp": "07:29:05",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho PIXEL: [CoinMarketCap] Ronin-based Game PIXEL Enters Top Ten Most-Traded Token... | [CoinDCX] Pixels Price Prediction 2026-2031: Can PIXEL Reach $0.0..."
+    },
+    {
+      "timestamp": "07:29:04",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: PIXEL/USDT | Giá: $0.005330 | Thanh khoản 24h: $218K USDT (LIGHT TIER (Thanh Khoản Vừa)) | Sổ lệnh: CÂN BẰNG CUNG CẦU (Giằng Co) (Tỷ số 1.04)"
+    },
+    {
+      "timestamp": "07:23:43",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
     {
       "timestamp": "04:45:43",
       "agent": "Kelly Risk",
@@ -741,67 +874,7 @@
       "agent": "Researcher",
       "level": "INFO",
       "message": "Đã thu nạp 3 tin tức mới cho PIXEL: [CoinMarketCap] Ronin-based Game PIXEL Enters Top Ten Most-Traded Token... | [CoinDCX] Pixels Price Prediction 2026-2031: Can PIXEL Reach $0.0..."
-    },
-    {
-      "timestamp": "01:57:45",
-      "agent": "Spotter",
-      "level": "INFO",
-      "message": "Đã khóa mục tiêu: PIXEL/USDT | Giá: $0.005380 | Thanh khoản 24h: $173K USDT (LIGHT TIER (Thanh Khoản Vừa)) | Sổ lệnh: LỰC MUA ÁP ĐẢO (Bò Gom Hàng) (Tỷ số 1.58)"
-    },
-    {
-      "timestamp": "01:57:35",
-      "agent": "Spotter",
-      "level": "INFO",
-      "message": "Removed PIXEL from watchlist."
-    },
-    {
-      "timestamp": "01:57:27",
-      "agent": "Spotter",
-      "level": "SUCCESS",
-      "message": "Added PIXEL/USDT to active trading watchlist."
-    },
-    {
-      "timestamp": "01:57:27",
-      "agent": "Spotter",
-      "level": "SUCCESS",
-      "message": "Added PIXEL/USDT to active trading watchlist."
-    },
-    {
-      "timestamp": "01:57:19",
-      "agent": "Spotter",
-      "level": "INFO",
-      "message": "Removed SUI from watchlist."
-    },
-    {
-      "timestamp": "01:57:15",
-      "agent": "System",
-      "level": "INFO",
-      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
-    },
-    {
-      "timestamp": "01:57:08",
-      "agent": "Spotter",
-      "level": "INFO",
-      "message": "Removed NEAR from watchlist."
-    },
-    {
-      "timestamp": "01:54:59",
-      "agent": "System",
-      "level": "INFO",
-      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
-    },
-    {
-      "timestamp": "01:54:50",
-      "agent": "System",
-      "level": "INFO",
-      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
-    },
-    {
-      "timestamp": "01:53:21",
-      "agent": "Executor",
-      "level": "TRADE",
-      "message": "EXECUTED MOCK FILL: LONG $50.00 of BTC/USDT @ $81,547.60 (24h Vol: $585.2M USDT)"
     }
   ],
-  "last_updated": 1792273543.9232335
+  "last_updated": 1792284563.995483
 }

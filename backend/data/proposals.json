@@ -74,7 +74,7 @@
       "pricer": "Xác suất LONG: 56% (Lợi thế: +6.4%)",
       "kelly": "Ký quỹ đề xuất $32.00 (Đòn bẩy 3x)"
     },
-    "status": "PENDING",
+    "status": "APPROVED",
     "created_at": "2026-10-18 04:43:51"
   },
   "prop_BTC_SHORT_1792273543": {
@@ -100,7 +100,7 @@
       "pricer": "Xác suất SHORT: 57% (Lợi thế: +7.3%)",
       "kelly": "Ký quỹ đề xuất $36.31 (Đòn bẩy 3x)"
     },
-    "status": "PENDING",
+    "status": "APPROVED",
     "created_at": "2026-10-18 04:45:43"
   }
 }

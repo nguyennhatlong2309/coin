@@ -1,6 +1,370 @@
 let isAutoRunning = false;
 let autoStatusInterval = null;
 
+// ============================================================
+// NOTIFICATION SYSTEM & AGENT ANIMATION ENGINE
+// ============================================================
+const NOTIF_STORAGE_KEY = "quantdesk_notifications_v2";
+let notifications = [];
+window._notifActions = {};
+
+function initNotificationSystem() {
+  loadStoredNotifications();
+  updateNotificationBadge();
+  renderNotificationList();
+
+  // Override window.alert globally so native browser alert never blocks execution
+  window.alert = function(msg) {
+    showNotification({
+      type: "info",
+      title: "Thông Báo Hệ Thống",
+      message: String(msg)
+    });
+  };
+}
+
+function loadStoredNotifications() {
+  try {
+    const raw = localStorage.getItem(NOTIF_STORAGE_KEY);
+    if (raw) {
+      notifications = JSON.parse(raw);
+    }
+  } catch (e) {
+    notifications = [];
+  }
+}
+
+function saveStoredNotifications() {
+  try {
+    localStorage.setItem(NOTIF_STORAGE_KEY, JSON.stringify(notifications.slice(0, 50)));
+  } catch (e) {
+    console.warn("Cannot save notifications:", e);
+  }
+}
+
+function updateNotificationBadge() {
+  const badge = document.getElementById("notify-badge");
+  const drawerCount = document.getElementById("notify-drawer-count-badge");
+  const unreadCount = notifications.filter(n => !n.isRead).length;
+
+  if (badge) {
+    badge.textContent = unreadCount;
+    if (unreadCount === 0) {
+      badge.classList.add("zero");
+    } else {
+      badge.classList.remove("zero");
+    }
+  }
+  if (drawerCount) {
+    drawerCount.textContent = `${unreadCount} CHƯA ĐỌC • ${notifications.length} TỔNG CỘNG`;
+  }
+}
+
+function showNotification({
+  type = "info", // "success", "info", "ai", "warning", "error"
+  title = "Thông Báo",
+  message = "",
+  duration = 5500,
+  action = null,
+  actionLabel = "Bấm để xem chi tiết →"
+}) {
+  const id = "notif_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
+  const notifObj = {
+    id,
+    type,
+    title,
+    message,
+    time: Date.now(),
+    isRead: false,
+    hasAction: !!action,
+    actionLabel
+  };
+
+  if (action && typeof action === "function") {
+    window._notifActions[id] = action;
+  }
+
+  // Add to drawer storage
+  notifications.unshift(notifObj);
+  if (notifications.length > 50) notifications.pop();
+  saveStoredNotifications();
+  updateNotificationBadge();
+  renderNotificationList();
+
+  // Spawn floating corner toast
+  createToastItem(notifObj, duration, actionLabel);
+  return id;
+}
+
+function createToastItem(notif, duration, actionLabel) {
+  const container = document.getElementById("toast-container");
+  if (!container) return;
+
+  const toast = document.createElement("div");
+  toast.className = `toast-item toast-${notif.type}`;
+  toast.id = `toast-${notif.id}`;
+
+  const iconMap = {
+    success: "✅",
+    info: "ℹ️",
+    ai: "🤖",
+    warning: "⚠️",
+    error: "❌"
+  };
+  const icon = iconMap[notif.type] || "🔔";
+
+  toast.innerHTML = `
+    <div class="toast-header">
+      <div class="toast-title-group">
+        <span class="toast-icon">${icon}</span>
+        <span class="toast-title">${escapeHtml(notif.title)}</span>
+      </div>
+      <button class="toast-close-btn" title="Đóng" onclick="event.stopPropagation(); dismissToast('${notif.id}')">✕</button>
+    </div>
+    <div class="toast-message">${escapeHtml(notif.message)}</div>
+    <div class="toast-hint">${escapeHtml(actionLabel)}</div>
+    <div class="toast-progress" style="animation-duration: ${duration}ms;"></div>
+  `;
+
+  // Clicking toast opens notification or executes action
+  toast.addEventListener("click", () => {
+    if (window._notifActions && window._notifActions[notif.id]) {
+      window._notifActions[notif.id]();
+    } else {
+      openNotificationDrawer();
+      highlightNotificationInDrawer(notif.id);
+    }
+    dismissToast(notif.id);
+  });
+
+  container.appendChild(toast);
+
+  toast._dismissTimer = setTimeout(() => {
+    dismissToast(notif.id);
+  }, duration);
+}
+
+function dismissToast(id) {
+  const toast = document.getElementById(`toast-${id}`);
+  if (!toast) return;
+  if (toast._dismissTimer) clearTimeout(toast._dismissTimer);
+
+  toast.classList.add("removing");
+  setTimeout(() => {
+    if (toast.parentNode) {
+      toast.parentNode.removeChild(toast);
+    }
+  }, 280);
+}
+
+function toggleNotificationDrawer() {
+  const drawer = document.getElementById("notification-drawer");
+  if (!drawer) return;
+  if (drawer.classList.contains("open")) {
+    closeNotificationDrawer();
+  } else {
+    openNotificationDrawer();
+  }
+}
+
+function openNotificationDrawer() {
+  const drawer = document.getElementById("notification-drawer");
+  const backdrop = document.getElementById("notification-backdrop");
+  if (drawer) drawer.classList.add("open");
+  if (backdrop) backdrop.classList.add("open");
+  renderNotificationList();
+}
+
+function closeNotificationDrawer() {
+  const drawer = document.getElementById("notification-drawer");
+  const backdrop = document.getElementById("notification-backdrop");
+  if (drawer) drawer.classList.remove("open");
+  if (backdrop) backdrop.classList.remove("open");
+}
+
+function markAllNotificationsRead() {
+  notifications.forEach(n => n.isRead = true);
+  saveStoredNotifications();
+  updateNotificationBadge();
+  renderNotificationList();
+}
+
+function clearAllNotifications() {
+  notifications = [];
+  saveStoredNotifications();
+  updateNotificationBadge();
+  renderNotificationList();
+}
+
+function renderNotificationList() {
+  const list = document.getElementById("notification-list");
+  if (!list) return;
+
+  if (!notifications || notifications.length === 0) {
+    list.innerHTML = `
+      <div class="notify-empty-state">
+        <span style="font-size: 2.2rem;">🔕</span>
+        <div style="font-weight: 700; margin-top: 10px; color: #fff;">Chưa có thông báo nào</div>
+        <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; max-width: 260px;">
+          Các sự kiện vào lệnh, khớp TP/SL, và kết quả quét AI sẽ được lưu trữ tự động tại đây.
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const iconMap = {
+    success: "✅",
+    info: "ℹ️",
+    ai: "🤖",
+    warning: "⚠️",
+    error: "❌"
+  };
+
+  list.innerHTML = notifications.map(n => {
+    const timeStr = formatNotificationTime(n.time);
+    const icon = iconMap[n.type] || "🔔";
+    const unreadClass = n.isRead ? "" : "unread";
+
+    return `
+      <div class="notify-item type-${n.type} ${unreadClass}" id="notify-item-${n.id}" onclick="handleNotificationClick('${n.id}')">
+        <div class="notify-item-header">
+          <div class="notify-item-title-wrap">
+            <span class="notify-item-icon">${icon}</span>
+            <span class="notify-item-title">${escapeHtml(n.title)}</span>
+          </div>
+          <span class="notify-item-time">${timeStr}</span>
+        </div>
+        <div class="notify-item-body">${escapeHtml(n.message)}</div>
+        ${n.hasAction ? `
+          <div class="notify-item-footer">
+            <button class="notify-item-action-btn">${escapeHtml(n.actionLabel || "Xem chi tiết →")}</button>
+          </div>
+        ` : ""}
+      </div>
+    `;
+  }).join("");
+}
+
+function handleNotificationClick(id) {
+  const item = notifications.find(n => n.id === id);
+  if (item) {
+    item.isRead = true;
+    saveStoredNotifications();
+    updateNotificationBadge();
+    const el = document.getElementById(`notify-item-${id}`);
+    if (el) el.classList.remove("unread");
+
+    if (window._notifActions && window._notifActions[id]) {
+      closeNotificationDrawer();
+      window._notifActions[id]();
+    }
+  }
+}
+
+function highlightNotificationInDrawer(id) {
+  setTimeout(() => {
+    const el = document.getElementById(`notify-item-${id}`);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      el.style.borderColor = "var(--accent-cyan)";
+      el.style.boxShadow = "0 0 16px rgba(0, 240, 255, 0.4)";
+      setTimeout(() => {
+        el.style.borderColor = "";
+        el.style.boxShadow = "";
+      }, 2000);
+    }
+  }, 100);
+}
+
+function formatNotificationTime(ts) {
+  if (!ts) return "";
+  const diffSec = Math.floor((Date.now() - ts) / 1000);
+  if (diffSec < 10) return "Vừa xong";
+  if (diffSec < 60) return `${diffSec}s trước`;
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 60) return `${diffMin}m trước`;
+  const diffHours = Math.floor(diffMin / 60);
+  if (diffHours < 24) return `${diffHours}h trước`;
+  const d = new Date(ts);
+  return `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
+// ============================================================
+// AGENT ANIMATIONS & LIVE STATUS VISUALS
+// ============================================================
+const AGENT_KEYS = ["spotter", "researcher", "pricer", "kelly"];
+
+function setAgentActive(agentKey, isActive, customStatusText = null) {
+  const card = document.getElementById(`agent-card-${agentKey}`);
+  const statusEl = document.getElementById(`agent-status-${agentKey}`);
+  if (!card) return;
+
+  if (isActive) {
+    card.classList.add("agent-active", `active-${agentKey}`);
+    if (statusEl) {
+      const textNode = statusEl.querySelector(".agent-status-text");
+      if (textNode) {
+        textNode.textContent = customStatusText || "ĐANG HOẠT ĐỘNG...";
+      }
+    }
+  } else {
+    card.classList.remove("agent-active", `active-${agentKey}`);
+    if (statusEl) {
+      const textNode = statusEl.querySelector(".agent-status-text");
+      if (textNode) {
+        textNode.textContent = "SẴN SÀNG";
+      }
+    }
+  }
+}
+
+function resetAllAgents() {
+  AGENT_KEYS.forEach(k => setAgentActive(k, false));
+}
+
+let agentCycleTimer = null;
+function playAgentSequence(targetCoin = null) {
+  if (agentCycleTimer) clearTimeout(agentCycleTimer);
+  resetAllAgents();
+
+  const coinLabel = targetCoin ? targetCoin.toUpperCase() : "THỊ TRƯỜNG";
+  const steps = [
+    { key: "spotter", text: `ĐANG SĂN KÈO ${coinLabel}...`, duration: 700 },
+    { key: "researcher", text: `ĐANG CÀO GOOGLE NEWS...`, duration: 900 },
+    { key: "pricer", text: `ĐANG TÍNH STATS (Δp)...`, duration: 900 },
+    { key: "kelly", text: `ĐANG QUẢN TRỊ RỦI RO KELLY...`, duration: 1000 }
+  ];
+
+  let currentIdx = 0;
+  function runStep() {
+    if (currentIdx >= steps.length) {
+      setTimeout(() => {
+        resetAllAgents();
+      }, 1500);
+      return;
+    }
+
+    const step = steps[currentIdx];
+    AGENT_KEYS.forEach(k => {
+      if (k !== step.key) setAgentActive(k, false);
+    });
+    setAgentActive(step.key, true, step.text);
+
+    currentIdx++;
+    agentCycleTimer = setTimeout(runStep, step.duration);
+  }
+
+  runStep();
+}
+
+function pulseAgentLight(key, statusText) {
+  setAgentActive(key, true, statusText);
+  setTimeout(() => {
+    setAgentActive(key, false);
+  }, 2600);
+}
+
 // Chart State
 let chartInstance = null;
 let candleSeries = null;
@@ -10,6 +374,7 @@ let currentChartInterval = "1h";
 
 // Initialize Dashboard
 document.addEventListener("DOMContentLoaded", () => {
+  initNotificationSystem();
   loadPortfolio();
   loadCryptoWatchlist(true);
   initChart();
@@ -340,11 +705,27 @@ window.closePosition = async function(positionId) {
     const data = await res.json();
     if (data.success) {
       loadPortfolio();
+      showNotification({
+        type: "success",
+        title: "Đã Đóng Vị Thế",
+        message: "Vị thế đã được tất toán thành công theo giá thị trường.",
+        duration: 5000
+      });
     } else {
-      alert(data.message || "Không thể đóng vị thế.");
+      showNotification({
+        type: "error",
+        title: "Không Thể Đóng Vị Thế",
+        message: data.message || "Không thể đóng vị thế.",
+        duration: 6000
+      });
     }
   } catch (err) {
-    console.error("Error closing position:", err);
+    showNotification({
+      type: "error",
+      title: "Lỗi Đóng Vị Thế",
+      message: "Lỗi kết nối: " + err,
+      duration: 6000
+    });
   }
 };
 
@@ -524,7 +905,7 @@ async function loadPortfolio() {
       }).join("");
     }
 
-    // Terminal Thought Stream
+    // Terminal Thought Stream & Dynamic Agent Pulse
     const terminal = document.getElementById("thought-terminal");
     if (data.thought_logs && data.thought_logs.length > 0) {
       terminal.innerHTML = data.thought_logs.map(log => {
@@ -539,6 +920,16 @@ async function loadPortfolio() {
 
         return `<div class="terminal-line"><span class="log-time">[${log.timestamp}]</span> <span class="log-tag ${tagClass}">[${escapeHtml(log.agent)}]</span> ${escapeHtml(log.message)}</div>`;
       }).join("");
+
+      // Dynamically highlight active agent from latest thought log
+      const latest = data.thought_logs[0];
+      if (latest && !agentCycleTimer) {
+        const ag = (latest.agent || "").toLowerCase();
+        if (ag.includes("spotter")) pulseAgentLight("spotter", "Đang săn kèo & lọc coin");
+        else if (ag.includes("researcher")) pulseAgentLight("researcher", "Đang đọc tin tức Google");
+        else if (ag.includes("pricer")) pulseAgentLight("pricer", "Đang định giá thống kê");
+        else if (ag.includes("kelly")) pulseAgentLight("kelly", "Đang quản trị rủi ro Kelly");
+      }
     }
 
     // Recent Trades History Table
@@ -654,11 +1045,27 @@ async function addNewCoin() {
       input.value = "";
       await loadCryptoWatchlist(true);
       await loadPortfolio();
+      showNotification({
+        type: "success",
+        title: "Đã Thêm Vào Watchlist",
+        message: result.message,
+        duration: 5000
+      });
     } else {
-      alert("Thông báo: " + result.message);
+      showNotification({
+        type: "warning",
+        title: "Không Thể Thêm Coin",
+        message: result.message,
+        duration: 6000
+      });
     }
   } catch (err) {
-    alert("Lỗi khi thêm coin: " + err);
+    showNotification({
+      type: "error",
+      title: "Lỗi Kết Nối",
+      message: "Lỗi khi thêm coin: " + err,
+      duration: 6000
+    });
   }
 }
 
@@ -673,11 +1080,27 @@ async function quickAdd(coin) {
     if (result.success) {
       await loadCryptoWatchlist(true);
       await loadPortfolio();
+      showNotification({
+        type: "success",
+        title: "Đã Thêm Nhanh Coin",
+        message: result.message,
+        duration: 5000
+      });
     } else {
-      alert(result.message);
+      showNotification({
+        type: "warning",
+        title: "Thông Báo Watchlist",
+        message: result.message,
+        duration: 5000
+      });
     }
   } catch (err) {
-    console.error("Error quick adding:", err);
+    showNotification({
+      type: "error",
+      title: "Lỗi Kết Nối",
+      message: "Không thể thêm nhanh coin: " + err,
+      duration: 6000
+    });
   }
 }
 
@@ -689,9 +1112,21 @@ async function removeCoin(coin) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ coin: coin })
     });
+    const data = await res.json();
     await loadCryptoWatchlist(true);
+    showNotification({
+      type: data.success ? "info" : "warning",
+      title: data.success ? "Đã Xóa Khỏi Watchlist" : "Không Thể Xóa",
+      message: data.message || `Đã xóa ${coin} khỏi danh sách theo dõi.`,
+      duration: 4000
+    });
   } catch (err) {
-    console.error("Error removing coin:", err);
+    showNotification({
+      type: "error",
+      title: "Lỗi Xóa Coin",
+      message: "Lỗi kết nối: " + err,
+      duration: 6000
+    });
   }
 }
 
@@ -919,6 +1354,8 @@ async function executeScanWithOptions() {
   };
 
   try {
+    playAgentSequence(payload.coin);
+
     const res = await fetch("/api/scan", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -934,11 +1371,37 @@ async function executeScanWithOptions() {
     if (mode === "PROPOSAL") {
       scrollToProposals();
       if (data.cycle_result && data.cycle_result.status === "hold") {
-        alert(`Hội đồng AI (The Pricer & Kelly Risk) nhận định:\nLợi thế thống kê của thị trường hiện tại trên ${data.cycle_result.coin || 'coin này'} chưa vượt ngưỡng an toàn (>4.0%). AI quyết định GIỮ NGUYÊN TIỀN MẶT (HOLD) để bảo toàn vốn.`);
+        showNotification({
+          type: "warning",
+          title: "AI Hội Đồng: GIỮ TIỀN MẶT (HOLD)",
+          message: `Lợi thế thống kê của thị trường hiện tại trên ${data.cycle_result.coin || 'thị trường'} chưa vượt ngưỡng an toàn (>4.0%). AI quyết định GIỮ NGUYÊN TIỀN MẶT để bảo toàn vốn.`,
+          duration: 8000
+        });
+      } else {
+        showNotification({
+          type: "ai",
+          title: "AI Quét Xong & Tạo Đề Xuất Mới",
+          message: `Đã đưa phương án giao dịch ${data.cycle_result?.coin || ''} vào Hàng Đợi Chờ Duyệt.`,
+          duration: 8000,
+          action: scrollToProposals,
+          actionLabel: "Xem hàng đợi đề xuất →"
+        });
       }
+    } else {
+      showNotification({
+        type: "success",
+        title: "Đã Khớp Lệnh Trực Tiếp",
+        message: `AI đã mở vị thế ${data.cycle_result?.coin || ''} trực tiếp vào danh mục.`,
+        duration: 7000
+      });
     }
   } catch (err) {
-    alert("Lỗi khi chạy quét AI: " + err);
+    showNotification({
+      type: "error",
+      title: "Lỗi Quét AI",
+      message: "Không thể hoàn thành quét thị trường: " + err,
+      duration: 6000
+    });
   } finally {
     if (btn) {
       btn.disabled = false;
@@ -1094,11 +1557,27 @@ async function approveProposal(proposalId) {
       // Switch chart to this coin if possible
       const prop = currentPendingProposals.find(p => p.id === proposalId);
       if (prop) changeChartCoin(prop.coin, true);
+      showNotification({
+        type: "success",
+        title: "Đã Phê Duyệt & Khớp Lệnh!",
+        message: data.message || "Vị thế mới đã được kích hoạt thành công.",
+        duration: 6500
+      });
     } else {
-      alert("Thông báo: " + data.message);
+      showNotification({
+        type: "error",
+        title: "Phê Duyệt Thất Bại",
+        message: data.message || "Không thể phê duyệt đề xuất.",
+        duration: 6000
+      });
     }
   } catch (err) {
-    alert("Lỗi khi phê duyệt đề xuất: " + err);
+    showNotification({
+      type: "error",
+      title: "Lỗi Kết Nối",
+      message: "Lỗi khi phê duyệt đề xuất: " + err,
+      duration: 6000
+    });
   }
 }
 
@@ -1112,9 +1591,20 @@ async function rejectProposal(proposalId) {
     const data = await res.json();
     if (data.success) {
       await loadProposals();
+      showNotification({
+        type: "info",
+        title: "Đã Hủy Bỏ Đề Xuất",
+        message: "Đề xuất đã được loại bỏ khỏi hàng đợi.",
+        duration: 4000
+      });
     }
   } catch (err) {
-    alert("Lỗi khi hủy đề xuất: " + err);
+    showNotification({
+      type: "error",
+      title: "Lỗi Hủy Đề Xuất",
+      message: "Không thể hủy đề xuất: " + err,
+      duration: 5000
+    });
   }
 }
 
@@ -1123,8 +1613,19 @@ async function clearAllProposals() {
   try {
     await fetch("/api/proposals/clear", { method: "POST" });
     await loadProposals();
+    showNotification({
+      type: "info",
+      title: "Đã Dọn Hàng Đợi",
+      message: "Tất cả đề xuất trong hàng đợi đã được xóa sạch.",
+      duration: 4500
+    });
   } catch (err) {
-    alert("Lỗi khi xóa đề xuất: " + err);
+    showNotification({
+      type: "error",
+      title: "Lỗi Xóa Hàng Đợi",
+      message: "Không thể xóa đề xuất: " + err,
+      duration: 5000
+    });
   }
 }
 
@@ -1180,8 +1681,19 @@ async function toggleAutoMode() {
     const data = await res.json();
     isAutoRunning = data.is_auto_running;
     updateAutoButtonState();
+    showNotification({
+      type: isAutoRunning ? "success" : "info",
+      title: isAutoRunning ? "Vòng Lặp Tự Động: ĐÃ BẬT" : "Vòng Lặp Tự Động: ĐÃ TẮT",
+      message: isAutoRunning ? "AI Swarm đang quét và thẩm định tự động định kỳ 30 giây." : "Đã tạm dừng chế độ giao dịch tự động.",
+      duration: 5000
+    });
   } catch (err) {
-    alert("Lỗi khi bật/tắt chế độ tự động: " + err);
+    showNotification({
+      type: "error",
+      title: "Lỗi Chế Độ Tự Động",
+      message: "Không thể chuyển trạng thái: " + err,
+      duration: 5000
+    });
   }
 }
 
@@ -1214,8 +1726,19 @@ async function resetPortfolio() {
   try {
     await fetch("/api/portfolio/reset", { method: "POST" });
     await loadPortfolio();
+    showNotification({
+      type: "success",
+      title: "Đã Đặt Lại Danh Mục",
+      message: "Số dư vốn ảo đã được khôi phục về $1,000.00 tiền mặt ban đầu.",
+      duration: 5000
+    });
   } catch (err) {
-    alert("Lỗi khi đặt lại vốn danh mục: " + err);
+    showNotification({
+      type: "error",
+      title: "Lỗi Đặt Lại Danh Mục",
+      message: "Lỗi kết nối: " + err,
+      duration: 5000
+    });
   }
 }
 
@@ -1443,6 +1966,8 @@ async function submitPlanForAIValidation() {
   }
 
   try {
+    playAgentSequence(coin);
+
     const payload = {
       coin: coin,
       side: side,
@@ -1464,8 +1989,36 @@ async function submitPlanForAIValidation() {
     currentPlannerValidationResult = data;
     renderAiValidationVerdict(data);
 
+    if (data.verdict === "APPROVED") {
+      showNotification({
+        type: "success",
+        title: "Hội Đồng AI Đã Phê Duyệt",
+        message: data.title || "Kế hoạch đã vượt qua kiểm định rủi ro Kelly.",
+        duration: 6000
+      });
+    } else if (data.verdict === "SUGGEST_ADJUSTMENT") {
+      showNotification({
+        type: "warning",
+        title: "AI Khuyến Nghị Điều Chỉnh",
+        message: data.title || "Vui lòng xem thông số tối ưu đề xuất để bảo toàn vốn.",
+        duration: 6000
+      });
+    } else {
+      showNotification({
+        type: "error",
+        title: "Hội Đồng AI Từ Chối Kế Hoạch",
+        message: data.title || "Rủi ro vị thế quá cao, không đáp ứng tiêu chuẩn an toàn.",
+        duration: 6000
+      });
+    }
+
   } catch (err) {
-    alert("Lỗi khi gửi thẩm định AI: " + err);
+    showNotification({
+      type: "error",
+      title: "Lỗi Thẩm Định AI",
+      message: "Không thể kết nối đến AI: " + err,
+      duration: 6000
+    });
   } finally {
     if (btnSubmit) {
       btnSubmit.disabled = false;
@@ -1616,11 +2169,27 @@ async function executeApprovedPlan() {
       await loadPortfolio();
       // Switch chart to this coin to see the lines!
       changeChartCoin(coin, true);
+      showNotification({
+        type: "success",
+        title: "Đã Khớp Lệnh Kế Hoạch!",
+        message: `Đã mở vị thế ${payload.coin} ${payload.side} đòn bẩy x${payload.leverage} với $${payload.stake_amount.toFixed(2)}.`,
+        duration: 7000
+      });
     } else {
-      alert("Khớp lệnh không thành công: " + (data.message || "Vui lòng kiểm tra lại số dư"));
+      showNotification({
+        type: "error",
+        title: "Khớp Lệnh Không Thành Công",
+        message: data.message || "Vui lòng kiểm tra lại số dư vốn ký quỹ.",
+        duration: 6000
+      });
     }
   } catch (err) {
-    alert("Lỗi khi khớp lệnh: " + err);
+    showNotification({
+      type: "error",
+      title: "Lỗi Khớp Lệnh",
+      message: "Lỗi kết nối khi khớp lệnh: " + err,
+      duration: 6000
+    });
   } finally {
     if (btnExec) {
       btnExec.disabled = false;

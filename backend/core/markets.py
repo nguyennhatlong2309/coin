@@ -1,6 +1,7 @@
 import httpx
 import logging
 import random
+import time
 from typing import List, Dict, Any
 
 logger = logging.getLogger(__name__)
@@ -59,18 +60,26 @@ CURATED_POLYMARKET_EVENTS = [
     }
 ]
 
-def fetch_prediction_markets(limit: int = 15) -> List[Dict[str, Any]]:
+_cached_markets: List[Dict[str, Any]] = []
+_last_market_fetch: float = 0.0
+_MARKET_CACHE_TTL: float = 30.0 # 30 seconds cache
+
+def fetch_prediction_markets(limit: int = 15, force_refresh: bool = False) -> List[Dict[str, Any]]:
     """
-    Fetches real live prediction markets.
-    First attempts live API (Manifold Markets open public API).
-    Blends with high-liquidity Polymarket global benchmarks.
+    Fetches real live prediction markets with in-memory caching (TTL: 30s)
+    to guarantee sub-millisecond responses on high-frequency portfolio polling.
     """
+    global _cached_markets, _last_market_fetch
+    now = time.time()
+    if not force_refresh and _cached_markets and (now - _last_market_fetch < _MARKET_CACHE_TTL):
+        return _cached_markets
+
     markets = []
     
-    # 1. Fetch live markets from Manifold Markets open API (works without VPN in VN)
+    # 1. Fetch live markets from Manifold Markets open API (with fast timeout)
     try:
         url = f"https://api.manifold.markets/v0/markets?limit={limit}&sort=liquidity"
-        with httpx.Client(timeout=8.0) as client:
+        with httpx.Client(timeout=2.5) as client:
             resp = client.get(url)
             if resp.status_code == 200:
                 data = resp.json()
@@ -88,7 +97,7 @@ def fetch_prediction_markets(limit: int = 15) -> List[Dict[str, Any]]:
                             "url": item.get("url", "https://manifold.markets")
                         })
     except Exception as e:
-        logger.warning(f"Error fetching Manifold markets: {e}")
+        logger.warning(f"Error fetching Manifold markets (fallback to curated cache): {e}")
 
     # 2. Add curated high-profile Polymarket events with micro-fluctuations for realistic simulation
     for poly in CURATED_POLYMARKET_EVENTS:
@@ -105,4 +114,8 @@ def fetch_prediction_markets(limit: int = 15) -> List[Dict[str, Any]]:
             "url": poly["url"]
         })
 
-    return markets
+    if markets:
+        _cached_markets = markets
+        _last_market_fetch = now
+
+    return _cached_markets or markets
