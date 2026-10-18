@@ -61,8 +61,8 @@
         <div class="kpi-sub" id="kpi-realized">Đã chốt: $0.00 • Tạm tính: $0.00</div>
       </div>
 
-      <div class="kpi-card">
-        <div class="kpi-title">TỶ LỆ THẮNG & THỐNG KÊ</div>
+      <div class="kpi-card" onclick="scrollToTrades()" style="cursor: pointer;" title="Nhấp để cuộn xuống xem Sổ Nhật Ký Khớp Lệnh">
+        <div class="kpi-title">TỶ LỆ THẮNG & THỐNG KÊ ↗</div>
         <div class="kpi-value highlight-gold" id="kpi-winrate">0.0%</div>
         <div class="kpi-sub" id="kpi-trades">0 Lệnh • 0 Vị thế mở</div>
       </div>
@@ -322,10 +322,16 @@
     </div>
 
     <!-- Trade History Section -->
-    <section class="panel panel-bottom">
+    <section class="panel panel-bottom" id="trades-panel">
       <div class="panel-header">
-        <h3>📜 SỔ NHẬT KÝ KHỚP LỆNH MÔ PHỎNG</h3>
-        <span class="badge-mini">XÁC MINH SỔ CÁI</span>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:1.1rem;">📜</span>
+          <h3>SỔ NHẬT KÝ KHỚP LỆNH MÔ PHỎNG (TRADE HISTORY)</h3>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="badge-mini" id="trades-count-badge" style="background:rgba(0, 240, 255, 0.15); color:var(--accent-cyan); border:1px solid rgba(0, 240, 255, 0.3);">0 LỆNH ĐÃ KHỚP</span>
+          <span class="badge-mini">XÁC MINH SỔ CÁI REAL-TIME</span>
+        </div>
       </div>
       <div class="table-container">
         <table class="data-table">

@@ -100,8 +100,22 @@ class PortfolioManager:
         total_closed = sum(1 for t in trades if "pnl" in t and "CLOSE" in t.get("action", ""))
         win_rate = (win_count / total_closed * 100) if total_closed > 0 else 0.0
 
+        formatted_trades = []
+        for t in trades[:30]:
+            trade_copy = dict(t)
+            if "price" not in trade_copy or trade_copy["price"] is None:
+                trade_copy["price"] = trade_copy.get("exit_price") or trade_copy.get("entry_price") or 0.0
+            if "total_amount" not in trade_copy or trade_copy["total_amount"] is None:
+                trade_copy["total_amount"] = trade_copy.get("margin") or 0.0
+            if "reasoning" not in trade_copy or not trade_copy["reasoning"]:
+                r = trade_copy.get("reason", "MANUAL")
+                pnl = trade_copy.get("pnl", 0.0)
+                pnl_pct = trade_copy.get("pnl_percent", 0.0)
+                trade_copy["reasoning"] = f"Đóng vị thế ({r}): PnL {pnl:+,.2f} USD ({pnl_pct:+.1f}%)"
+            formatted_trades.append(trade_copy)
+
         return {
-            "cash_balance": round(cash, 2),
+            "cash_balance": round(self.state["cash_balance"], 2),
             "positions_value": round(positions_value, 2),
             "total_equity": round(total_equity, 2),
             "total_pnl": round(total_pnl, 2),
@@ -112,7 +126,7 @@ class PortfolioManager:
             "total_open_count": len(self.state["open_positions"]),
             "trades_count": len(trades),
             "win_rate": round(win_rate, 1),
-            "recent_trades": trades[:20],
+            "recent_trades": formatted_trades,
             "thought_logs": self.state["thought_logs"][:30]
         }
 
@@ -264,12 +278,15 @@ class PortfolioManager:
             "asset_type": pos.get("asset_type", "crypto"),
             "question": pos["question"],
             "shares": shares,
+            "price": exit_price,
             "entry_price": entry_p,
             "exit_price": exit_price,
             "margin": margin,
+            "total_amount": round(margin, 2),
             "pnl": round(pnl, 2),
             "pnl_percent": round(pnl_pct, 2),
-            "reason": reason
+            "reason": reason,
+            "reasoning": f"Đóng vị thế ({reason}): PnL {pnl:+,.2f} USD ({pnl_pct:+.1f}%)"
         }
         self.state["trades_history"].insert(0, trade_record)
 

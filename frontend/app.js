@@ -1000,24 +1000,47 @@ async function loadPortfolio() {
 
     // Recent Trades History Table
     const tradesTbody = document.getElementById("trades-tbody");
+    const tradesCountBadge = document.getElementById("trades-count-badge");
+    if (tradesCountBadge) {
+      tradesCountBadge.textContent = `${data.trades_count || (data.recent_trades ? data.recent_trades.length : 0)} LỆNH ĐÃ KHỚP`;
+    }
+
     if (data.recent_trades && data.recent_trades.length > 0) {
       tradesTbody.innerHTML = data.recent_trades.map(t => {
-        const isBuy = t.action.includes("BUY") || t.action.includes("LONG") || t.action.includes("YES");
+        const actionStr = t.action || "";
+        const isClose = actionStr.startsWith("CLOSE");
+        const isLong = actionStr.includes("LONG") || actionStr.includes("BUY") || actionStr.includes("YES");
+        
+        let actionTagClass = "tag-outcome-yes";
+        let actionLabel = actionStr;
+
+        if (isClose) {
+          const pnlVal = t.pnl !== undefined ? Number(t.pnl) : 0;
+          actionTagClass = pnlVal >= 0 ? "tag-close-win" : "tag-close-loss";
+          actionLabel = `${actionStr} (${pnlVal >= 0 ? '+' : ''}${pnlVal.toFixed(2)}$)`;
+        } else if (!isLong) {
+          actionTagClass = "tag-outcome-no";
+        }
+
+        const priceVal = (t.price !== undefined && t.price !== null) ? Number(t.price) : (t.exit_price || t.entry_price || 0);
+        const totalAmountVal = (t.total_amount !== undefined && t.total_amount !== null) ? Number(t.total_amount) : (t.margin || 0);
+        const reasonText = t.reasoning || (t.reason ? `Đóng lệnh: ${t.reason}` : "-");
+
         return `
           <tr>
-            <td class="text-muted">${t.timestamp}</td>
-            <td><span class="${isBuy ? 'tag-outcome-yes' : 'tag-outcome-no'}">${t.action}</span></td>
-            <td>${escapeHtml(t.question)}</td>
-            <td>${t.shares}</td>
-            <td>${formatPriceNum(t.price)}</td>
-            <td>$${t.total_amount.toFixed(2)}</td>
-            <td class="text-muted" style="font-size:0.75rem">${escapeHtml(t.reasoning)}</td>
+            <td class="text-muted" style="white-space:nowrap; font-family:var(--font-mono);">${t.timestamp || "-"}</td>
+            <td><span class="${actionTagClass}">${escapeHtml(actionLabel)}</span></td>
+            <td><strong>${escapeHtml(t.question || t.symbol || "-")}</strong></td>
+            <td style="font-family:var(--font-mono);">${t.shares !== undefined ? t.shares : "-"}</td>
+            <td style="font-family:var(--font-mono);">${formatPriceNum(priceVal)}</td>
+            <td style="font-family:var(--font-mono); font-weight:700;">$${totalAmountVal.toFixed(2)}</td>
+            <td class="text-muted" style="font-size:0.75rem">${escapeHtml(reasonText)}</td>
           </tr>
         `;
       }).join("");
 
     } else {
-      tradesTbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted">Chưa có lịch sử giao dịch nào.</td></tr>`;
+      tradesTbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted" style="padding:24px;">Chưa có lịch sử giao dịch nào.</td></tr>`;
     }
   } catch (err) {
     console.error("Error polling portfolio:", err);
@@ -1730,6 +1753,13 @@ function scrollToProposals() {
   }
 }
 
+function scrollToTrades() {
+  const el = document.getElementById("trades-panel");
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+
 window.openScanModal = openScanModal;
 window.closeScanModal = closeScanModal;
 window.setScanStakePct = setScanStakePct;
@@ -1739,6 +1769,7 @@ window.rejectProposal = rejectProposal;
 window.clearAllProposals = clearAllProposals;
 window.tweakProposalInPlanner = tweakProposalInPlanner;
 window.scrollToProposals = scrollToProposals;
+window.scrollToTrades = scrollToTrades;
 
 // 8. Toggle Auto-Scan Mode
 async function toggleAutoMode() {
