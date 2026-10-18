@@ -1,28 +1,201 @@
 {
-  "cash_balance": 960.0,
-  "realized_pnl": 0.0,
-  "open_positions": {
-    "crypto_ETHUSDT_SHORT_1792289335": {
-      "id": "crypto_ETHUSDT_SHORT_1792289335",
+  "cash_balance": 1000.74,
+  "realized_pnl": 0.74,
+  "open_positions": {},
+  "trades_history": [
+    {
+      "timestamp": "14:31:51",
+      "action": "CLOSE_SHORT",
+      "market_id": "crypto_SOLUSDT",
+      "symbol": "SOL",
+      "asset_type": "crypto",
+      "question": "SOL/USDT (SHORT)",
+      "shares": 1.150391,
+      "price": 103.53,
+      "entry_price": 103.53,
+      "exit_price": 103.53,
+      "margin": 23.82,
+      "total_amount": 23.82,
+      "pnl": 0.0,
+      "pnl_percent": 0.0,
+      "reason": "MANUAL",
+      "reasoning": "Đóng vị thế (MANUAL): PnL +0.00 USD (+0.0%)"
+    },
+    {
+      "timestamp": "14:31:51",
+      "action": "CLOSE_SHORT",
+      "market_id": "crypto_DOGEUSDT",
+      "symbol": "DOGE",
+      "asset_type": "crypto",
+      "question": "DOGE/USDT (SHORT)",
+      "shares": 3154.18,
+      "price": 0.07922,
+      "entry_price": 0.07926,
+      "exit_price": 0.07922,
+      "margin": 50.0,
+      "total_amount": 50.0,
+      "pnl": 0.13,
+      "pnl_percent": 0.25,
+      "reason": "MANUAL",
+      "reasoning": "Đóng vị thế (MANUAL): PnL +0.13 USD (+0.3%)"
+    },
+    {
+      "timestamp": "14:31:51",
+      "action": "CLOSE_SHORT",
+      "market_id": "crypto_BNBUSDT",
+      "symbol": "BNB",
+      "asset_type": "crypto",
+      "question": "BNB/USDT (SHORT)",
+      "shares": 0.181386,
+      "price": 721.46,
+      "entry_price": 719.46,
+      "exit_price": 721.46,
+      "margin": 26.1,
+      "total_amount": 26.1,
+      "pnl": -0.36,
+      "pnl_percent": -1.39,
+      "reason": "MANUAL",
+      "reasoning": "Đóng vị thế (MANUAL): PnL -0.36 USD (-1.4%)"
+    },
+    {
+      "timestamp": "14:31:51",
+      "action": "CLOSE_SHORT",
+      "market_id": "crypto_PIXELUSDT",
+      "symbol": "PIXEL",
+      "asset_type": "crypto",
+      "question": "PIXEL/USDT (SHORT)",
+      "shares": 47348.48,
+      "price": 0.00525,
+      "entry_price": 0.00528,
+      "exit_price": 0.00525,
+      "margin": 50.0,
+      "total_amount": 50.0,
+      "pnl": 1.42,
+      "pnl_percent": 2.84,
+      "reason": "MANUAL",
+      "reasoning": "Đóng vị thế (MANUAL): PnL +1.42 USD (+2.8%)"
+    },
+    {
+      "timestamp": "14:31:51",
+      "action": "CLOSE_SHORT",
+      "market_id": "crypto_BTCUSDT",
+      "symbol": "BTC",
+      "asset_type": "crypto",
+      "question": "BTC/USDT (SHORT)",
+      "shares": 0.002449,
+      "price": 81744.0,
+      "entry_price": 81668.15,
+      "exit_price": 81744.0,
+      "margin": 40.0,
+      "total_amount": 40.0,
+      "pnl": -0.19,
+      "pnl_percent": -0.46,
+      "reason": "MANUAL",
+      "reasoning": "Đóng vị thế (MANUAL): PnL -0.19 USD (-0.5%)"
+    },
+    {
+      "timestamp": "14:31:51",
+      "action": "CLOSE_SHORT",
       "market_id": "crypto_ETHUSDT",
       "symbol": "ETH",
-      "question": "ETH/USDT (SHORT)",
       "asset_type": "crypto",
-      "outcome": "SHORT",
-      "leverage": 5,
+      "question": "ETH/USDT (SHORT)",
       "shares": 0.08307,
+      "price": 2410.8,
       "entry_price": 2407.61,
-      "current_price": 2407.71,
+      "exit_price": 2410.8,
       "margin": 40.0,
-      "cost_basis": 40.0,
-      "position_size": 200.0,
-      "stop_loss": 2455.7622,
-      "take_profit": 2311.3056,
-      "liquidation_price": 2865.0559,
-      "opened_at": "2026-10-18 09:08:55"
-    }
-  },
-  "trades_history": [
+      "total_amount": 40.0,
+      "pnl": -0.26,
+      "pnl_percent": -0.66,
+      "reason": "MANUAL",
+      "reasoning": "Đóng vị thế (MANUAL): PnL -0.26 USD (-0.7%)"
+    },
+    {
+      "timestamp": "09:10:46",
+      "action": "OPEN_SHORT_5X",
+      "market_id": "crypto_SOLUSDT",
+      "symbol": "SOL",
+      "asset_type": "crypto",
+      "question": "SOL/USDT (SHORT)",
+      "shares": 1.150391,
+      "price": 103.53,
+      "leverage": 5,
+      "margin": 23.82,
+      "total_amount": 23.82,
+      "stop_loss": 105.6108,
+      "take_profit": 99.3984,
+      "liquidation_price": 123.2007,
+      "reasoning": "Duyệt đề xuất AI: Tín hiệu Alpha: SHORT 5x trên SOL (Lợi thế: +11.4%). Ký quỹ: $23.82 (Vị thế: $119.10). SL: $105.6108 | TP: $99.3984"
+    },
+    {
+      "timestamp": "09:10:33",
+      "action": "OPEN_SHORT_5X",
+      "market_id": "crypto_DOGEUSDT",
+      "symbol": "DOGE",
+      "asset_type": "crypto",
+      "question": "DOGE/USDT (SHORT)",
+      "shares": 3154.18,
+      "price": 0.07926,
+      "leverage": 5,
+      "margin": 50.0,
+      "total_amount": 50.0,
+      "stop_loss": 0.080845,
+      "take_profit": 0.07609,
+      "liquidation_price": 0.094319,
+      "reasoning": "Tín hiệu Alpha: SHORT 5x trên DOGE (Lợi thế: +10.6%). Ký quỹ: $50.00 (Vị thế: $250.00). SL: $0.0808 | TP: $0.0761"
+    },
+    {
+      "timestamp": "09:10:22",
+      "action": "OPEN_SHORT_5X",
+      "market_id": "crypto_BNBUSDT",
+      "symbol": "BNB",
+      "asset_type": "crypto",
+      "question": "BNB/USDT (SHORT)",
+      "shares": 0.181386,
+      "price": 719.46,
+      "leverage": 5,
+      "margin": 26.1,
+      "total_amount": 26.1,
+      "stop_loss": 733.8594,
+      "take_profit": 690.6912,
+      "liquidation_price": 856.1574,
+      "reasoning": "Duyệt đề xuất AI: Tín hiệu Alpha: SHORT 5x trên BNB (Lợi thế: +8.0%). Ký quỹ: $26.10 (Vị thế: $130.50). SL: $733.8594 | TP: $690.6912"
+    },
+    {
+      "timestamp": "09:10:01",
+      "action": "OPEN_SHORT_5X",
+      "market_id": "crypto_PIXELUSDT",
+      "symbol": "PIXEL",
+      "asset_type": "crypto",
+      "question": "PIXEL/USDT (SHORT)",
+      "shares": 47348.48,
+      "price": 0.00528,
+      "leverage": 5,
+      "margin": 50.0,
+      "total_amount": 50.0,
+      "stop_loss": 0.005386,
+      "take_profit": 0.005069,
+      "liquidation_price": 0.006283,
+      "reasoning": "Tín hiệu Alpha: SHORT 5x trên PIXEL (Lợi thế: +10.4%). Ký quỹ: $50.00 (Vị thế: $250.00). SL: $0.0054 | TP: $0.0051"
+    },
+    {
+      "timestamp": "09:09:27",
+      "action": "OPEN_SHORT_5X",
+      "market_id": "crypto_BTCUSDT",
+      "symbol": "BTC",
+      "asset_type": "crypto",
+      "question": "BTC/USDT (SHORT)",
+      "shares": 0.002449,
+      "price": 81668.15,
+      "leverage": 5,
+      "margin": 40.0,
+      "total_amount": 40.0,
+      "stop_loss": 83301.513,
+      "take_profit": 78401.424,
+      "liquidation_price": 97185.0985,
+      "reasoning": "Tín hiệu Alpha: SHORT 5x trên BTC (Lợi thế: +8.0%). Ký quỹ: $40.00 (Vị thế: $200.00). SL: $83,301.5130 | TP: $78,401.4240"
+    },
     {
       "timestamp": "09:08:55",
       "action": "OPEN_SHORT_5X",
@@ -43,53 +216,605 @@
   ],
   "thought_logs": [
     {
-      "timestamp": "09:08:55",
-      "agent": "Executor",
-      "level": "TRADE",
-      "message": "KHỚP LỆNH MARGIN THÀNH CÔNG: SHORT 5x $40.00 của ETH/USDT @ $2,407.61 (Vị thế: $200.00 | SL: $2,455.7622 | TP: $2,311.3056)"
+      "timestamp": "14:31:51",
+      "agent": "Portfolio",
+      "level": "SUCCESS",
+      "message": "[ĐÓNG LỆNH THỦ CÔNG] SOL (SHORT 5x): Đóng tại $103.5300. PnL: +0.00 USD (+0.0%), Hoàn vốn: $23.82"
     },
     {
-      "timestamp": "09:08:55",
-      "agent": "Kelly Risk",
+      "timestamp": "14:31:51",
+      "agent": "Portfolio",
+      "level": "SUCCESS",
+      "message": "[ĐÓNG LỆNH THỦ CÔNG] DOGE (SHORT 5x): Đóng tại $0.0792. PnL: +0.13 USD (+0.3%), Hoàn vốn: $50.13"
+    },
+    {
+      "timestamp": "14:31:51",
+      "agent": "Portfolio",
+      "level": "WARN",
+      "message": "[ĐÓNG LỆNH THỦ CÔNG] BNB (SHORT 5x): Đóng tại $721.4600. PnL: -0.36 USD (-1.4%), Hoàn vốn: $25.74"
+    },
+    {
+      "timestamp": "14:31:51",
+      "agent": "Portfolio",
+      "level": "SUCCESS",
+      "message": "[ĐÓNG LỆNH THỦ CÔNG] PIXEL (SHORT 5x): Đóng tại $0.0053. PnL: +1.42 USD (+2.8%), Hoàn vốn: $51.42"
+    },
+    {
+      "timestamp": "14:31:51",
+      "agent": "Portfolio",
+      "level": "WARN",
+      "message": "[ĐÓNG LỆNH THỦ CÔNG] BTC (SHORT 5x): Đóng tại $81,744.0000. PnL: -0.19 USD (-0.5%), Hoàn vốn: $39.81"
+    },
+    {
+      "timestamp": "14:31:51",
+      "agent": "Portfolio",
+      "level": "WARN",
+      "message": "[ĐÓNG LỆNH THỦ CÔNG] ETH (SHORT 5x): Đóng tại $2,410.8000. PnL: -0.26 USD (-0.7%), Hoàn vốn: $39.74"
+    },
+    {
+      "timestamp": "14:09:25",
+      "agent": "System",
       "level": "INFO",
-      "message": "Quản trị Rủi ro (ETH): Đòn bẩy 5x | Ký quỹ: $40.00 | Cắt lỗ (SL): $2,455.7622 (-2.0%) | Chốt lời (TP): $2,311.3056 (+4.0%) | Giá thanh lý: $2,865.0559"
+      "message": "Autonomous Swarm Loop TẠM DỪNG (Manual Mode)."
     },
     {
-      "timestamp": "09:08:55",
-      "agent": "The Pricer",
-      "level": "INFO",
-      "message": "Định giá Định Lượng (ETH): Tín hiệu=SHORT (P_fair=57% | Lợi thế=+8.0%) | Xu Hướng GIẢM Rõ Rệt (Giá < EMA20 < EMA50) | EMA20: $2,432.22 | EMA50: $2,465.70 | RSI(14): 42.2 | VSA: Volume bình thường (1.0x trung bình)"
-    },
-    {
-      "timestamp": "09:08:55",
-      "agent": "Researcher",
-      "level": "INFO",
-      "message": "Đã thu nạp 3 tin tức mới cho ETH: [TradingView] Here’s why the crypto market is going down today (Oct. ... | [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:..."
-    },
-    {
-      "timestamp": "09:08:54",
+      "timestamp": "14:09:11",
       "agent": "Spotter",
       "level": "INFO",
-      "message": "Đã khóa mục tiêu: ETH/USDT | Giá: $2,407.61 | Thanh khoản 24h: $323.9M USDT (MEGA TIER (Thanh Khoản Khổng Lồ)) | Sổ lệnh: LỰC MUA ÁP ĐẢO (Bò Gom Hàng) (Tỷ số 13.55)"
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
     },
     {
-      "timestamp": "09:08:34",
-      "agent": "System",
+      "timestamp": "14:08:39",
+      "agent": "Spotter",
       "level": "INFO",
-      "message": "Autonomous Swarm Loop ĐÃ BẬT [TỰ ĐỘNG KHỚP LỆNH TRỰC TIẾP (4H) - Quét 6 coin định kỳ 30s]."
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
     },
     {
-      "timestamp": "09:08:24",
-      "agent": "System",
+      "timestamp": "14:08:08",
+      "agent": "Spotter",
       "level": "INFO",
-      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
     },
     {
-      "timestamp": "09:07:53",
-      "agent": "System",
+      "timestamp": "14:07:32",
+      "agent": "Spotter",
       "level": "INFO",
-      "message": "Portfolio reset successfully. Initial capital established at $1,000.00 USD."
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "14:06:56",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "14:06:20",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "14:05:43",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "14:05:08",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "14:04:31",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "14:03:55",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "14:03:19",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "14:02:43",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "14:02:06",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "14:01:29",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "14:00:53",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "14:00:17",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:59:38",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:59:03",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:58:26",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:57:50",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:57:14",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:56:38",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:56:02",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:55:26",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:54:49",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:54:13",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:53:37",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:53:00",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:52:24",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:51:48",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:51:16",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:50:46",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:50:16",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:49:39",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:49:02",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:48:26",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:47:47",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:47:11",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:46:35",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:45:59",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:45:22",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:44:45",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:44:09",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:43:32",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:42:56",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:42:20",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:41:43",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:41:06",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:40:30",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:39:54",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:39:18",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:38:41",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:38:05",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:37:29",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:36:53",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:36:16",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:35:40",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:35:03",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:34:27",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:33:51",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:33:03",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:32:26",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:31:49",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:31:13",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:30:36",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:30:00",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:29:22",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:28:45",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:28:08",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:27:31",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:26:54",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:26:17",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:25:40",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:25:04",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:24:27",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:23:50",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:23:13",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:22:36",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:21:59",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:21:22",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:20:46",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:20:07",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:19:24",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:18:39",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:18:02",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:17:25",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:16:48",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:16:12",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:15:36",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:14:59",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:14:22",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:13:46",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
+    },
+    {
+      "timestamp": "13:13:09",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Tất cả 6 đồng coin trong danh mục đều đã có vị thế mở (6) hoặc đề xuất chờ duyệt (0). Tạm dừng mở mới để bảo toàn vốn và quản trị lệnh hiện tại."
     }
   ],
-  "last_updated": 1792289343.9557667
+  "last_updated": 1792308711.1492472
 }
