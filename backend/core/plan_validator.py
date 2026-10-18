@@ -6,6 +6,7 @@ from ..config import (
     DEFAULT_TP_PERCENT, 
     MAINTENANCE_MARGIN_BUFFER
 )
+from .quant_indicators import analyze_quant_structure
 
 class TradePlanValidator:
     def __init__(self, crypto_service, portfolio):
@@ -46,10 +47,16 @@ class TradePlanValidator:
         ratio = depth.get("ratio", 1.0)
         curr_price = ticker["price"]
 
+        # Fetch real candles for Quant Trend & VSA validation
+        tf_map = {"SCALP": "15m", "DAY": "1h", "SWING": "4h"}
+        klines_tf = tf_map.get(timeframe.upper(), "1h")
+        klines = self.crypto_service.fetch_klines(clean_coin, interval=klines_tf, limit=60)
+        candles = klines.get("candles", []) if isinstance(klines, dict) and "candles" in klines else []
+        quant_res = analyze_quant_structure(candles, orderbook_ratio=ratio)
+
         # 1. Determine or validate Direction (Side)
         if side == "AUTO" or not side:
-            # Pick based on orderbook + momentum
-            chosen_side = "LONG" if ratio >= 0.95 else "SHORT"
+            chosen_side = quant_res["chosen_side"] if quant_res["chosen_side"] != "HOLD" else "LONG"
         else:
             chosen_side = side.upper()
 
@@ -84,6 +91,57 @@ class TradePlanValidator:
         has_tp = (take_profit is not None and take_profit > 0)
 
         # ----------------- RISK EVALUATION CHECKS -----------------
+
+        # Check 0: Counter-Trend Warning (Đánh ngược xu hướng kỹ thuật)
+        if chosen_side == "LONG" and quant_res["trend"] in ["BEARISH", "BEARISH_PULLBACK"]:
+            return {
+                "verdict": "SUGGEST_ADJUSTMENT",
+                "title": "CẢNH BÁO RỦI RO: ĐÁNH NGƯỢC XU HƯỚNG GIẢM",
+                "analysis": (
+                    f"Bạn đang chọn LONG (đánh lên) trong khi {clean_coin} đang nằm trong "
+                    f"XU HƯỚNG GIẢM RÕ RỆT (Giá ${curr_price:,.4f} < EMA20 ${quant_res['ema20']:,.4f} < EMA50 ${quant_res['ema50']:,.4f}). "
+                    f"VSA cảnh báo: {quant_res['vsa']['description']}. "
+                    f"Bắt đáy ngược xu hướng có tỷ lệ thua lỗ cao. Đề xuất chuyển hướng sang SHORT hoặc hạ đòn bẩy xuống mức tối thiểu (1x-2x)."
+                ),
+                "metrics": {
+                    "entry_price": curr_price,
+                    "liq_price": liq_price,
+                    "trend": quant_res["trend_desc"],
+                    "rsi": quant_res["rsi"],
+                    "vsa": quant_res["vsa"]["pattern"]
+                },
+                "suggested_params": {
+                    "side": "SHORT",
+                    "leverage": min(leverage, 2),
+                    "stop_loss": suggested_sl,
+                    "take_profit": suggested_tp
+                }
+            }
+
+        if chosen_side == "SHORT" and quant_res["trend"] in ["BULLISH", "BULLISH_RECOVERY"]:
+            return {
+                "verdict": "SUGGEST_ADJUSTMENT",
+                "title": "CẢNH BÁO RỦI RO: ĐÁNH NGƯỢC XU HƯỚNG TĂNG",
+                "analysis": (
+                    f"Bạn đang chọn SHORT (bán khống) trong khi {clean_coin} đang nằm trong "
+                    f"XU HƯỚNG TĂNG RÕ RỆT (Giá ${curr_price:,.4f} > EMA20 ${quant_res['ema20']:,.4f} > EMA50 ${quant_res['ema50']:,.4f}). "
+                    f"VSA cảnh báo: {quant_res['vsa']['description']}. "
+                    f"Chặn đầu xe lửa trong Uptrend rất dễ bị ép giá thanh lý. Đề xuất đổi sang LONG theo xu hướng chính."
+                ),
+                "metrics": {
+                    "entry_price": curr_price,
+                    "liq_price": liq_price,
+                    "trend": quant_res["trend_desc"],
+                    "rsi": quant_res["rsi"],
+                    "vsa": quant_res["vsa"]["pattern"]
+                },
+                "suggested_params": {
+                    "side": "LONG",
+                    "leverage": min(leverage, 2),
+                    "stop_loss": suggested_sl,
+                    "take_profit": suggested_tp
+                }
+            }
 
         # Check A: No Stop-Loss provided
         if not has_sl:

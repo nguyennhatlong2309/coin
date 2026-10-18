@@ -3,6 +3,7 @@ import random
 from typing import Dict, Any, List, Optional
 from .news_fetcher import search_google_news
 from .portfolio import PortfolioManager
+from .quant_indicators import analyze_quant_structure
 from ..config import (
     KELLY_FRACTION, 
     MAX_PORTFOLIO_PER_TRADE, 
@@ -140,7 +141,7 @@ class SwarmEngine:
             f"Đã thu nạp {len(articles)} tin tức mới cho {selected_coin}: {headlines_summary}"
         )
 
-        # 3. THE PRICER AGENT
+        # 3. THE PRICER AGENT (100% Deterministic Quant & VSA Engine)
         pos_words = {"surge", "record", "rally", "gain", "breakout", "bull", "accumulate", "etf", "approve", "high", "growth", "pump", "support"}
         neg_words = {"drop", "crash", "plunge", "decline", "fall", "dump", "bear", "selloff", "reject", "sec", "ban", "risk", "liquidate"}
 
@@ -150,33 +151,26 @@ class SwarmEngine:
             news_score += sum(1 for w in pos_words if w in text)
             news_score -= sum(1 for w in neg_words if w in text)
 
-        # Orderbook signal: ratio > 1 means more bids (buying pressure)
-        depth_score = (ratio - 1.0) * 0.12 # e.g. ratio 1.25 -> +0.03
+        # Fetch real candles from Binance for Trend, RSI and VSA Volume Analysis
+        klines = self.crypto_service.fetch_klines(selected_coin, interval=timeframe, limit=60)
+        candles = klines.get("candles", []) if isinstance(klines, dict) and "candles" in klines else []
 
-        # Momentum signal: 24h change reversion / trend following
-        change_24h = ticker["change_24h"]
-        momentum_score = min(0.04, max(-0.04, change_24h * 0.005))
+        quant_res = analyze_quant_structure(
+            candles=candles,
+            orderbook_ratio=ratio,
+            news_sentiment=news_score
+        )
 
-        # Total signal drift from 50% baseline
-        total_drift = (news_score * 0.02) + depth_score + momentum_score + random.gauss(0, 0.015)
-        
-        # Fair probability of upward movement (LONG) vs downward (SHORT)
-        p_long = min(0.85, max(0.15, round(0.50 + total_drift, 3)))
-        p_short = round(1.0 - p_long, 3)
-
-        if p_long >= 0.50:
-            chosen_side = "LONG"
-            chosen_prob = p_long
-            edge = round(p_long - 0.50, 3)
-        else:
-            chosen_side = "SHORT"
-            chosen_prob = p_short
-            edge = round(p_short - 0.50, 3)
+        chosen_side = quant_res["chosen_side"]
+        chosen_prob = quant_res["chosen_prob"]
+        edge = quant_res["edge"]
+        trend_desc = quant_res.get("trend_desc", "Trung tính")
+        quant_summary = quant_res.get("summary", "")
 
         self.portfolio.log_thought(
             "The Pricer",
             "INFO",
-            f"Định giá xác suất ({selected_coin}): Tín hiệu={chosen_side} (P_fair={int(chosen_prob*100)}% | Lợi thế={edge:+.1%}). Tỷ số sổ lệnh={ratio:.2f}x, Đà 24h={change_24h:+.1f}%"
+            f"Định giá Định Lượng ({selected_coin}): Tín hiệu={chosen_side} (P_fair={int(chosen_prob*100)}% | Lợi thế={edge:+.1%}) | {quant_summary}"
         )
 
         # 4. KELLY RISK AGENT
@@ -184,17 +178,22 @@ class SwarmEngine:
         total_equity = summary["total_equity"]
         cash = summary["cash_balance"]
 
-        if edge < MIN_EDGE_THRESHOLD:
+        if chosen_side == "HOLD" or edge < MIN_EDGE_THRESHOLD:
+            reason = (
+                f"Thị trường {selected_coin} đi ngang kẹp EMA hoặc lợi thế ({edge:+.1%}) chưa vượt ngưỡng an toàn ({MIN_EDGE_THRESHOLD:.1%}). "
+                f"Giữ nguyên 100% tiền mặt để bảo toàn vốn."
+            )
             self.portfolio.log_thought(
                 "Kelly Risk",
                 "WARN",
-                f"Lợi thế thống kê ({edge:+.1%}) thấp hơn ngưỡng tối thiểu ({MIN_EDGE_THRESHOLD:.1%}) trên {selected_coin}. Giữ nguyên tiền mặt."
+                reason
             )
             return {
                 "status": "hold",
                 "coin": selected_coin,
                 "side": chosen_side,
-                "edge": edge
+                "edge": edge,
+                "reason": reason
             }
 
         # Kelly: f* = (b*p - q)/b, for 1:1 payout assumption b=1 => f* = 2p - 1
@@ -260,7 +259,7 @@ class SwarmEngine:
         analysis_summary = {
             "spotter": f"Khối lượng 24h: {ticker.get('liquidity_formatted', 'Tốt')} | Sổ lệnh L2: {ratio:.2f}x ({depth_sentiment})",
             "researcher": f"Tâm lý tin tức: {'Tích cực' if news_score > 0 else ('Tiêu cực' if news_score < 0 else 'Trung tính')} ({len(articles)} tin)",
-            "pricer": f"Xác suất {chosen_side}: {int(chosen_prob*100)}% (Lợi thế: {edge:+.1%})",
+            "pricer": f"{trend_desc} | RSI: {quant_res.get('rsi', 50)} | VSA: {quant_res.get('vsa', {}).get('pattern', 'NORMAL')} | Xác suất {chosen_side}: {int(chosen_prob*100)}% (Lợi thế: {edge:+.1%})",
             "kelly": f"Ký quỹ đề xuất ${stake_dollars:.2f} (Đòn bẩy {leverage}x)"
         }
 

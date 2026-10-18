@@ -12,7 +12,7 @@
       "leverage": 3,
       "shares": 0.133779,
       "entry_price": 717.6,
-      "current_price": 720.27,
+      "current_price": 719.45,
       "margin": 32.0,
       "cost_basis": 32.0,
       "position_size": 96.0,
@@ -31,7 +31,7 @@
       "leverage": 3,
       "shares": 0.001337,
       "entry_price": 81454.67,
-      "current_price": 81756.84,
+      "current_price": 81682.34,
       "margin": 36.31,
       "cost_basis": 36.31,
       "position_size": 108.93,
@@ -50,7 +50,7 @@
       "leverage": 3,
       "shares": 0.034656,
       "entry_price": 2405.65,
-      "current_price": 2412.99,
+      "current_price": 2408.68,
       "margin": 27.79,
       "cost_basis": 27.79,
       "position_size": 83.37,
@@ -69,7 +69,7 @@
       "leverage": 5,
       "shares": 1.303549,
       "entry_price": 103.41,
-      "current_price": 103.82,
+      "current_price": 103.73,
       "margin": 26.96,
       "cost_basis": 26.96,
       "position_size": 134.8,
@@ -88,7 +88,7 @@
       "leverage": 3,
       "shares": 1365.62,
       "entry_price": 0.0797,
-      "current_price": 0.07956,
+      "current_price": 0.07941,
       "margin": 36.28,
       "cost_basis": 36.28,
       "position_size": 108.84,
@@ -107,7 +107,7 @@
       "leverage": 5,
       "shares": 0.344323,
       "entry_price": 721.56,
-      "current_price": 720.27,
+      "current_price": 719.45,
       "margin": 49.69,
       "cost_basis": 49.69,
       "position_size": 248.45,
@@ -126,7 +126,7 @@
       "leverage": 2,
       "shares": 610.96,
       "entry_price": 0.07971,
-      "current_price": 0.07956,
+      "current_price": 0.07941,
       "margin": 24.35,
       "cost_basis": 24.35,
       "position_size": 48.7,
@@ -145,7 +145,7 @@
       "leverage": 5,
       "shares": 0.003033,
       "entry_price": 81889.68,
-      "current_price": 81756.84,
+      "current_price": 81682.34,
       "margin": 49.68,
       "cost_basis": 49.68,
       "position_size": 248.4,
@@ -491,6 +491,60 @@
     }
   ],
   "thought_logs": [
+    {
+      "timestamp": "08:59:14",
+      "agent": "Spotter",
+      "level": "WARN",
+      "message": "Đồng PIXEL hiện đã có một đề xuất giao dịch nằm trong danh sách chờ duyệt. Vui lòng phê duyệt hoặc từ chối đề xuất cũ trước khi quét mới."
+    },
+    {
+      "timestamp": "08:59:07",
+      "agent": "Kelly Risk",
+      "level": "SUCCESS",
+      "message": "ĐÃ TẠO ĐỀ XUẤT CHỜ DUYỆT: SHORT 5x $49.61 của PIXEL/USDT @ $0.005310 (SL: $0.0054 | TP: $0.0051)"
+    },
+    {
+      "timestamp": "08:59:07",
+      "agent": "Kelly Risk",
+      "level": "INFO",
+      "message": "Quản trị Rủi ro (PIXEL): Đòn bẩy 5x | Ký quỹ: $49.61 | Cắt lỗ (SL): $0.0054 (-2.0%) | Chốt lời (TP): $0.0051 (+4.0%) | Giá thanh lý: $0.0063"
+    },
+    {
+      "timestamp": "08:59:07",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá Định Lượng (PIXEL): Tín hiệu=SHORT (P_fair=60% | Lợi thế=+10.7%) | Xu Hướng GIẢM Rõ Rệt (Giá < EMA20 < EMA50) | EMA20: $0.01 | EMA50: $0.01 | RSI(14): 39.1 | VSA: Volume bình thường (1.0x trung bình)"
+    },
+    {
+      "timestamp": "08:59:07",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho PIXEL: [CoinMarketCap] Ronin-based Game PIXEL Enters Top Ten Most-Traded Token... | [CoinDCX] Pixels Price Prediction 2026-2031: Can PIXEL Reach $0.0..."
+    },
+    {
+      "timestamp": "08:59:06",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: PIXEL/USDT | Giá: $0.005310 | Thanh khoản 24h: $216K USDT (LIGHT TIER (Thanh Khoản Vừa)) | Sổ lệnh: CÂN BẰNG CUNG CẦU (Giằng Co) (Tỷ số 0.86)"
+    },
+    {
+      "timestamp": "08:58:51",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "08:56:11",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Autonomous Swarm Loop PAUSED (Manual Mode)."
+    },
+    {
+      "timestamp": "08:56:06",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Autonomous Swarm Loop ENABLED (Scanning active coins & markets every 30s)."
+    },
     {
       "timestamp": "08:50:54",
       "agent": "Kelly Risk",
@@ -1036,61 +1090,7 @@
       "agent": "User",
       "level": "SUCCESS",
       "message": "ĐÃ PHÊ DUYỆT ĐỀ XUẤT: LONG 3x DOGE/USDT @ $0.0797"
-    },
-    {
-      "timestamp": "08:42:12",
-      "agent": "Kelly Risk",
-      "level": "WARN",
-      "message": "Lợi thế thống kê (+0.4%) thấp hơn ngưỡng tối thiểu (4.0%) trên SOL. Giữ nguyên tiền mặt."
-    },
-    {
-      "timestamp": "08:42:12",
-      "agent": "The Pricer",
-      "level": "INFO",
-      "message": "Định giá xác suất (SOL): Tín hiệu=SHORT (P_fair=50% | Lợi thế=+0.4%). Tỷ số sổ lệnh=0.86x, Đà 24h=-0.2%"
-    },
-    {
-      "timestamp": "08:42:12",
-      "agent": "Researcher",
-      "level": "INFO",
-      "message": "Đã thu nạp 3 tin tức mới cho SOL: [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:... | [TradingView] Here’s why the crypto market is going down today (Oct. ..."
-    },
-    {
-      "timestamp": "08:42:11",
-      "agent": "Spotter",
-      "level": "INFO",
-      "message": "Đã khóa mục tiêu: SOL/USDT | Giá: $104.180 | Thanh khoản 24h: $109.6M USDT (DEEP TIER (Thanh Khoản Sâu)) | Sổ lệnh: CÂN BẰNG CUNG CẦU (Giằng Co) (Tỷ số 0.86)"
-    },
-    {
-      "timestamp": "08:41:41",
-      "agent": "Kelly Risk",
-      "level": "SUCCESS",
-      "message": "ĐÃ TẠO ĐỀ XUẤT CHỜ DUYỆT: LONG 5x $49.68 của BTC/USDT @ $81,797.58 (SL: $80,161.6284 | TP: $85,069.4832)"
-    },
-    {
-      "timestamp": "08:41:41",
-      "agent": "Kelly Risk",
-      "level": "INFO",
-      "message": "Quản trị Rủi ro (BTC): Đòn bẩy 5x | Ký quỹ: $49.68 | Cắt lỗ (SL): $80,161.6284 (-2.0%) | Chốt lời (TP): $85,069.4832 (+4.0%) | Giá thanh lý: $66,256.0398"
-    },
-    {
-      "timestamp": "08:41:41",
-      "agent": "The Pricer",
-      "level": "INFO",
-      "message": "Định giá xác suất (BTC): Tín hiệu=LONG (P_fair=85% | Lợi thế=+35.0%). Tỷ số sổ lệnh=23.33x, Đà 24h=+0.3%"
-    },
-    {
-      "timestamp": "08:41:41",
-      "agent": "Researcher",
-      "level": "INFO",
-      "message": "Đã thu nạp 3 tin tức mới cho BTC: [TradingView] Here’s why the crypto market is going down today (Oct. ... | [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:..."
-    },
-    {
-      "timestamp": "08:41:40",
-      "agent": "Spotter",
-      "level": "INFO",
-      "message": "Đã khóa mục tiêu: BTC/USDT | Giá: $81,797.58 | Thanh khoản 24h: $568.2M USDT (MEGA TIER (Thanh Khoản Khổng Lồ)) | Sổ lệnh: LỰC MUA ÁP ĐẢO (Bò Gom Hàng) (Tỷ số 23.33)"
     }
   ],
-  "last_updated": 1792288266.9662793
+  "last_updated": 1792288754.2641578
 }
