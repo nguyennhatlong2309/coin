@@ -411,6 +411,72 @@ body {
   font-weight: 700;
 }
 
+/* Thought Stream Parent Panel Dynamic Agent Glow */
+.thought-stream-panel {
+  position: relative;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.thought-stream-panel.flash-spotter {
+  border-color: var(--accent-cyan) !important;
+  box-shadow: 0 0 26px rgba(0, 240, 255, 0.45), inset 0 0 16px rgba(0, 240, 255, 0.12) !important;
+  background: linear-gradient(180deg, rgba(0, 240, 255, 0.08) 0%, rgba(13, 18, 29, 0.85) 100%) !important;
+  animation: thought-panel-pulse-cyan 1.4s infinite alternate ease-in-out;
+}
+
+.thought-stream-panel.flash-researcher {
+  border-color: var(--accent-blue) !important;
+  box-shadow: 0 0 26px rgba(59, 130, 246, 0.45), inset 0 0 16px rgba(59, 130, 246, 0.12) !important;
+  background: linear-gradient(180deg, rgba(59, 130, 246, 0.08) 0%, rgba(13, 18, 29, 0.85) 100%) !important;
+  animation: thought-panel-pulse-blue 1.4s infinite alternate ease-in-out;
+}
+
+.thought-stream-panel.flash-pricer {
+  border-color: var(--accent-purple) !important;
+  box-shadow: 0 0 26px rgba(168, 85, 247, 0.45), inset 0 0 16px rgba(168, 85, 247, 0.12) !important;
+  background: linear-gradient(180deg, rgba(168, 85, 247, 0.08) 0%, rgba(13, 18, 29, 0.85) 100%) !important;
+  animation: thought-panel-pulse-purple 1.4s infinite alternate ease-in-out;
+}
+
+.thought-stream-panel.flash-kelly {
+  border-color: var(--accent-gold) !important;
+  box-shadow: 0 0 26px rgba(245, 158, 11, 0.45), inset 0 0 16px rgba(245, 158, 11, 0.12) !important;
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.08) 0%, rgba(13, 18, 29, 0.85) 100%) !important;
+  animation: thought-panel-pulse-gold 1.4s infinite alternate ease-in-out;
+}
+
+.thought-stream-panel.flash-trade {
+  border-color: var(--accent-green) !important;
+  box-shadow: 0 0 26px rgba(16, 185, 129, 0.45), inset 0 0 16px rgba(16, 185, 129, 0.12) !important;
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.08) 0%, rgba(13, 18, 29, 0.85) 100%) !important;
+  animation: thought-panel-pulse-green 1.4s infinite alternate ease-in-out;
+}
+
+@keyframes thought-panel-pulse-cyan {
+  0% { box-shadow: 0 0 16px rgba(0, 240, 255, 0.3), inset 0 0 8px rgba(0, 240, 255, 0.06); }
+  100% { box-shadow: 0 0 32px rgba(0, 240, 255, 0.65), inset 0 0 20px rgba(0, 240, 255, 0.18); }
+}
+
+@keyframes thought-panel-pulse-blue {
+  0% { box-shadow: 0 0 16px rgba(59, 130, 246, 0.3), inset 0 0 8px rgba(59, 130, 246, 0.06); }
+  100% { box-shadow: 0 0 32px rgba(59, 130, 246, 0.65), inset 0 0 20px rgba(59, 130, 246, 0.18); }
+}
+
+@keyframes thought-panel-pulse-purple {
+  0% { box-shadow: 0 0 16px rgba(168, 85, 247, 0.3), inset 0 0 8px rgba(168, 85, 247, 0.06); }
+  100% { box-shadow: 0 0 32px rgba(168, 85, 247, 0.65), inset 0 0 20px rgba(168, 85, 247, 0.18); }
+}
+
+@keyframes thought-panel-pulse-gold {
+  0% { box-shadow: 0 0 16px rgba(245, 158, 11, 0.3), inset 0 0 8px rgba(245, 158, 11, 0.06); }
+  100% { box-shadow: 0 0 32px rgba(245, 158, 11, 0.65), inset 0 0 20px rgba(245, 158, 11, 0.18); }
+}
+
+@keyframes thought-panel-pulse-green {
+  0% { box-shadow: 0 0 16px rgba(16, 185, 129, 0.3), inset 0 0 8px rgba(16, 185, 129, 0.06); }
+  100% { box-shadow: 0 0 32px rgba(16, 185, 129, 0.65), inset 0 0 20px rgba(16, 185, 129, 0.18); }
+}
+
 /* Terminal Thought Stream */
 .terminal-box {
   background: #04060a;

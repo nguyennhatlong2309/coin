@@ -321,6 +321,69 @@ function setAgentActive(agentKey, isActive, customStatusText = null) {
 
 function resetAllAgents() {
   AGENT_KEYS.forEach(k => setAgentActive(k, false));
+  const panel = document.getElementById("thought-panel");
+  if (panel) {
+    panel.classList.remove("flash-spotter", "flash-researcher", "flash-pricer", "flash-kelly", "flash-trade");
+  }
+}
+
+let thoughtFlashTimer = null;
+function flashThoughtPanel(agentKey, duration = 2600) {
+  const panel = document.getElementById("thought-panel");
+  const liveIndicator = document.getElementById("thought-live-indicator");
+  if (!panel) return;
+
+  // Clear previous flash states
+  panel.classList.remove("flash-spotter", "flash-researcher", "flash-pricer", "flash-kelly", "flash-trade");
+
+  if (!agentKey) return;
+  const key = agentKey.toLowerCase();
+  let flashClass = "";
+  let label = "TRỰC TIẾP";
+  let color = "";
+
+  if (key.includes("spotter")) {
+    flashClass = "flash-spotter";
+    label = "⚡ SPOTTER ĐANG NÓI...";
+    color = "var(--accent-cyan)";
+  } else if (key.includes("researcher")) {
+    flashClass = "flash-researcher";
+    label = "🌐 RESEARCHER ĐANG NÓI...";
+    color = "var(--accent-blue)";
+  } else if (key.includes("pricer")) {
+    flashClass = "flash-pricer";
+    label = "📊 THE PRICER ĐANG NÓI...";
+    color = "var(--accent-purple)";
+  } else if (key.includes("kelly")) {
+    flashClass = "flash-kelly";
+    label = "🛡️ KELLY RISK ĐANG NÓI...";
+    color = "var(--accent-gold)";
+  } else if (key.includes("executor") || key.includes("trade")) {
+    flashClass = "flash-trade";
+    label = "🚀 KHỚP LỆNH MOCK...";
+    color = "var(--accent-green)";
+  }
+
+  if (flashClass) {
+    panel.classList.add(flashClass);
+    if (liveIndicator) {
+      liveIndicator.textContent = label;
+      liveIndicator.style.borderColor = color;
+      liveIndicator.style.color = color;
+      liveIndicator.style.boxShadow = `0 0 12px ${color}`;
+    }
+
+    if (thoughtFlashTimer) clearTimeout(thoughtFlashTimer);
+    thoughtFlashTimer = setTimeout(() => {
+      panel.classList.remove(flashClass);
+      if (liveIndicator) {
+        liveIndicator.textContent = "TRỰC TIẾP";
+        liveIndicator.style.borderColor = "";
+        liveIndicator.style.color = "";
+        liveIndicator.style.boxShadow = "";
+      }
+    }, duration);
+  }
 }
 
 let agentCycleTimer = null;
@@ -350,6 +413,7 @@ function playAgentSequence(targetCoin = null) {
       if (k !== step.key) setAgentActive(k, false);
     });
     setAgentActive(step.key, true, step.text);
+    flashThoughtPanel(step.key, step.duration);
 
     currentIdx++;
     agentCycleTimer = setTimeout(runStep, step.duration);
@@ -360,6 +424,7 @@ function playAgentSequence(targetCoin = null) {
 
 function pulseAgentLight(key, statusText) {
   setAgentActive(key, true, statusText);
+  flashThoughtPanel(key, 2600);
   setTimeout(() => {
     setAgentActive(key, false);
   }, 2600);
@@ -921,7 +986,7 @@ async function loadPortfolio() {
         return `<div class="terminal-line"><span class="log-time">[${log.timestamp}]</span> <span class="log-tag ${tagClass}">[${escapeHtml(log.agent)}]</span> ${escapeHtml(log.message)}</div>`;
       }).join("");
 
-      // Dynamically highlight active agent from latest thought log
+      // Dynamically highlight active agent & flash parent thought panel from latest thought log
       const latest = data.thought_logs[0];
       if (latest && !agentCycleTimer) {
         const ag = (latest.agent || "").toLowerCase();
@@ -929,6 +994,7 @@ async function loadPortfolio() {
         else if (ag.includes("researcher")) pulseAgentLight("researcher", "Đang đọc tin tức Google");
         else if (ag.includes("pricer")) pulseAgentLight("pricer", "Đang định giá thống kê");
         else if (ag.includes("kelly")) pulseAgentLight("kelly", "Đang quản trị rủi ro Kelly");
+        else if (ag.includes("executor") || latest.level === "TRADE") flashThoughtPanel("trade", 2600);
       }
     }
 
