@@ -2,6 +2,7 @@ import math
 from typing import Dict, Any, Optional
 from ..config import (
     DEFAULT_LEVERAGE, 
+    MAX_LEVERAGE,
     DEFAULT_SL_PERCENT, 
     DEFAULT_TP_PERCENT, 
     MAINTENANCE_MARGIN_BUFFER
@@ -17,7 +18,7 @@ class TradePlanValidator:
         self,
         coin: str,
         side: str = "AUTO",
-        timeframe: str = "SCALP",
+        timeframe: str = "1m",
         leverage: int = DEFAULT_LEVERAGE,
         stake_amount: float = 50.0,
         stop_loss: Optional[float] = None,
@@ -33,7 +34,7 @@ class TradePlanValidator:
         - Leverage vs Timeframe compatibility
         """
         clean_coin = coin.upper().replace("USDT", "").strip()
-        ticker = self.crypto_service.fetch_coin_ticker(clean_coin)
+        ticker = self.crypto_service.fetch_coin_ticker(clean_coin, force_refresh=True)
         if not ticker:
             return {
                 "verdict": "REJECTED",
@@ -45,14 +46,25 @@ class TradePlanValidator:
 
         depth = self.crypto_service.fetch_coin_depth(clean_coin)
         ratio = depth.get("ratio", 1.0)
-        curr_price = ticker["price"]
 
-        # Fetch real candles for Quant Trend & VSA validation
-        tf_map = {"SCALP": "15m", "DAY": "1h", "SWING": "4h"}
-        klines_tf = tf_map.get(timeframe.upper(), "1h")
+        # Fetch real candles for Quant Trend & VSA validation (Supports 1m, 3m, 5m scalping up to 1d)
+        tf_map = {
+            "1M": "1m", "3M": "3m", "5M": "5m", "15M": "15m",
+            "1H": "1h", "4H": "4h", "1D": "1d",
+            "SCALP": "1m", "DAY": "1h", "SWING": "4h"
+        }
+        klines_tf = tf_map.get(timeframe.upper(), timeframe.lower() if timeframe.lower() in ["1m", "3m", "5m", "15m", "1h", "4h", "1d"] else "1m")
         klines = self.crypto_service.fetch_klines(clean_coin, interval=klines_tf, limit=60)
         candles = klines.get("candles", []) if isinstance(klines, dict) and "candles" in klines else []
-        quant_res = analyze_quant_structure(candles, orderbook_ratio=ratio)
+
+        # Tích hợp Dữ liệu Nến Đa Khung Thời Gian (1H Macro + 15M Cấu trúc + 1M Trigger)
+        mtf_data = self.crypto_service.fetch_multi_timeframe_klines(clean_coin)
+        quant_res = analyze_quant_structure(candles, orderbook_ratio=ratio, mtf_data=mtf_data, use_patterns=True)
+        curr_price = candles[-1]["close"] if (candles and len(candles) > 0 and candles[-1].get("close")) else ticker["price"]
+
+        # Nhận diện Phiên Giao Dịch Thế Giới (Giờ Việt Nam)
+        from .session_manager import get_current_session
+        curr_session = get_current_session()
 
         # 1. Determine or validate Direction (Side)
         if side == "AUTO" or not side:
@@ -60,8 +72,8 @@ class TradePlanValidator:
         else:
             chosen_side = side.upper()
 
-        leverage = max(1, min(10, leverage))
-        margin = max(5.0, stake_amount)
+        leverage = max(1, min(MAX_LEVERAGE, leverage))
+        margin = max(0.5, stake_amount)
         position_size = margin * leverage
 
         # 2. Calculate Liquidation Price
@@ -72,11 +84,18 @@ class TradePlanValidator:
 
         # 3. Minimum safe distance for Stop-Loss depending on Timeframe
         min_sl_pct_map = {
-            "SCALP": 0.008, # 0.8% minimum distance to avoid wick sweeps on 1m-5m
-            "DAY": 0.015,   # 1.5% distance for 15m-1h
-            "SWING": 0.030  # 3.0% distance for 4h-1d
+            "1M": 0.003, # 0.3% minimum distance for 1m ultra-fast scalp
+            "3M": 0.004,
+            "5M": 0.005, # 0.5% distance for 5m scalp
+            "15M": 0.008,
+            "1H": 0.015,
+            "4H": 0.030,
+            "1D": 0.050,
+            "SCALP": 0.004,
+            "DAY": 0.015,
+            "SWING": 0.030
         }
-        min_sl_pct = min_sl_pct_map.get(timeframe.upper(), 0.012)
+        min_sl_pct = min_sl_pct_map.get(timeframe.upper(), 0.005)
         safe_sl_pct = max(min_sl_pct * 1.5, DEFAULT_SL_PERCENT)
 
         # Suggested default SL/TP if needed
@@ -91,57 +110,116 @@ class TradePlanValidator:
         has_tp = (take_profit is not None and take_profit > 0)
 
         # ----------------- RISK EVALUATION CHECKS -----------------
+        # Check CB: Cầu Chì An Toàn Ngày (Daily Circuit Breaker)
+        summary = self.portfolio.get_summary()
+        daily = summary.get("daily_metrics", {})
+        if daily.get("circuit_breaker_active", False):
+            return {
+                "verdict": "REJECTED",
+                "title": "🚨 CẦU CHÌ AN TOÀN NGÀY ĐANG NGẮT",
+                "analysis": (
+                    f"Thua lỗ trong ngày hôm nay đã chạm giới hạn tối đa (-{daily.get('max_drawdown_pct', 8.0)}%). "
+                    f"Cầu chì an toàn tự động ngắt mở vị thế mới để bảo toàn vốn tích lũy. "
+                    f"Hệ thống sẽ tự động mở lại vào 07:00 sáng mai (giờ Việt Nam / 00:00 UTC)!"
+                ),
+                "metrics": {
+                    "entry_price": curr_price,
+                    "liq_price": liq_price,
+                    "daily_pnl": daily.get("daily_pnl", 0.0),
+                    "daily_roi": daily.get("daily_roi_percent", 0.0)
+                },
+                "suggested_params": {"stop_loss": suggested_sl, "take_profit": suggested_tp}
+            }
+
+        # Check PL: Luật Khóa Lợi Nhuận Bảo Vệ Thành Quả Ngày
+        if daily.get("profit_lock_active", False):
+            return {
+                "verdict": "REJECTED",
+                "title": "🔒 LUẬT KHÓA LỢI NHUẬN NGÀY ĐANG BẬT",
+                "analysis": (
+                    f"Mục tiêu lợi nhuận ngày hôm nay (+{daily.get('target_profit_pct', 20.0)}%) đã hoàn thành xuất sắc! "
+                    f"Hệ thống tự động kích hoạt Luật Khóa Lợi Nhuận để bảo vệ 100% tiền lãi vào két và chặn toàn bộ lệnh mở mới đến 07:00 sáng mai."
+                ),
+                "metrics": {
+                    "entry_price": curr_price,
+                    "liq_price": liq_price,
+                    "daily_pnl": daily.get("daily_pnl", 0.0),
+                    "daily_roi": daily.get("daily_roi_percent", 0.0)
+                },
+                "suggested_params": {"stop_loss": suggested_sl, "take_profit": suggested_tp}
+            }
+
+        smc = quant_res.get("smc", {})
+        pat = quant_res.get("candlestick_pattern", {})
+        mtf = quant_res.get("multi_timeframe", {})
 
         # Check 0: Counter-Trend Warning (Đánh ngược xu hướng kỹ thuật)
         if chosen_side == "LONG" and quant_res["trend"] in ["BEARISH", "BEARISH_PULLBACK"]:
-            return {
-                "verdict": "SUGGEST_ADJUSTMENT",
-                "title": "CẢNH BÁO RỦI RO: ĐÁNH NGƯỢC XU HƯỚNG GIẢM",
-                "analysis": (
-                    f"Bạn đang chọn LONG (đánh lên) trong khi {clean_coin} đang nằm trong "
-                    f"XU HƯỚNG GIẢM RÕ RỆT (Giá ${curr_price:,.4f} < EMA20 ${quant_res['ema20']:,.4f} < EMA50 ${quant_res['ema50']:,.4f}). "
-                    f"VSA cảnh báo: {quant_res['vsa']['description']}. "
-                    f"Bắt đáy ngược xu hướng có tỷ lệ thua lỗ cao. Đề xuất chuyển hướng sang SHORT hoặc hạ đòn bẩy xuống mức tối thiểu (1x-2x)."
-                ),
-                "metrics": {
-                    "entry_price": curr_price,
-                    "liq_price": liq_price,
-                    "trend": quant_res["trend_desc"],
-                    "rsi": quant_res["rsi"],
-                    "vsa": quant_res["vsa"]["pattern"]
-                },
-                "suggested_params": {
-                    "side": "SHORT",
-                    "leverage": min(leverage, 2),
-                    "stop_loss": suggested_sl,
-                    "take_profit": suggested_tp
+            # Ngoại lệ hợp lệ: Có tín hiệu SMC Bullish Sweep hoặc nến Pinbar rút chân đáy (Hammer / Tweezer)
+            has_pinbar_reversal = pat.get("detected") and pat.get("signal") == "BULLISH" and ("PINBAR" in pat.get("pattern", "") or "TWEEZER" in pat.get("pattern", "") or "ENGULFING" in pat.get("pattern", ""))
+            if smc.get("pattern") == "BULLISH_SWEEP" or has_pinbar_reversal:
+                # Chấp thuận như một cú Scalp Reversal bắt đáy có bảo hiểm Price Action / SMC
+                pass
+            else:
+                return {
+                    "verdict": "SUGGEST_ADJUSTMENT",
+                    "title": "CẢNH BÁO RỦI RO: ĐÁNH NGƯỢC XU HƯỚNG GIẢM",
+                    "analysis": (
+                        f"Bạn đang chọn LONG (đánh lên) trong khi {clean_coin} đang nằm trong "
+                        f"XU HƯỚNG GIẢM RÕ RỆT (Giá ${curr_price:,.4f} < EMA20 ${quant_res['ema20']:,.4f} < EMA50 ${quant_res['ema50']:,.4f}). "
+                        f"VSA cảnh báo: {quant_res['vsa']['description']}. "
+                        f"Bắt đáy ngược xu hướng khi chưa có nến Pin Bar rút râu xác nhận có tỷ lệ thua lỗ cao. Đề xuất chuyển hướng sang SHORT hoặc hạ đòn bẩy xuống mức tối thiểu (1x-2x)."
+                    ),
+                    "metrics": {
+                        "entry_price": curr_price,
+                        "liq_price": liq_price,
+                        "trend": quant_res["trend_desc"],
+                        "rsi": quant_res["rsi"],
+                        "vsa": quant_res["vsa"]["pattern"],
+                        "smc": smc.get("pattern", "NONE"),
+                        "candlestick": pat.get("pattern", "NONE"),
+                        "mtf": mtf.get("description", "N/A")
+                    },
+                    "suggested_params": {
+                        "side": "SHORT",
+                        "leverage": min(leverage, 2),
+                        "stop_loss": suggested_sl,
+                        "take_profit": suggested_tp
+                    }
                 }
-            }
 
         if chosen_side == "SHORT" and quant_res["trend"] in ["BULLISH", "BULLISH_RECOVERY"]:
-            return {
-                "verdict": "SUGGEST_ADJUSTMENT",
-                "title": "CẢNH BÁO RỦI RO: ĐÁNH NGƯỢC XU HƯỚNG TĂNG",
-                "analysis": (
-                    f"Bạn đang chọn SHORT (bán khống) trong khi {clean_coin} đang nằm trong "
-                    f"XU HƯỚNG TĂNG RÕ RỆT (Giá ${curr_price:,.4f} > EMA20 ${quant_res['ema20']:,.4f} > EMA50 ${quant_res['ema50']:,.4f}). "
-                    f"VSA cảnh báo: {quant_res['vsa']['description']}. "
-                    f"Chặn đầu xe lửa trong Uptrend rất dễ bị ép giá thanh lý. Đề xuất đổi sang LONG theo xu hướng chính."
-                ),
-                "metrics": {
-                    "entry_price": curr_price,
-                    "liq_price": liq_price,
-                    "trend": quant_res["trend_desc"],
-                    "rsi": quant_res["rsi"],
-                    "vsa": quant_res["vsa"]["pattern"]
-                },
-                "suggested_params": {
-                    "side": "LONG",
-                    "leverage": min(leverage, 2),
-                    "stop_loss": suggested_sl,
-                    "take_profit": suggested_tp
+            # Ngoại lệ hợp lệ: Có tín hiệu SMC Bearish Sweep hoặc nến Pinbar bắn sao (Shooting Star / Tweezer)
+            has_pinbar_reversal = pat.get("detected") and pat.get("signal") == "BEARISH" and ("PINBAR" in pat.get("pattern", "") or "TWEEZER" in pat.get("pattern", "") or "ENGULFING" in pat.get("pattern", ""))
+            if smc.get("pattern") == "BEARISH_SWEEP" or has_pinbar_reversal:
+                pass
+            else:
+                return {
+                    "verdict": "SUGGEST_ADJUSTMENT",
+                    "title": "CẢNH BÁO RỦI RO: ĐÁNH NGƯỢC XU HƯỚNG TĂNG",
+                    "analysis": (
+                        f"Bạn đang chọn SHORT (bán khống) trong khi {clean_coin} đang nằm trong "
+                        f"XU HƯỚNG TĂNG RÕ RỆT (Giá ${curr_price:,.4f} > EMA20 ${quant_res['ema20']:,.4f} > EMA50 ${quant_res['ema50']:,.4f}). "
+                        f"VSA cảnh báo: {quant_res['vsa']['description']}. "
+                        f"Chặn đầu xe lửa trong Uptrend khi chưa có nến Shooting Star rút râu rất dễ bị ép giá thanh lý. Đề xuất đổi sang LONG theo xu hướng chính."
+                    ),
+                    "metrics": {
+                        "entry_price": curr_price,
+                        "liq_price": liq_price,
+                        "trend": quant_res["trend_desc"],
+                        "rsi": quant_res["rsi"],
+                        "vsa": quant_res["vsa"]["pattern"],
+                        "smc": smc.get("pattern", "NONE"),
+                        "candlestick": pat.get("pattern", "NONE"),
+                        "mtf": mtf.get("description", "N/A")
+                    },
+                    "suggested_params": {
+                        "side": "LONG",
+                        "leverage": min(leverage, 2),
+                        "stop_loss": suggested_sl,
+                        "take_profit": suggested_tp
+                    }
                 }
-            }
 
         # Check A: No Stop-Loss provided
         if not has_sl:
@@ -184,6 +262,32 @@ class TradePlanValidator:
                     "verdict": "REJECTED",
                     "title": "MỨC CẮT LỖ KHÔNG HỢP LỆ",
                     "analysis": f"Với lệnh SHORT (bán khống), giá Cắt Lỗ (${stop_loss:,.4f}) bắt buộc phải CAO HƠN giá vào lệnh (${curr_price:,.4f}).",
+                    "metrics": {"entry_price": curr_price, "liq_price": liq_price},
+                    "suggested_params": {"stop_loss": suggested_sl, "take_profit": suggested_tp}
+                }
+
+            # Check B2: Stop-Loss placed beyond Liquidation Price (Guaranteed liquidation before SL!)
+            if chosen_side == "LONG" and stop_loss <= liq_price:
+                return {
+                    "verdict": "REJECTED",
+                    "title": "CẮT LỖ NẰM DƯỚI GIÁ THANH LÝ",
+                    "analysis": (
+                        f"Với đòn bẩy {leverage}x, vị thế LONG sẽ bị THANH LÝ tại ${liq_price:,.4f}! "
+                        f"Mức Cắt Lỗ (${stop_loss:,.4f}) nằm sâu hơn giá thanh lý, khiến tài khoản bị cháy sạch tiền ký quỹ trước khi lệnh cắt lỗ kịp chạm tới. "
+                        f"Vui lòng nâng mức Cắt Lỗ lên trên ${liq_price:,.4f} (đề xuất an toàn: ${suggested_sl:,.4f})."
+                    ),
+                    "metrics": {"entry_price": curr_price, "liq_price": liq_price},
+                    "suggested_params": {"stop_loss": suggested_sl, "take_profit": suggested_tp}
+                }
+            if chosen_side == "SHORT" and stop_loss >= liq_price:
+                return {
+                    "verdict": "REJECTED",
+                    "title": "CẮT LỖ NẰM TRÊN GIÁ THANH LÝ",
+                    "analysis": (
+                        f"Với đòn bẩy {leverage}x, vị thế SHORT sẽ bị THANH LÝ tại ${liq_price:,.4f}! "
+                        f"Mức Cắt Lỗ (${stop_loss:,.4f}) nằm cao hơn giá thanh lý, khiến tài khoản bị cháy sạch tiền ký quỹ trước khi lệnh cắt lỗ kịp chạm tới. "
+                        f"Vui lòng hạ mức Cắt Lỗ xuống dưới ${liq_price:,.4f} (đề xuất an toàn: ${suggested_sl:,.4f})."
+                    ),
                     "metrics": {"entry_price": curr_price, "liq_price": liq_price},
                     "suggested_params": {"stop_loss": suggested_sl, "take_profit": suggested_tp}
                 }
@@ -273,13 +377,13 @@ class TradePlanValidator:
                 }
 
         # Check E: Leverage vs Timeframe compatibility
-        if timeframe.upper() == "SWING" and leverage > 3:
+        if timeframe.upper() in ["SWING", "4H", "1D"] and leverage > 5:
             return {
                 "verdict": "SUGGEST_ADJUSTMENT",
                 "title": "ĐÒN BẨY QUÁ CAO CHO KHUNG SWING DÀI HẠN",
                 "analysis": (
                     f"Giao dịch dài hạn (Swing 4h-1d) với đòn bẩy {leverage}x rất nguy hiểm do biến động giá qua đêm "
-                    f"và chi phí phí duy trì Funding Rate. Đề xuất hạ đòn bẩy xuống 2x hoặc 3x."
+                    f"và chi phí phí duy trì Funding Rate. Đề xuất hạ đòn bẩy xuống 2x hoặc 3x (hoặc chuyển sang khung 1m-5m Scalp nếu muốn đánh đòn bẩy lớn)."
                 ),
                 "metrics": {
                     "entry_price": curr_price,
@@ -304,6 +408,13 @@ class TradePlanValidator:
         )
         if has_tp:
             summary_msg += f", Tỷ lệ R:R tối ưu đạt 1:{rr_ratio:.2f} (Rủi ro: ${risk_dollars:.2f} / Kỳ vọng lời: ${reward_dollars:.2f})."
+        if pat.get("detected"):
+            summary_msg += f" [Price Action: {pat.get('description')}]."
+        if mtf.get("is_confluent"):
+            summary_msg += f" [Hợp Lưu Đa Khung: {mtf.get('description')}]."
+        if smc.get("detected"):
+            summary_msg += f" [SMC Tín hiệu: {smc.get('description')}]."
+        summary_msg += f" [{curr_session.get('badge', 'Phiên')}: {curr_session.get('time_range', '')}]."
 
         return {
             "verdict": "APPROVED",
@@ -316,7 +427,14 @@ class TradePlanValidator:
                 "reward_dollars": reward_dollars,
                 "rr_ratio": rr_ratio,
                 "orderbook_ratio": round(ratio, 2),
-                "momentum_24h": ticker["change_24h"]
+                "momentum_24h": ticker["change_24h"],
+                "smc": smc.get("pattern", "NONE"),
+                "candlestick": pat.get("pattern", "NONE"),
+                "candlestick_desc": pat.get("description", ""),
+                "multi_timeframe": mtf.get("description", "Đơn khung"),
+                "session": curr_session.get("name", ""),
+                "session_badge": curr_session.get("badge", ""),
+                "session_risk_mode": curr_session.get("risk_mode", "")
             },
             "suggested_params": {
                 "side": chosen_side,

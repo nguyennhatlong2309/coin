@@ -1,0 +1,857 @@
+{
+  "cash_balance": 999.08,
+  "realized_pnl": 27.35,
+  "open_positions": {
+    "crypto_BNBUSDT_LONG_1792370774": {
+      "id": "crypto_BNBUSDT_LONG_1792370774",
+      "market_id": "crypto_BNBUSDT",
+      "symbol": "BNB",
+      "question": "BNB/USDT (LONG)",
+      "asset_type": "crypto",
+      "outcome": "LONG",
+      "leverage": 20,
+      "shares": 0.780217,
+      "entry_price": 724.67,
+      "current_price": 727.11,
+      "margin": 28.27,
+      "cost_basis": 28.27,
+      "position_size": 565.4,
+      "stop_loss": 718.9322,
+      "take_profit": 736.3257,
+      "liquidation_price": 690.2482,
+      "opened_at": "2026-10-19 07:46:14"
+    }
+  },
+  "trades_history": [
+    {
+      "timestamp": "09:49:29",
+      "action": "CLOSE_LONG",
+      "market_id": "crypto_DOGEUSDT",
+      "symbol": "DOGE",
+      "asset_type": "crypto",
+      "question": "DOGE/USDT (LONG)",
+      "shares": 7113.74,
+      "price": 0.08018,
+      "entry_price": 0.07948,
+      "exit_price": 0.08018,
+      "margin": 28.27,
+      "total_amount": 28.27,
+      "pnl": 4.98,
+      "pnl_percent": 17.61,
+      "reason": "TAKE_PROFIT",
+      "reasoning": "Đóng vị thế (TAKE_PROFIT): PnL +4.98 USD (+17.6%)"
+    },
+    {
+      "timestamp": "09:49:29",
+      "action": "CLOSE_LONG",
+      "market_id": "crypto_SOLUSDT",
+      "symbol": "SOL",
+      "asset_type": "crypto",
+      "question": "SOL/USDT (LONG)",
+      "shares": 4.195099,
+      "price": 105.74,
+      "entry_price": 104.05,
+      "exit_price": 105.74,
+      "margin": 29.1,
+      "total_amount": 29.1,
+      "pnl": 7.09,
+      "pnl_percent": 24.36,
+      "reason": "TAKE_PROFIT",
+      "reasoning": "Đóng vị thế (TAKE_PROFIT): PnL +7.09 USD (+24.4%)"
+    },
+    {
+      "timestamp": "09:30:23",
+      "action": "CLOSE_SHORT",
+      "market_id": "crypto_EDUUSDT",
+      "symbol": "EDU",
+      "asset_type": "crypto",
+      "question": "EDU/USDT (SHORT)",
+      "shares": 5815.13,
+      "price": 0.0702,
+      "entry_price": 0.0714,
+      "exit_price": 0.0702,
+      "margin": 27.68,
+      "total_amount": 27.68,
+      "pnl": 6.98,
+      "pnl_percent": 25.21,
+      "reason": "TAKE_PROFIT",
+      "reasoning": "Đóng vị thế (TAKE_PROFIT): PnL +6.98 USD (+25.2%)"
+    },
+    {
+      "timestamp": "08:04:12",
+      "action": "OPEN_SHORT_15X",
+      "market_id": "crypto_EDUUSDT",
+      "symbol": "EDU",
+      "asset_type": "crypto",
+      "question": "EDU/USDT (SHORT)",
+      "shares": 5815.13,
+      "price": 0.0714,
+      "leverage": 15,
+      "margin": 27.68,
+      "total_amount": 27.68,
+      "stop_loss": 0.071971,
+      "take_profit": 0.070258,
+      "liquidation_price": 0.075922,
+      "reasoning": "Duyệt đề xuất AI: Tín hiệu Alpha: SHORT 15x trên EDU (Lợi thế: +7.5%). Ký quỹ: $27.68 (Vị thế: $415.20). SL: $0.0720 | TP: $0.0703"
+    },
+    {
+      "timestamp": "07:58:59",
+      "action": "CLOSE_LONG",
+      "market_id": "crypto_PIXELUSDT",
+      "symbol": "PIXEL",
+      "asset_type": "crypto",
+      "question": "PIXEL/USDT (LONG)",
+      "shares": 110214.42,
+      "price": 0.00511,
+      "entry_price": 0.00513,
+      "exit_price": 0.00511,
+      "margin": 28.27,
+      "total_amount": 28.27,
+      "pnl": -2.2,
+      "pnl_percent": -7.8,
+      "reason": "STOP_LOSS",
+      "reasoning": "Đóng vị thế (STOP_LOSS): PnL -2.20 USD (-7.8%)"
+    },
+    {
+      "timestamp": "07:50:35",
+      "action": "CLOSE_LONG",
+      "market_id": "crypto_LSKUSDT",
+      "symbol": "LSK",
+      "asset_type": "crypto",
+      "question": "LSK/USDT (LONG)",
+      "shares": 3098.35,
+      "price": 0.1913,
+      "entry_price": 0.1881,
+      "exit_price": 0.1913,
+      "margin": 29.14,
+      "total_amount": 29.14,
+      "pnl": 9.91,
+      "pnl_percent": 34.02,
+      "reason": "TAKE_PROFIT",
+      "reasoning": "Đóng vị thế (TAKE_PROFIT): PnL +9.91 USD (+34.0%)"
+    },
+    {
+      "timestamp": "07:46:14",
+      "action": "OPEN_LONG_20X",
+      "market_id": "crypto_BNBUSDT",
+      "symbol": "BNB",
+      "asset_type": "crypto",
+      "question": "BNB/USDT (LONG)",
+      "shares": 0.780217,
+      "price": 724.67,
+      "leverage": 20,
+      "margin": 28.27,
+      "total_amount": 28.27,
+      "stop_loss": 718.9322,
+      "take_profit": 736.3257,
+      "liquidation_price": 690.2482,
+      "reasoning": "Duyệt đề xuất AI: Tín hiệu Alpha: LONG 20x trên BNB (Lợi thế: +10.0%). Ký quỹ: $28.27 (Vị thế: $565.40). SL: $718.9322 | TP: $736.3257"
+    },
+    {
+      "timestamp": "07:46:02",
+      "action": "OPEN_LONG_20X",
+      "market_id": "crypto_DOGEUSDT",
+      "symbol": "DOGE",
+      "asset_type": "crypto",
+      "question": "DOGE/USDT (LONG)",
+      "shares": 7113.74,
+      "price": 0.07948,
+      "leverage": 20,
+      "margin": 28.27,
+      "total_amount": 28.27,
+      "stop_loss": 0.079201,
+      "take_profit": 0.080158,
+      "liquidation_price": 0.075705,
+      "reasoning": "Duyệt đề xuất AI: Tín hiệu Alpha: LONG 20x trên DOGE (Lợi thế: +16.3%). Ký quỹ: $28.27 (Vị thế: $565.40). SL: $0.0792 | TP: $0.0802 | SMC: BULLISH_FVG_RETEST"
+    },
+    {
+      "timestamp": "07:46:00",
+      "action": "OPEN_LONG_20X",
+      "market_id": "crypto_PIXELUSDT",
+      "symbol": "PIXEL",
+      "asset_type": "crypto",
+      "question": "PIXEL/USDT (LONG)",
+      "shares": 110214.42,
+      "price": 0.00513,
+      "leverage": 20,
+      "margin": 28.27,
+      "total_amount": 28.27,
+      "stop_loss": 0.00511,
+      "take_profit": 0.005206,
+      "liquidation_price": 0.004886,
+      "reasoning": "Duyệt đề xuất AI: Tín hiệu Alpha: LONG 20x trên PIXEL (Lợi thế: +13.7%). Ký quỹ: $28.27 (Vị thế: $565.40). SL: $0.0051 | TP: $0.0052 | SMC: BULLISH_FVG_RETEST"
+    },
+    {
+      "timestamp": "07:33:48",
+      "action": "OPEN_LONG_20X",
+      "market_id": "crypto_LSKUSDT",
+      "symbol": "LSK",
+      "asset_type": "crypto",
+      "question": "LSK/USDT (LONG)",
+      "shares": 3098.35,
+      "price": 0.1881,
+      "leverage": 20,
+      "margin": 29.14,
+      "total_amount": 29.14,
+      "stop_loss": 0.186694,
+      "take_profit": 0.191211,
+      "liquidation_price": 0.179165,
+      "reasoning": "Duyệt đề xuất AI: Tín hiệu Alpha: LONG 20x trên LSK (Lợi thế: +14.0%). Ký quỹ: $29.14 (Vị thế: $582.80). SL: $0.1867 | TP: $0.1912"
+    },
+    {
+      "timestamp": "07:32:35",
+      "action": "CLOSE_LONG",
+      "market_id": "crypto_PIXELUSDT",
+      "symbol": "PIXEL",
+      "asset_type": "crypto",
+      "question": "PIXEL/USDT (LONG)",
+      "shares": 58593.75,
+      "price": 0.00513,
+      "entry_price": 0.00512,
+      "exit_price": 0.00513,
+      "margin": 30.0,
+      "total_amount": 30.0,
+      "pnl": 0.59,
+      "pnl_percent": 1.95,
+      "reason": "MANUAL",
+      "reasoning": "Đóng vị thế (MANUAL): PnL +0.59 USD (+2.0%)"
+    },
+    {
+      "timestamp": "07:32:29",
+      "action": "OPEN_LONG_15X",
+      "market_id": "crypto_SOLUSDT",
+      "symbol": "SOL",
+      "asset_type": "crypto",
+      "question": "SOL/USDT (LONG)",
+      "shares": 4.195099,
+      "price": 104.05,
+      "leverage": 15,
+      "margin": 29.1,
+      "total_amount": 29.1,
+      "stop_loss": 103.2176,
+      "take_profit": 105.7148,
+      "liquidation_price": 97.4602,
+      "reasoning": "Duyệt đề xuất AI: Tín hiệu Alpha: LONG 15x trên SOL (Lợi thế: +8.4%). Ký quỹ: $29.10 (Vị thế: $436.50). SL: $103.2176 | TP: $105.7148"
+    },
+    {
+      "timestamp": "07:25:11",
+      "action": "OPEN_LONG_10X",
+      "market_id": "crypto_PIXELUSDT",
+      "symbol": "PIXEL",
+      "asset_type": "crypto",
+      "question": "PIXEL/USDT (LONG)",
+      "shares": 58593.75,
+      "price": 0.00512,
+      "leverage": 10,
+      "margin": 30.0,
+      "total_amount": 30.0,
+      "stop_loss": 0.005079,
+      "take_profit": 0.005202,
+      "liquidation_price": 0.004634,
+      "reasoning": "Duyệt đề xuất AI: Tín hiệu Alpha: LONG 10x trên PIXEL (Lợi thế: +5.4%). Ký quỹ: $30.00 (Vị thế: $300.00). SL: $0.0051 | TP: $0.0052 | SMC: BEARISH_FVG_RETEST"
+    }
+  ],
+  "thought_logs": [
+    {
+      "timestamp": "16:37:01",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "16:36:51",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "16:36:17",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "16:35:48",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "09:49:29",
+      "agent": "Memory",
+      "level": "INFO",
+      "message": "[Trí Nhớ AI] Thắng lớn (+4.98$ / +17.6%): Lệnh LONG DOGE chạm trúng mốc Chốt lời (TP). Tỷ lệ R:R được duy trì nghiêm ngặt. -> Bài học: Tiếp tục giữ kỷ luật điểm TP theo cấu trúc thanh khoản, không chốt non."
+    },
+    {
+      "timestamp": "09:49:29",
+      "agent": "Portfolio",
+      "level": "SUCCESS",
+      "message": "[CHỐT LỜI THÀNH CÔNG (TP)] DOGE (LONG 20x): Đóng tại $0.0802. PnL: +4.98 USD (+17.6%), Hoàn vốn: $33.25"
+    },
+    {
+      "timestamp": "09:49:29",
+      "agent": "Memory",
+      "level": "INFO",
+      "message": "[Trí Nhớ AI] Thắng lớn (+7.09$ / +24.4%): Lệnh LONG SOL chạm trúng mốc Chốt lời (TP). Tỷ lệ R:R được duy trì nghiêm ngặt. -> Bài học: Tiếp tục giữ kỷ luật điểm TP theo cấu trúc thanh khoản, không chốt non."
+    },
+    {
+      "timestamp": "09:49:29",
+      "agent": "Portfolio",
+      "level": "SUCCESS",
+      "message": "[CHỐT LỜI THÀNH CÔNG (TP)] SOL (LONG 15x): Đóng tại $105.7400. PnL: +7.09 USD (+24.4%), Hoàn vốn: $36.19"
+    },
+    {
+      "timestamp": "09:30:23",
+      "agent": "Memory",
+      "level": "INFO",
+      "message": "[Trí Nhớ AI] Thắng lớn (+6.98$ / +25.2%): Lệnh SHORT EDU chạm trúng mốc Chốt lời (TP). Tỷ lệ R:R được duy trì nghiêm ngặt. -> Bài học: Tiếp tục giữ kỷ luật điểm TP theo cấu trúc thanh khoản, không chốt non."
+    },
+    {
+      "timestamp": "09:30:23",
+      "agent": "Portfolio",
+      "level": "SUCCESS",
+      "message": "[CHỐT LỜI THÀNH CÔNG (TP)] EDU (SHORT 15x): Đóng tại $0.0702. PnL: +6.98 USD (+25.2%), Hoàn vốn: $34.66"
+    },
+    {
+      "timestamp": "08:04:12",
+      "agent": "User",
+      "level": "SUCCESS",
+      "message": "ĐÃ PHÊ DUYỆT ĐỀ XUẤT: SHORT 15x EDU/USDT @ $0.0714"
+    },
+    {
+      "timestamp": "08:04:07",
+      "agent": "Kelly Risk",
+      "level": "SUCCESS",
+      "message": "ĐÃ TẠO ĐỀ XUẤT CHỜ DUYỆT: SHORT 15x $27.68 của EDU/USDT @ $0.071400 (SL: $0.0720 | TP: $0.0703)"
+    },
+    {
+      "timestamp": "08:04:07",
+      "agent": "Kelly Risk",
+      "level": "INFO",
+      "message": "Quản trị Rủi ro (EDU): Đòn bẩy 15x | Ký quỹ: $27.68 | Cắt lỗ (SL): $0.0720 (-0.8%) | Chốt lời (TP): $0.0703 (+1.6%) | Giá thanh lý: $0.0759"
+    },
+    {
+      "timestamp": "08:04:07",
+      "agent": "Research Manager",
+      "level": "SUCCESS",
+      "message": "[Tổng Hợp Tranh Biện] Phe Gấu chiếm ưu thế áp đảo, cấu trúc giá nghiêng về giảm."
+    },
+    {
+      "timestamp": "08:04:07",
+      "agent": "Bear Analyst",
+      "level": "INFO",
+      "message": "[Tranh Luận Phe Gấu] Cấu trúc kỹ thuật suy yếu: Xu Hướng GIẢM Rõ Rệt (Giá < EMA20 < EMA50). Phe Bán kiểm soát thế trận."
+    },
+    {
+      "timestamp": "08:04:07",
+      "agent": "Bull Analyst",
+      "level": "INFO",
+      "message": "[Tranh Luận Phe Bò] Cảnh báo phe Bò: Dù tín hiệu SHORT, cần lưu ý các vùng hỗ trợ EMA và lực đỡ tiềm năng."
+    },
+    {
+      "timestamp": "08:04:07",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá Định Lượng (EDU): Tín hiệu=SHORT (P_fair=57% | Lợi thế=+7.5%) | Xu Hướng GIẢM Rõ Rệt (Giá < EMA20 < EMA50) | EMA20: $0.07 | EMA50: $0.07 | RSI(14): 39.6 | VSA: Volume bình thường (1.0x trung bình)"
+    },
+    {
+      "timestamp": "08:04:07",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho EDU: [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:... | [Bloomberg.com] Strategy’s Saylor Sees Bitcoin Moving Back Up Beyond $1..."
+    },
+    {
+      "timestamp": "08:04:05",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: EDU/USDT | Giá: $0.071400 | Thanh khoản 24h: $752K USDT (LIGHT TIER (Thanh Khoản Vừa)) | Sổ lệnh: CÂN BẰNG CUNG CẦU (Giằng Co) (Tỷ số 1.1)"
+    },
+    {
+      "timestamp": "08:04:00",
+      "agent": "Spotter",
+      "level": "SUCCESS",
+      "message": "Added EDU/USDT to active trading watchlist."
+    },
+    {
+      "timestamp": "07:58:59",
+      "agent": "Memory",
+      "level": "INFO",
+      "message": "[Trí Nhớ AI] Cắt lỗ an toàn (-2.20$ / -7.8%): Lệnh LONG PIXEL dính SL do giá đảo chiều bất ngờ. Tấm khiên SL đã bảo vệ PIXEL khỏi bị thanh lý vốn lớn. -> Bài học: SL đã làm tròn nhiệm vụ bảo vệ tài khoản. Cần rà soát kỹ ngưỡng cản EMA20/50 và khối lượng nến trước khi vào lệnh tiếp."
+    },
+    {
+      "timestamp": "07:58:59",
+      "agent": "Portfolio",
+      "level": "WARN",
+      "message": "[CẮT LỖ AN TOÀN (SL)] PIXEL (LONG 20x): Đóng tại $0.0051. PnL: -2.20 USD (-7.8%), Hoàn vốn: $26.07"
+    },
+    {
+      "timestamp": "07:55:07",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "07:52:17",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "07:52:12",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "07:51:50",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "07:51:31",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "07:50:35",
+      "agent": "Memory",
+      "level": "INFO",
+      "message": "[Trí Nhớ AI] Thắng lớn (+9.91$ / +34.0%): Lệnh LONG LSK chạm trúng mốc Chốt lời (TP). Tỷ lệ R:R được duy trì nghiêm ngặt. -> Bài học: Tiếp tục giữ kỷ luật điểm TP theo cấu trúc thanh khoản, không chốt non."
+    },
+    {
+      "timestamp": "07:50:35",
+      "agent": "Portfolio",
+      "level": "SUCCESS",
+      "message": "[CHỐT LỜI THÀNH CÔNG (TP)] LSK (LONG 20x): Đóng tại $0.1913. PnL: +9.91 USD (+34.0%), Hoàn vốn: $39.05"
+    },
+    {
+      "timestamp": "07:46:14",
+      "agent": "User",
+      "level": "SUCCESS",
+      "message": "ĐÃ PHÊ DUYỆT ĐỀ XUẤT: LONG 20x BNB/USDT @ $724.6700"
+    },
+    {
+      "timestamp": "07:46:02",
+      "agent": "User",
+      "level": "SUCCESS",
+      "message": "ĐÃ PHÊ DUYỆT ĐỀ XUẤT: LONG 20x DOGE/USDT @ $0.0795"
+    },
+    {
+      "timestamp": "07:46:00",
+      "agent": "User",
+      "level": "SUCCESS",
+      "message": "ĐÃ PHÊ DUYỆT ĐỀ XUẤT: LONG 20x PIXEL/USDT @ $0.0051"
+    },
+    {
+      "timestamp": "07:45:56",
+      "agent": "Kelly Risk",
+      "level": "SUCCESS",
+      "message": "ĐÃ TẠO ĐỀ XUẤT CHỜ DUYỆT: LONG 20x $28.27 của BNB/USDT @ $724.730 (SL: $718.9322 | TP: $736.3257)"
+    },
+    {
+      "timestamp": "07:45:56",
+      "agent": "Kelly Risk",
+      "level": "INFO",
+      "message": "Quản trị Rủi ro (BNB): Đòn bẩy 20x | Ký quỹ: $28.27 | Cắt lỗ (SL): $718.9322 (-0.8%) | Chốt lời (TP): $736.3257 (+1.6%) | Giá thanh lý: $690.3053"
+    },
+    {
+      "timestamp": "07:45:56",
+      "agent": "Research Manager",
+      "level": "SUCCESS",
+      "message": "[Tổng Hợp Tranh Biện] Phe Bò chiếm ưu thế rõ rệt dựa trên dữ liệu dòng tiền và SMC."
+    },
+    {
+      "timestamp": "07:45:56",
+      "agent": "Bear Analyst",
+      "level": "WARN",
+      "message": "[Tranh Luận Phe Gấu] Phản biện rủi ro lệnh LONG: RSI=64.6 tiệm cận vùng cản. Cần đề phòng bẫy rút râu quét stop-loss trước khi đảo chiều. Cảnh báo sổ lệnh: Phe Bán vẫn đang treo tường Ask dày đặc (0.18x)."
+    },
+    {
+      "timestamp": "07:45:56",
+      "agent": "Bull Analyst",
+      "level": "INFO",
+      "message": "[Tranh Luận Phe Bò] Cấu trúc kỹ thuật ủng hộ: Xu Hướng TĂNG Rõ Rệt (Giá > EMA20 > EMA50). RSI(14)=64.6 nằm trong vùng mở rộng tốt. Tin tức hỗ trợ (+2 điểm)."
+    },
+    {
+      "timestamp": "07:45:56",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá Định Lượng (BNB): Tín hiệu=LONG (P_fair=60% | Lợi thế=+10.0%) | Xu Hướng TĂNG Rõ Rệt (Giá > EMA20 > EMA50) | EMA20: $723.78 | EMA50: $723.50 | RSI(14): 64.6 | VSA: Volume bình thường (1.0x trung bình)"
+    },
+    {
+      "timestamp": "07:45:56",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho BNB: [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:... | [Bloomberg.com] Strategy’s Saylor Sees Bitcoin Moving Back Up Beyond $1..."
+    },
+    {
+      "timestamp": "07:45:55",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: BNB/USDT | Giá: $724.730 | Thanh khoản 24h: $55.0M USDT (DEEP TIER (Thanh Khoản Sâu)) | Sổ lệnh: TƯỜNG BÁN ĐÈ GIÁ (Gấu Xả Hàng) (Tỷ số 0.18)"
+    },
+    {
+      "timestamp": "07:45:50",
+      "agent": "Kelly Risk",
+      "level": "SUCCESS",
+      "message": "ĐÃ TẠO ĐỀ XUẤT CHỜ DUYỆT: LONG 20x $28.27 của DOGE/USDT @ $0.079500 (SL: $0.0792 | TP: $0.0802)"
+    },
+    {
+      "timestamp": "07:45:50",
+      "agent": "Kelly Risk",
+      "level": "INFO",
+      "message": "Quản trị Rủi ro (DOGE): Đòn bẩy 20x | Ký quỹ: $28.27 | Cắt lỗ (SL): $0.0792 (-0.4%) | Chốt lời (TP): $0.0802 (+0.8%) | Giá thanh lý: $0.0757"
+    },
+    {
+      "timestamp": "07:45:50",
+      "agent": "Kelly Risk",
+      "level": "SUCCESS",
+      "message": "[SMC Sniper SL] Tối ưu hóa điểm Cắt Lỗ theo râu nến quét thanh khoản SMC: SL=$0.0792 (-0.38%) | TP=$0.0802 (+0.83%) | R:R 1:2.2"
+    },
+    {
+      "timestamp": "07:45:50",
+      "agent": "Research Manager",
+      "level": "SUCCESS",
+      "message": "[Tổng Hợp Tranh Biện] Phe Bò chiếm ưu thế rõ rệt dựa trên dữ liệu dòng tiền và SMC."
+    },
+    {
+      "timestamp": "07:45:50",
+      "agent": "Bear Analyst",
+      "level": "WARN",
+      "message": "[Tranh Luận Phe Gấu] Phản biện rủi ro lệnh LONG: RSI=59.1 tiệm cận vùng cản. Cần đề phòng bẫy rút râu quét stop-loss trước khi đảo chiều."
+    },
+    {
+      "timestamp": "07:45:50",
+      "agent": "Bull Analyst",
+      "level": "INFO",
+      "message": "[Tranh Luận Phe Bò] Cấu trúc kỹ thuật ủng hộ: Xu Hướng TĂNG Rõ Rệt (Giá > EMA20 > EMA50). RSI(14)=59.1 nằm trong vùng mở rộng tốt. Dấu chân cá mập: SMC Fair Value Gap: Giá retest vùng FVG tăng [$0.0794 - $0.0795] và giữ vững hỗ trợ. Sổ lệnh L2: Lực mua áp đảo (Bid/Ask 1.25x)."
+    },
+    {
+      "timestamp": "07:45:50",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "[SMC Smart Money] SMC Fair Value Gap: Giá retest vùng FVG tăng [$0.0794 - $0.0795] và giữ vững hỗ trợ"
+    },
+    {
+      "timestamp": "07:45:50",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá Định Lượng (DOGE): Tín hiệu=LONG (P_fair=66% | Lợi thế=+16.3%) | Xu Hướng TĂNG Rõ Rệt (Giá > EMA20 > EMA50) | EMA20: $0.08 | EMA50: $0.08 | RSI(14): 59.1 | VSA: Volume bình thường (1.0x trung bình) | SMC: BULLISH_FVG_RETEST (SMC Fair Value Gap: Giá retest vùng FVG tăng [$0.0794 - $0.0795] và giữ vững hỗ trợ)"
+    },
+    {
+      "timestamp": "07:45:50",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho DOGE: [Robinhood] Dogecoin price on Oct 18, 2026 at 9pm EDT Crypto Predic... | [Bit2Me] Price of Dogecoin (DOGE) today in EUR – Quote and marke..."
+    },
+    {
+      "timestamp": "07:45:49",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: DOGE/USDT | Giá: $0.079500 | Thanh khoản 24h: $46.1M USDT (SOLID TIER (Thanh Khoản Tốt)) | Sổ lệnh: LỰC MUA ÁP ĐẢO (Bò Gom Hàng) (Tỷ số 1.25)"
+    },
+    {
+      "timestamp": "07:45:40",
+      "agent": "Kelly Risk",
+      "level": "SUCCESS",
+      "message": "ĐÃ TẠO ĐỀ XUẤT CHỜ DUYỆT: LONG 20x $28.27 của PIXEL/USDT @ $0.005140 (SL: $0.0051 | TP: $0.0052)"
+    },
+    {
+      "timestamp": "07:45:40",
+      "agent": "Kelly Risk",
+      "level": "INFO",
+      "message": "Quản trị Rủi ro (PIXEL): Đòn bẩy 20x | Ký quỹ: $28.27 | Cắt lỗ (SL): $0.0051 (-0.6%) | Chốt lời (TP): $0.0052 (+1.3%) | Giá thanh lý: $0.0049"
+    },
+    {
+      "timestamp": "07:45:40",
+      "agent": "Kelly Risk",
+      "level": "SUCCESS",
+      "message": "[SMC Sniper SL] Tối ưu hóa điểm Cắt Lỗ theo râu nến quét thanh khoản SMC: SL=$0.0051 (-0.58%) | TP=$0.0052 (+1.28%) | R:R 1:2.2"
+    },
+    {
+      "timestamp": "07:45:40",
+      "agent": "Memory",
+      "level": "INFO",
+      "message": "[Trí Nhớ AI (PIXEL)] Bài học gần nhất: Chốt lời thành công (+0.59$ / +1.9%): Vị thế LONG PIXEL đóng xanh an toàn theo chiến thuật chủ động. -> Ghi nhớ: Bảo toàn lợi nhuận tốt khi xung lực thị trường có dấu hiệu suy kiệt."
+    },
+    {
+      "timestamp": "07:45:40",
+      "agent": "Research Manager",
+      "level": "SUCCESS",
+      "message": "[Tổng Hợp Tranh Biện] Phe Bò chiếm ưu thế rõ rệt dựa trên dữ liệu dòng tiền và SMC."
+    },
+    {
+      "timestamp": "07:45:40",
+      "agent": "Bear Analyst",
+      "level": "WARN",
+      "message": "[Tranh Luận Phe Gấu] Phản biện rủi ro lệnh LONG: RSI=66.7 tiệm cận vùng cản. Cần đề phòng bẫy rút râu quét stop-loss trước khi đảo chiều. Lưu ý bài học quá khứ: Bảo toàn lợi nhuận tốt khi xung lực thị trường có dấu hiệu suy kiệt."
+    },
+    {
+      "timestamp": "07:45:40",
+      "agent": "Bull Analyst",
+      "level": "INFO",
+      "message": "[Tranh Luận Phe Bò] Cấu trúc kỹ thuật ủng hộ: Phục Hồi Sớm (Giá vượt EMA20 đang hướng lên EMA50). RSI(14)=66.7 nằm trong vùng mở rộng tốt. Dấu chân cá mập: SMC Fair Value Gap: Giá retest vùng FVG tăng [$0.0051 - $0.0051] và giữ vững hỗ trợ. Sổ lệnh L2: Lực mua áp đảo (Bid/Ask 1.33x)."
+    },
+    {
+      "timestamp": "07:45:40",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "[SMC Smart Money] SMC Fair Value Gap: Giá retest vùng FVG tăng [$0.0051 - $0.0051] và giữ vững hỗ trợ"
+    },
+    {
+      "timestamp": "07:45:40",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá Định Lượng (PIXEL): Tín hiệu=LONG (P_fair=63% | Lợi thế=+13.7%) | Phục Hồi Sớm (Giá vượt EMA20 đang hướng lên EMA50) | EMA20: $0.01 | EMA50: $0.01 | RSI(14): 66.7 | VSA: Volume bình thường (1.0x trung bình) | SMC: BULLISH_FVG_RETEST (SMC Fair Value Gap: Giá retest vùng FVG tăng [$0.0051 - $0.0051] và giữ vững hỗ trợ)"
+    },
+    {
+      "timestamp": "07:45:40",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho PIXEL: [CoinMarketCap] Ronin-based Game PIXEL Enters Top Ten Most-Traded Token... | [Binance] Not Pixel Price Today | Live PX Price, Chart & Market D..."
+    },
+    {
+      "timestamp": "07:45:39",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: PIXEL/USDT | Giá: $0.005140 | Thanh khoản 24h: $245K USDT (LIGHT TIER (Thanh Khoản Vừa)) | Sổ lệnh: LỰC MUA ÁP ĐẢO (Bò Gom Hàng) (Tỷ số 1.33)"
+    },
+    {
+      "timestamp": "07:45:08",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Removed ETH from watchlist."
+    },
+    {
+      "timestamp": "07:45:06",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Removed BTC from watchlist."
+    },
+    {
+      "timestamp": "07:33:48",
+      "agent": "User",
+      "level": "SUCCESS",
+      "message": "ĐÃ PHÊ DUYỆT ĐỀ XUẤT: LONG 20x LSK/USDT @ $0.1881"
+    },
+    {
+      "timestamp": "07:33:42",
+      "agent": "Kelly Risk",
+      "level": "SUCCESS",
+      "message": "ĐÃ TẠO ĐỀ XUẤT CHỜ DUYỆT: LONG 20x $29.14 của LSK/USDT @ $0.188200 (SL: $0.1867 | TP: $0.1912)"
+    },
+    {
+      "timestamp": "07:33:42",
+      "agent": "Kelly Risk",
+      "level": "INFO",
+      "message": "Quản trị Rủi ro (LSK): Đòn bẩy 20x | Ký quỹ: $29.14 | Cắt lỗ (SL): $0.1867 (-0.8%) | Chốt lời (TP): $0.1912 (+1.6%) | Giá thanh lý: $0.1793"
+    },
+    {
+      "timestamp": "07:33:42",
+      "agent": "Research Manager",
+      "level": "SUCCESS",
+      "message": "[Tổng Hợp Tranh Biện] Phe Bò chiếm ưu thế rõ rệt dựa trên dữ liệu dòng tiền và SMC."
+    },
+    {
+      "timestamp": "07:33:42",
+      "agent": "Bear Analyst",
+      "level": "WARN",
+      "message": "[Tranh Luận Phe Gấu] Phản biện rủi ro lệnh LONG: RSI=64.2 tiệm cận vùng cản. Cần đề phòng bẫy rút râu quét stop-loss trước khi đảo chiều."
+    },
+    {
+      "timestamp": "07:33:42",
+      "agent": "Bull Analyst",
+      "level": "INFO",
+      "message": "[Tranh Luận Phe Bò] Cấu trúc kỹ thuật ủng hộ: Xu Hướng TĂNG Rõ Rệt (Giá > EMA20 > EMA50). RSI(14)=64.2 nằm trong vùng mở rộng tốt. Sổ lệnh L2: Lực mua áp đảo (Bid/Ask 2.86x). Tin tức hỗ trợ (+2 điểm)."
+    },
+    {
+      "timestamp": "07:33:42",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá Định Lượng (LSK): Tín hiệu=LONG (P_fair=64% | Lợi thế=+14.0%) | Xu Hướng TĂNG Rõ Rệt (Giá > EMA20 > EMA50) | EMA20: $0.19 | EMA50: $0.19 | RSI(14): 64.2 | VSA: Volume bình thường (1.0x trung bình)"
+    },
+    {
+      "timestamp": "07:33:42",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho LSK: [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:... | [Bloomberg.com] Strategy’s Saylor Sees Bitcoin Moving Back Up Beyond $1..."
+    },
+    {
+      "timestamp": "07:33:41",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: LSK/USDT | Giá: $0.188200 | Thanh khoản 24h: $3.5M USDT (LIGHT TIER (Thanh Khoản Vừa)) | Sổ lệnh: LỰC MUA ÁP ĐẢO (Bò Gom Hàng) (Tỷ số 2.86)"
+    },
+    {
+      "timestamp": "07:33:29",
+      "agent": "Spotter",
+      "level": "SUCCESS",
+      "message": "Added LSK/USDT to active trading watchlist."
+    },
+    {
+      "timestamp": "07:32:35",
+      "agent": "Memory",
+      "level": "INFO",
+      "message": "[Trí Nhớ AI] Chốt lời thành công (+0.59$ / +1.9%): Vị thế LONG PIXEL đóng xanh an toàn theo chiến thuật chủ động. -> Bài học: Bảo toàn lợi nhuận tốt khi xung lực thị trường có dấu hiệu suy kiệt."
+    },
+    {
+      "timestamp": "07:32:35",
+      "agent": "Portfolio",
+      "level": "SUCCESS",
+      "message": "[ĐÓNG LỆNH THỦ CÔNG] PIXEL (LONG 10x): Đóng tại $0.0051. PnL: +0.59 USD (+2.0%), Hoàn vốn: $30.59"
+    },
+    {
+      "timestamp": "07:32:29",
+      "agent": "User",
+      "level": "SUCCESS",
+      "message": "ĐÃ PHÊ DUYỆT ĐỀ XUẤT: LONG 15x SOL/USDT @ $104.0500"
+    },
+    {
+      "timestamp": "07:32:25",
+      "agent": "Kelly Risk",
+      "level": "SUCCESS",
+      "message": "ĐÃ TẠO ĐỀ XUẤT CHỜ DUYỆT: LONG 15x $29.10 của SOL/USDT @ $104.050 (SL: $103.2176 | TP: $105.7148)"
+    },
+    {
+      "timestamp": "07:32:25",
+      "agent": "Kelly Risk",
+      "level": "INFO",
+      "message": "Quản trị Rủi ro (SOL): Đòn bẩy 15x | Ký quỹ: $29.10 | Cắt lỗ (SL): $103.2176 (-0.8%) | Chốt lời (TP): $105.7148 (+1.6%) | Giá thanh lý: $97.4602"
+    },
+    {
+      "timestamp": "07:32:25",
+      "agent": "Research Manager",
+      "level": "SUCCESS",
+      "message": "[Tổng Hợp Tranh Biện] Phe Bò chiếm ưu thế rõ rệt dựa trên dữ liệu dòng tiền và SMC."
+    },
+    {
+      "timestamp": "07:32:25",
+      "agent": "Bear Analyst",
+      "level": "WARN",
+      "message": "[Tranh Luận Phe Gấu] Phản biện rủi ro lệnh LONG: RSI=51.2 tiệm cận vùng cản. Cần đề phòng bẫy rút râu quét stop-loss trước khi đảo chiều. Cảnh báo sổ lệnh: Phe Bán vẫn đang treo tường Ask dày đặc (0.88x)."
+    },
+    {
+      "timestamp": "07:32:25",
+      "agent": "Bull Analyst",
+      "level": "INFO",
+      "message": "[Tranh Luận Phe Bò] Cấu trúc kỹ thuật ủng hộ: Phục Hồi Sớm (Giá vượt EMA20 đang hướng lên EMA50). RSI(14)=51.2 nằm trong vùng mở rộng tốt. Tin tức hỗ trợ (+2 điểm)."
+    },
+    {
+      "timestamp": "07:32:25",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá Định Lượng (SOL): Tín hiệu=LONG (P_fair=58% | Lợi thế=+8.4%) | Phục Hồi Sớm (Giá vượt EMA20 đang hướng lên EMA50) | EMA20: $104.02 | EMA50: $104.07 | RSI(14): 51.2 | VSA: Volume bình thường (1.0x trung bình)"
+    },
+    {
+      "timestamp": "07:32:25",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho SOL: [TradingView] Crypto Market Faces $932 Million Overnight Liquidation:... | [Bloomberg.com] Strategy’s Saylor Sees Bitcoin Moving Back Up Beyond $1..."
+    },
+    {
+      "timestamp": "07:32:24",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: SOL/USDT | Giá: $104.050 | Thanh khoản 24h: $155.5M USDT (DEEP TIER (Thanh Khoản Sâu)) | Sổ lệnh: CÂN BẰNG CUNG CẦU (Giằng Co) (Tỷ số 0.88)"
+    },
+    {
+      "timestamp": "07:25:11",
+      "agent": "User",
+      "level": "SUCCESS",
+      "message": "ĐÃ PHÊ DUYỆT ĐỀ XUẤT: LONG 10x PIXEL/USDT @ $0.0051"
+    },
+    {
+      "timestamp": "07:25:08",
+      "agent": "Kelly Risk",
+      "level": "SUCCESS",
+      "message": "ĐÃ TẠO ĐỀ XUẤT CHỜ DUYỆT: LONG 10x $30.00 của PIXEL/USDT @ $0.005120 (SL: $0.0051 | TP: $0.0052)"
+    },
+    {
+      "timestamp": "07:25:08",
+      "agent": "Kelly Risk",
+      "level": "INFO",
+      "message": "Quản trị Rủi ro (PIXEL): Đòn bẩy 10x | Ký quỹ: $30.00 | Cắt lỗ (SL): $0.0051 (-0.8%) | Chốt lời (TP): $0.0052 (+1.6%) | Giá thanh lý: $0.0046"
+    },
+    {
+      "timestamp": "07:25:08",
+      "agent": "Research Manager",
+      "level": "SUCCESS",
+      "message": "[Tổng Hợp Tranh Biện] Phe Bò chiếm ưu thế rõ rệt dựa trên dữ liệu dòng tiền và SMC."
+    },
+    {
+      "timestamp": "07:25:08",
+      "agent": "Bear Analyst",
+      "level": "WARN",
+      "message": "[Tranh Luận Phe Gấu] Phản biện rủi ro lệnh LONG: RSI=63.5 tiệm cận vùng cản. Cần đề phòng bẫy rút râu quét stop-loss trước khi đảo chiều."
+    },
+    {
+      "timestamp": "07:25:08",
+      "agent": "Bull Analyst",
+      "level": "INFO",
+      "message": "[Tranh Luận Phe Bò] Cấu trúc kỹ thuật ủng hộ: Xu Hướng TĂNG Rõ Rệt (Giá > EMA20 > EMA50). RSI(14)=63.5 nằm trong vùng mở rộng tốt. Sổ lệnh L2: Lực mua áp đảo (Bid/Ask 1.09x)."
+    },
+    {
+      "timestamp": "07:25:08",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "[SMC Smart Money] SMC Fair Value Gap: Giá hồi test vùng FVG giảm [$0.0051 - $0.0051] và bị kháng cự từ chối"
+    },
+    {
+      "timestamp": "07:25:08",
+      "agent": "The Pricer",
+      "level": "INFO",
+      "message": "Định giá Định Lượng (PIXEL): Tín hiệu=LONG (P_fair=55% | Lợi thế=+5.4%) | Xu Hướng TĂNG Rõ Rệt (Giá > EMA20 > EMA50) | EMA20: $0.01 | EMA50: $0.01 | RSI(14): 63.5 | VSA: Volume bình thường (1.0x trung bình) | SMC: BEARISH_FVG_RETEST (SMC Fair Value Gap: Giá hồi test vùng FVG giảm [$0.0051 - $0.0051] và bị kháng cự từ chối)"
+    },
+    {
+      "timestamp": "07:25:08",
+      "agent": "Researcher",
+      "level": "INFO",
+      "message": "Đã thu nạp 3 tin tức mới cho PIXEL: [CoinMarketCap] Ronin-based Game PIXEL Enters Top Ten Most-Traded Token... | [CoinDCX] Pixels Price Prediction 2026-2031: Can PIXEL Reach $0.0..."
+    },
+    {
+      "timestamp": "07:25:06",
+      "agent": "Spotter",
+      "level": "INFO",
+      "message": "Đã khóa mục tiêu: PIXEL/USDT | Giá: $0.005120 | Thanh khoản 24h: $241K USDT (LIGHT TIER (Thanh Khoản Vừa)) | Sổ lệnh: CÂN BẰNG CUNG CẦU (Giằng Co) (Tỷ số 1.09)"
+    },
+    {
+      "timestamp": "07:24:22",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "07:24:06",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "07:23:52",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "07:23:23",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "07:22:17",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    },
+    {
+      "timestamp": "07:22:04",
+      "agent": "System",
+      "level": "INFO",
+      "message": "Quant Desk Backend initialized with Crypto Watchlist & Liquidity Engine."
+    }
+  ],
+  "last_updated": 1792402810.8005028
+}

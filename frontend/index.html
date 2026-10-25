@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QUANT DESK | Hệ Thống Giao Dịch Mô Phỏng Đa Đặc Vụ AI</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/style.css?v=4.4">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -18,7 +18,7 @@
         <span class="pulse-indicator"></span>
         <span class="logo-text">QUANT<span class="highlight">DESK</span></span>
       </div>
-      <span class="sub-badge">SWARM v1.0 • GIAO DỊCH MÔ PHỎNG</span>
+      <span id="sub-badge-mode" class="sub-badge">SWARM v1.0 • GIAO DỊCH MÔ PHỎNG</span>
     </div>
 
     <div class="controls-group">
@@ -28,18 +28,45 @@
       <button id="btn-scan" class="btn btn-primary" onclick="openScanModal()">
         <span class="btn-icon">⚡</span> QUÉT THỊ TRƯỜNG
       </button>
-      <button id="btn-view-proposals" class="btn btn-secondary" style="border-color: rgba(99, 102, 241, 0.5); color: #a5b4fc; background: rgba(99, 102, 241, 0.1);" onclick="scrollToProposals()" title="Xem hàng đợi đề xuất AI đang chờ duyệt">
-        ⏳ ĐỀ XUẤT: <span id="header-proposals-count" style="font-weight:700; color:#38bdf8; margin-left:2px;">0</span>
+      <button id="btn-view-memory" class="btn btn-secondary" style="border-color: rgba(236, 72, 153, 0.5); color: #f472b6; background: rgba(236, 72, 153, 0.1);" onclick="openMemoryModal()" title="Xem kho Trí Nhớ & Bài Học Tự Phản Tỉnh AI (Trading Memory)">
+        🧠 TRÍ NHỚ: <span id="header-memory-count" style="font-weight:700; color:#f472b6; margin-left:2px;">0</span>
       </button>
-      <button id="btn-auto" class="btn btn-secondary" onclick="toggleAutoMode()">
-        <span id="auto-dot" class="status-dot"></span>
-        <span id="auto-text">VÒNG TỰ ĐỘNG: TẮT</span>
+      <div id="strategy-selector-wrapper" style="display:inline-flex; align-items:center; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.45); border-radius: 6px; padding: 0 4px;" title="Chuyển đổi chiến lược theo quy mô vốn (Lưu trữ toàn bộ chiến lược)">
+        <span style="font-size: 0.82rem; margin-right: 2px;">🎯</span>
+        <select id="strategy-profile-select" style="background:transparent; border:none; color:#34d399; font-weight:700; font-size:0.75rem; padding:6px 2px; cursor:pointer; outline:none;" onchange="changeStrategyProfile(this.value)">
+          <option value="MICRO_SNIPER_SMC" selected style="background:#0f172a; color:#34d399;">⚡ SNIPER $10 (20x-25x)</option>
+          <option value="CLASSIC_QUANT_SCALPER" style="background:#0f172a; color:#38bdf8;">📈 SCALPER $50-$300 (10x-15x)</option>
+          <option value="CONSERVATIVE_SWING_DEFENDER" style="background:#0f172a; color:#fbbf24;">🛡️ DEFENDER $500+ (3x-5x)</option>
+        </select>
+        <button class="btn btn-secondary" style="border:none; background:transparent; padding:2px 4px; margin-left:2px; color:#a7f3d0;" onclick="openStrategyModal()" title="Xem chi tiết chiến lược & quy tắc rủi ro">ℹ️</button>
+      </div>
+      <button id="btn-session-info" class="btn btn-secondary" style="border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);" onclick="openSessionModal()" title="Xem phiên giao dịch thế giới & chiến thuật thích ứng theo giờ VN">
+        <span id="session-badge-icon">🌐</span> <span id="header-session-name">PHIÊN GIAO DỊCH</span>
       </button>
+      <button id="btn-daily-info" class="btn btn-secondary" style="border-color: rgba(74, 222, 128, 0.4); color: #4ade80; background: rgba(74, 222, 128, 0.1);" onclick="openDailyMetricsModal()" title="Xem Lãi/Lỗ Trong Ngày & Cầu Chì An Toàn (Reset 07:00 VN)">
+        <span id="daily-status-dot" class="status-dot active"></span> 📅 HÔM NAY: <span id="header-daily-pnl-roi">+0.0%</span>
+      </button>
+      <button id="btn-binance-connect" class="btn btn-secondary" style="border-color: rgba(245, 158, 11, 0.5); color: #fbbf24; background: rgba(245, 158, 11, 0.1);" onclick="openBinanceModal()" title="Cấu hình kết nối sàn Binance Futures (Bước 2: Testnet / Real)">
+        <span id="binance-status-icon">🟡</span> <span id="header-binance-mode">BINANCE TESTNET</span>
+      </button>
+      <div style="display:inline-flex; align-items:center; background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 0 4px;">
+        <select id="auto-timeframe-select" style="background:transparent; border:none; color:#38bdf8; font-weight:700; font-size:0.75rem; padding:6px 4px; cursor:pointer; outline:none;" onchange="changeAutoLoopTimeframe(this.value)" title="Chọn khung thời gian cho Vòng Tự Động AI">
+          <option value="15m" selected style="background:#0f172a; color:#38bdf8;">🌊 15M Day-Scalp</option>
+          <option value="5m" style="background:#0f172a; color:#cbd5e1;">⚡ 5M Scalp</option>
+          <option value="1m" style="background:#0f172a; color:#cbd5e1;">⚡ 1M Micro</option>
+          <option value="1h" style="background:#0f172a; color:#cbd5e1;">📅 1H Swing</option>
+          <option value="4h" style="background:#0f172a; color:#cbd5e1;">🌊 4H Trend</option>
+        </select>
+        <button id="btn-auto" class="btn btn-secondary" style="border:none; background:transparent; padding:6px 8px; margin:0;" onclick="toggleAutoMode()">
+          <span id="auto-dot" class="status-dot"></span>
+          <span id="auto-text">TỰ ĐỘNG: TẮT</span>
+        </button>
+      </div>
       <button id="btn-notifications" class="btn btn-secondary notify-toggle-btn" onclick="toggleNotificationDrawer()" title="Xem trung tâm thông báo hệ thống">
         <span class="btn-icon">🔔</span> THÔNG BÁO <span id="notify-badge" class="notify-badge">0</span>
       </button>
       <button id="btn-reset" class="btn btn-danger" onclick="resetPortfolio()">
-        🔄 ĐẶT LẠI VỐN ($1,000)
+        🔄 ĐẶT LẠI VỐN ($10)
       </button>
     </div>
   </header>
@@ -50,15 +77,21 @@
     <!-- KPI Metric Cards (Bento) -->
     <section class="kpi-grid">
       <div class="kpi-card">
-        <div class="kpi-title">TỔNG TÀI SẢN (VỐN ẢO)</div>
-        <div class="kpi-value highlight-cyan" id="kpi-equity">$1,000.00</div>
-        <div class="kpi-sub" id="kpi-cash">Tiền mặt: $1,000.00</div>
+        <div class="kpi-title">TỔNG TÀI SẢN (All-Time)</div>
+        <div class="kpi-value highlight-cyan" id="kpi-equity">$10.00</div>
+        <div class="kpi-sub" id="kpi-cash">Tiền mặt: $10.00</div>
       </div>
 
       <div class="kpi-card">
-        <div class="kpi-title">TỔNG LỜI / LỖ (PnL)</div>
+        <div class="kpi-title">LÃI / LỖ TỔNG (All-Time PnL)</div>
         <div class="kpi-value" id="kpi-pnl">+$0.00 (+0.0%)</div>
         <div class="kpi-sub" id="kpi-realized">Đã chốt: $0.00 • Tạm tính: $0.00</div>
+      </div>
+
+      <div class="kpi-card" id="kpi-card-daily" onclick="openDailyMetricsModal()" style="cursor: pointer;" title="Nhấp để xem chi tiết mục tiêu ngày & cầu chì an toàn">
+        <div class="kpi-title">📅 LÃI / LỖ HÔM NAY (07:00 VN) ↗</div>
+        <div class="kpi-value highlight-green" id="kpi-daily-pnl">+$0.00 (+0.0%)</div>
+        <div class="kpi-sub" id="kpi-daily-sub">Vốn mở ngày: $10.00 • Cầu chì: An toàn</div>
       </div>
 
       <div class="kpi-card" onclick="scrollToTrades()" style="cursor: pointer;" title="Nhấp để cuộn xuống xem Sổ Nhật Ký Khớp Lệnh">
@@ -79,15 +112,29 @@
       <div class="panel-header">
         <h3>🪙 DANH SÁCH COIN THEO DÕI & THANH KHOẢN 24H (BINANCE SPOT)</h3>
         <div style="display:flex; gap:10px; align-items:center;">
+          <button class="btn-discovery-scan" onclick="triggerDiscoveryScan()" id="btn-discovery" title="Hội đồng AI Quét Top 100 coin & Phản biện đối nghịch">🔍 HỘI ĐỒNG AI QUÉT COIN (Scout + Gatekeeper)</button>
           <span class="badge-mini" id="watchlist-count-badge">0 COIN ĐANG BẬT AI</span>
           <button class="btn-refresh" onclick="loadCryptoWatchlist(true)">🔄 Làm mới</button>
         </div>
       </div>
 
+      <!-- Discovery Report Card Container -->
+      <div id="discovery-report-card" class="discovery-report-card" style="display: none;"></div>
+
       <!-- Controls & Quick Add -->
       <div class="crypto-top-controls">
         <div class="add-coin-form">
-          <input type="text" id="new-coin-input" class="coin-input" placeholder="Mã coin (ví dụ: PEPE, SUI)" onkeydown="if(event.key==='Enter') addNewCoin()" />
+          <div class="coin-search-container">
+            <span class="coin-search-icon">🔍</span>
+            <input 
+              type="text" 
+              id="new-coin-input" 
+              class="coin-input" 
+              placeholder="Tìm & thêm coin (ví dụ: BTC, SOL, SUI, PEPE...)" 
+              autocomplete="off" 
+            />
+            <div id="coin-search-dropdown" class="coin-search-dropdown" style="display: none;"></div>
+          </div>
           <button class="btn-add-coin" onclick="addNewCoin()">+ THÊM COIN</button>
         </div>
 
@@ -236,6 +283,23 @@
           </div>
         </div>
 
+        <!-- Dedicated Coin Workers Live Grid (Tự động phân thân bot độc lập theo từng coin) -->
+        <div class="panel" id="coin-workers-panel" style="margin-top: 10px;">
+          <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:1.1rem;">⚡</span>
+              <div>
+                <h3 style="font-size:0.85rem; margin:0;">ĐỘI NGŨ BOT CHUYÊN TRÁCH TỪNG COIN (PARALLEL WORKERS)</h3>
+                <span style="font-size:0.68rem; color:var(--text-dim);">Mỗi coin là 1 con bot độc lập canh nến 1M 24/7 • Tự sinh khi thêm coin mới</span>
+              </div>
+            </div>
+            <span class="badge-mini" id="workers-count-badge" style="background:rgba(56, 189, 248, 0.15); color:#38bdf8; border:1px solid rgba(56, 189, 248, 0.4);">0 BOT ĐANG CHẠY</span>
+          </div>
+          <div id="coin-workers-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-top: 10px;">
+            <!-- Dynamically populated via updateCoinWorkersUI() -->
+          </div>
+        </div>
+
         <!-- Live Terminal Thought Stream -->
         <div class="panel thought-stream-panel" id="thought-panel">
           <div class="panel-header">
@@ -252,26 +316,6 @@
 
       <!-- Right Column: Prediction Markets & Open Positions -->
       <div class="workspace-col">
-
-        <!-- AI Trade Proposals (Hàng Đợi Chờ Duyệt) -->
-        <div class="panel" id="proposals-panel" style="border: 1px solid rgba(99, 102, 241, 0.45); background: rgba(99, 102, 241, 0.03);">
-          <div class="panel-header">
-            <div style="display:flex; align-items:center; gap:10px;">
-              <span class="pulse-indicator" style="background:#818cf8; box-shadow:0 0 10px #818cf8;"></span>
-              <h3>⏳ HÀNG ĐỢI ĐỀ XUẤT CHỜ PHÊ DUYỆT (AI PROPOSALS)</h3>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span class="badge-mini" id="proposals-count" style="background:rgba(99, 102, 241, 0.25); color:#a5b4fc; border:1px solid rgba(99, 102, 241, 0.4);">0 ĐỀ XUẤT</span>
-              <button class="btn btn-outline" style="padding:2px 8px; font-size:0.75rem; border-color:rgba(255,255,255,0.15); color:var(--text-muted);" onclick="clearAllProposals()" title="Xóa tất cả đề xuất trong hàng đợi">Xóa Hết</button>
-            </div>
-          </div>
-
-          <div id="proposals-list-container">
-            <div class="text-center text-muted" style="padding: 22px; font-size: 0.85rem;">
-              Chưa có đề xuất nào trong danh sách đợi. Hãy bấm <strong>"QUÉT THỊ TRƯỜNG"</strong> để AI phân tích và gửi cơ hội vào đây!
-            </div>
-          </div>
-        </div>
 
         <!-- Open Positions Table -->
         <div class="panel">
@@ -329,8 +373,63 @@
           <h3>SỔ NHẬT KÝ KHỚP LỆNH MÔ PHỎNG (TRADE HISTORY)</h3>
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
+          <span class="badge-mini" id="trades-pnl-summary-badge" style="background:rgba(16, 185, 129, 0.15); color:#10b981; border:1px solid rgba(16, 185, 129, 0.3); font-weight:700;">LÃI ĐÃ CHỐT: +$0.00</span>
+          <span class="badge-mini" id="trades-win-rate-badge" style="background:rgba(245, 158, 11, 0.15); color:#fbbf24; border:1px solid rgba(245, 158, 11, 0.3); font-weight:700;">THẮNG: 0%</span>
           <span class="badge-mini" id="trades-count-badge" style="background:rgba(0, 240, 255, 0.15); color:var(--accent-cyan); border:1px solid rgba(0, 240, 255, 0.3);">0 LỆNH ĐÃ KHỚP</span>
-          <span class="badge-mini">XÁC MINH SỔ CÁI REAL-TIME</span>
+        </div>
+      </div>
+
+      <!-- Trade History Filter & Pagination Toolbar -->
+      <div class="trades-toolbar" style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; padding:10px 14px; background:rgba(15, 23, 42, 0.7); border-bottom:1px solid rgba(255, 255, 255, 0.08); font-size:0.8rem;">
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+          <!-- Filter by Coin -->
+          <div style="display:flex; align-items:center; gap:5px;">
+            <label style="color:var(--text-dim); font-size:0.75rem; font-weight:600;">🪙 COIN:</label>
+            <select id="trade-filter-symbol" class="form-input-control" style="padding:4px 8px; font-size:0.75rem; width:auto; min-width:110px;" onchange="onTradeFilterChange()">
+              <option value="ALL">🌐 Tất cả coin</option>
+            </select>
+          </div>
+
+          <!-- Filter by Result -->
+          <div style="display:flex; align-items:center; gap:5px;">
+            <label style="color:var(--text-dim); font-size:0.75rem; font-weight:600;">🎯 PHÂN LOẠI:</label>
+            <select id="trade-filter-type" class="form-input-control" style="padding:4px 8px; font-size:0.75rem; width:auto;" onchange="onTradeFilterChange()">
+              <option value="all">Tất cả lệnh (Vào & Ra)</option>
+              <option value="close">Chỉ lệnh ĐÃ ĐÓNG (Chốt sổ)</option>
+              <option value="win">🟢 Chỉ lệnh CÓ LÃI (Win)</option>
+              <option value="loss">🔴 Chỉ lệnh CẮT LỖ (Loss)</option>
+              <option value="open">⚡ Chỉ lệnh MỞ VỊ THẾ (Open)</option>
+            </select>
+          </div>
+
+          <!-- Page size -->
+          <div style="display:flex; align-items:center; gap:5px;">
+            <label style="color:var(--text-dim); font-size:0.75rem; font-weight:600;">HIỂN THỊ:</label>
+            <select id="trade-filter-limit" class="form-input-control" style="padding:4px 8px; font-size:0.75rem; width:auto;" onchange="onTradeLimitChange()">
+              <option value="30">30 lệnh</option>
+              <option value="50" selected>50 lệnh</option>
+              <option value="100">100 lệnh</option>
+              <option value="200">200 lệnh</option>
+              <option value="0">Tất cả (Toàn bộ)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span id="trades-pagination-info" style="color:var(--text-dim); font-size:0.75rem; font-family:var(--font-mono);">
+            Đang tải...
+          </span>
+          <button id="btn-trades-prev" class="btn-subtle" style="padding:4px 10px; font-size:0.75rem;" onclick="changeTradePage(-1)">
+            ◀ Trước
+          </button>
+          <span id="trades-current-page" style="font-weight:700; color:var(--accent-cyan); font-family:var(--font-mono); font-size:0.8rem; min-width:20px; text-align:center;">1</span>
+          <button id="btn-trades-next" class="btn-subtle" style="padding:4px 10px; font-size:0.75rem;" onclick="changeTradePage(1)">
+            Sau ▶
+          </button>
+          <button class="btn-subtle" style="padding:4px 10px; font-size:0.75rem; background:rgba(56, 189, 248, 0.12); color:#38bdf8; border:1px solid rgba(56, 189, 248, 0.35); font-weight:600;" onclick="exportTradesCSV()" title="Tải toàn bộ lịch sử dạng CSV để mở bằng Excel/Google Sheets">
+            📥 Xuất CSV
+          </button>
         </div>
       </div>
       <div class="table-container">
@@ -339,11 +438,11 @@
             <tr>
               <th>Thời Gian</th>
               <th>Hành Động</th>
-              <th>Tài Sản</th>
-              <th>Khối Lượng</th>
-              <th>Giá Khớp</th>
-              <th>Tổng Vốn (USD)</th>
-              <th>Lý Do AI Ra Quyết Định</th>
+              <th>Cặp Tài Sản</th>
+              <th>Giá Vào / Ra</th>
+              <th>Tiền Ký Quỹ (Vốn)</th>
+              <th style="text-align:right;">Tiền Thắng / Thua (PnL)</th>
+              <th>Lý Do / Chi Tiết Lệnh</th>
             </tr>
           </thead>
           <tbody id="trades-tbody">
@@ -413,9 +512,11 @@
             <div class="form-group-item">
               <label>KHUNG THỜI GIAN</label>
               <select id="plan-timeframe" class="form-input-control">
-                <option value="SCALP">⚡ Scalp (1m - 5m)</option>
-                <option value="DAY" selected>📅 Day Trade (15m - 1h)</option>
-                <option value="SWING">🌊 Swing (4h - 1d)</option>
+                <option value="1m" selected>⚡ Siêu Tốc 1 Phút (1M Scalp)</option>
+                <option value="5m">⚡ Lướt Sóng 5 Phút (5M Scalp)</option>
+                <option value="15m">⏱️ Ngắn Hạn (15M)</option>
+                <option value="1h">📅 Trong Ngày (1H Day)</option>
+                <option value="4h">🌊 Đánh Sóng (4H Swing)</option>
               </select>
             </div>
           </div>
@@ -426,15 +527,16 @@
               <select id="plan-leverage" class="form-input-control" onchange="recalculatePlannerEstimates()">
                 <option value="1">1x (Spot)</option>
                 <option value="2">2x</option>
-                <option value="3" selected>3x</option>
                 <option value="5">5x</option>
-                <option value="10">10x (Rủi ro cao)</option>
+                <option value="10">10x (Scalp vừa)</option>
+                <option value="20" selected>20x (Scalp Tiêu Chuẩn)</option>
+                <option value="25">25x (Trần tối đa Binance)</option>
               </select>
             </div>
 
             <div class="form-group-item">
               <label>TIỀN KÝ QUỸ (USD)</label>
-              <input type="number" id="plan-stake" class="form-input-control" value="50.00" min="5" step="5" oninput="recalculatePlannerEstimates()">
+              <input type="number" id="plan-stake" class="form-input-control" value="2.00" min="0.5" step="0.5" oninput="recalculatePlannerEstimates()">
             </div>
           </div>
 
@@ -593,40 +695,64 @@
             </select>
           </div>
 
-          <!-- Timeframe & Strategy Horizon -->
-          <div class="form-row-2">
-            <div class="form-group-item">
-              <label>⏱️ KHUNG THỜI GIAN (TIMEFRAME)</label>
-              <select id="scan-timeframe" class="form-input-control">
-                <option value="15m">15 Phút (Scalping Siêu Tốc)</option>
-                <option value="1h" selected>1 Giờ (Trong Ngày - Day Trade)</option>
-                <option value="4h">4 Giờ (Đánh Sóng - Swing Trade)</option>
-                <option value="1d">1 Ngày (Vị Thế Dài Hạn)</option>
-              </select>
+          <!-- Timeframe Selection (Scalping 1m - 5m) -->
+          <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <label style="margin: 0; font-weight: 700; color: #38bdf8; font-size: 0.82rem;">⏱️ KHUNG THỜI GIAN (TIMEFRAME - SCALPING 1M - 5M):</label>
+              <span id="active-tf-label" class="badge-mini" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">⚡ 1M (SIÊU TỐC)</span>
             </div>
+            <div class="quick-pill-group" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;">
+              <button type="button" class="btn-pill active" onclick="selectScanTf('1m', this)">⚡ 1M (1 Phút - Siêu Tốc)</button>
+              <button type="button" class="btn-pill" onclick="selectScanTf('3m', this)">⚡ 3M (3 Phút)</button>
+              <button type="button" class="btn-pill" onclick="selectScanTf('5m', this)">⚡ 5M (5 Phút - Lướt Sóng)</button>
+              <button type="button" class="btn-pill" onclick="selectScanTf('15m', this)">⏱️ 15M (15 Phút)</button>
+              <button type="button" class="btn-pill" onclick="selectScanTf('1h', this)">📅 1H (1 Giờ)</button>
+            </div>
+            <select id="scan-timeframe" class="form-input-control" onchange="onScanTfDropdownChange(this.value)">
+              <option value="1m" selected>⚡ 1 Phút (Scalping Siêu Tốc 1M - Đòn bẩy cao)</option>
+              <option value="3m">⚡ 3 Phút (Scalping 3M)</option>
+              <option value="5m">⚡ 5 Phút (Lướt Sóng Ngắn 5M)</option>
+              <option value="15m">⏱️ 15 Phút (Ngắn Hạn)</option>
+              <option value="1h">📅 1 Giờ (Trong Ngày - Day Trade)</option>
+              <option value="4h">🌊 4 Giờ (Đánh Sóng - Swing Trade)</option>
+              <option value="1d">1 Ngày (Vị Thế Dài Hạn)</option>
+            </select>
+          </div>
 
-            <div class="form-group-item">
-              <label>⚡ ĐÒN BẨY TỐI ĐA (LEVERAGE)</label>
-              <select id="scan-leverage" class="form-input-control">
-                <option value="0" selected>🤖 Tự động theo Lợi thế AI (Kelly Adaptive)</option>
-                <option value="1">1x (Spot / Không đòn bẩy)</option>
-                <option value="2">2x (An toàn)</option>
-                <option value="3">3x (Cân bằng)</option>
-                <option value="5">5x (Tích cực)</option>
-                <option value="10">10x (Mạo hiểm)</option>
-              </select>
+          <!-- Margin Leverage Selection (20x, 50x, 100x) -->
+          <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <label style="margin: 0; font-weight: 700; color: #f59e0b; font-size: 0.82rem;">⚡ ĐÒN BẨY MARGIN (LEVERAGE):</label>
+              <span id="active-lev-label" class="badge-mini" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3);">🔥 20X (TIÊU CHUẨN)</span>
             </div>
+            <div class="quick-pill-group" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;">
+              <button type="button" class="btn-pill active-lev" onclick="selectScanLev(20, this)">⚡ 20x (Scalp)</button>
+              <button type="button" class="btn-pill" onclick="selectScanLev(25, this)">🔥 25x (Tối Đa Binance)</button>
+              <button type="button" class="btn-pill" onclick="selectScanLev(10, this)">10x</button>
+              <button type="button" class="btn-pill" onclick="selectScanLev(5, this)">5x</button>
+              <button type="button" class="btn-pill" onclick="selectScanLev(2, this)">2x</button>
+              <button type="button" class="btn-pill" onclick="selectScanLev(0, this)">🤖 Tự Động AI</button>
+            </div>
+            <select id="scan-leverage" class="form-input-control" onchange="onScanLevDropdownChange(this.value)">
+              <option value="20" selected>⚡ 20x (Scalp Tiêu Chuẩn)</option>
+              <option value="25">🔥 25x (Trần tối đa Binance)</option>
+              <option value="10">10x (Scalp vừa)</option>
+              <option value="5">5x (Trung bình)</option>
+              <option value="2">2x (An toàn)</option>
+              <option value="1">1x (Spot / Không đòn bẩy)</option>
+              <option value="0">🤖 Tự động theo Lợi thế AI (Kelly Adaptive)</option>
+            </select>
           </div>
 
           <!-- Max Stake / Margin per Trade -->
           <div class="form-group-item">
             <label>💵 KÝ QUỸ TỐI ĐA CHO MỖI LỆNH ($ USD)</label>
-            <input type="number" id="scan-max-stake" class="form-input-control" placeholder="Để trống nếu muốn AI tự tính theo tỷ lệ Kelly" min="5" step="1">
+            <input type="number" id="scan-max-stake" class="form-input-control" placeholder="Để trống nếu muốn AI tự tính theo tỷ lệ Kelly (Gợi ý: 1 - 2 USD)" min="0.5" step="0.5">
             <div class="quick-pct-buttons" style="margin-top:6px;">
               <span class="chip-label">Gợi ý nhanh:</span>
-              <button type="button" class="btn-quick-pct" onclick="setScanStakePct(0.03)">3% Vốn (~$28)</button>
-              <button type="button" class="btn-quick-pct" onclick="setScanStakePct(0.05)">5% Vốn (~$47)</button>
-              <button type="button" class="btn-quick-pct" onclick="setScanStakePct(0.10)">10% Vốn (~$94)</button>
+              <button type="button" class="btn-quick-pct" onclick="setScanStakePct(0.10)">10% Vốn (~$1.0)</button>
+              <button type="button" class="btn-quick-pct" onclick="setScanStakePct(0.15)">15% Vốn (~$1.5)</button>
+              <button type="button" class="btn-quick-pct" onclick="setScanStakePct(0.20)">20% Vốn (~$2.0)</button>
             </div>
           </div>
 
@@ -635,44 +761,46 @@
             <div class="form-group-item">
               <label>🛡️ TỶ LỆ CẮT LỖ (SL %)</label>
               <select id="scan-sl-pct" class="form-input-control">
-                <option value="0" selected>🤖 Tối ưu theo AI (Đệm râu nến)</option>
-                <option value="0.015">Cứng -1.5%</option>
-                <option value="0.02">Cứng -2.0%</option>
-                <option value="0.03">Cứng -3.0%</option>
-                <option value="0.05">Cứng -5.0%</option>
+                <option value="0" selected>🤖 Tối ưu theo AI (0.8% - Tự đệm râu nến)</option>
+                <option value="0.005">Cực chặt -0.5% (Scalp 50x-100x)</option>
+                <option value="0.008">Chuẩn -0.8% (Scalp 20x)</option>
+                <option value="0.015">Rộng -1.5%</option>
+                <option value="0.02">Rộng -2.0%</option>
+                <option value="0.03">Rộng -3.0%</option>
               </select>
             </div>
 
             <div class="form-group-item">
               <label>🎯 TỶ LỆ CHỐT LỜI (TP %)</label>
               <select id="scan-tp-pct" class="form-input-control">
-                <option value="0" selected>🤖 Tối ưu theo AI (R:R >= 2.0)</option>
-                <option value="0.03">Cứng +3.0%</option>
-                <option value="0.04">Cứng +4.0%</option>
-                <option value="0.06">Cứng +6.0%</option>
-                <option value="0.10">Cứng +10.0%</option>
+                <option value="0" selected>🤖 Tối ưu theo AI (1.6% - R:R = 1:2)</option>
+                <option value="0.010">Nhanh +1.0% (Scalp 50x-100x)</option>
+                <option value="0.016">Chuẩn +1.6% (Scalp 20x)</option>
+                <option value="0.025">Mở rộng +2.5%</option>
+                <option value="0.040">+4.0%</option>
+                <option value="0.060">+6.0%</option>
               </select>
             </div>
           </div>
 
-          <!-- Execution Mode: Proposal Queue vs Auto Execute -->
-          <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 8px; padding: 12px; margin-top: 8px;">
-            <div style="font-weight: 700; font-size: 0.8rem; color: #a5b4fc; margin-bottom: 8px;">📋 CHẾ ĐỘ THỰC THI SAU KHI AI PHÂN TÍCH:</div>
+          <!-- Execution Mode: Direct Execute (Default) vs Proposal Queue -->
+          <div style="background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 8px; padding: 12px; margin-top: 8px;">
+            <div style="font-weight: 700; font-size: 0.8rem; color: #4ade80; margin-bottom: 8px;">⚡ CHẾ ĐỘ THỰC THI (BỎ PHÊ DUYỆT THỦ CÔNG):</div>
             <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; margin-bottom: 8px;">
-              <input type="radio" name="scan-exec-mode" value="PROPOSAL" checked style="margin-top: 3px;">
+              <input type="radio" name="scan-exec-mode" value="DIRECT_EXECUTE" checked style="margin-top: 3px;">
               <div>
-                <strong style="color: #38bdf8; font-size: 0.85rem;">Gửi vào Danh Sách Đợi để tôi Phê duyệt / Hủy bỏ (Khuyên dùng)</strong>
+                <strong style="color: #4ade80; font-size: 0.85rem;">⚡ TỰ ĐỘNG KHỚP LỆNH NGAY (Bỏ qua phê duyệt - Khuyên dùng)</strong>
                 <div style="font-size: 0.73rem; color: var(--text-dim); margin-top: 2px;">
-                  AI sẽ phân tích, thẩm định xong đưa vào hàng đợi. Bạn có toàn quyền xem các chỉ số, bấm Chấp nhận vào lệnh, Điều chỉnh SL/TP hoặc Hủy bỏ.
+                  AI tự động theo dõi biến động & nén lò xo (Squeeze), khi phát hiện cơ hội hoặc bẫy SMC sẽ tự động vào lệnh trực tiếp ngay lập tức mà không cần bạn bấm duyệt.
                 </div>
               </div>
             </label>
             <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer;">
-              <input type="radio" name="scan-exec-mode" value="DIRECT_EXECUTE" style="margin-top: 3px;">
+              <input type="radio" name="scan-exec-mode" value="PROPOSAL" style="margin-top: 3px;">
               <div>
-                <strong style="color: #f59e0b; font-size: 0.85rem;">Khớp lệnh tự động ngay lập tức (Bỏ qua phê duyệt)</strong>
+                <strong style="color: #94a3b8; font-size: 0.85rem;">📋 Gửi vào danh sách chờ duyệt thủ công</strong>
                 <div style="font-size: 0.73rem; color: var(--text-dim); margin-top: 2px;">
-                  AI sẽ tự động xuống tiền vào danh mục ngay khi tìm thấy cơ hội đủ điều kiện rủi ro.
+                  AI sẽ tạo Trade Proposal và chờ bạn bấm Chấp nhận hoặc Hủy bỏ.
                 </div>
               </div>
             </label>
@@ -686,6 +814,291 @@
               Hủy
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Trading Memory & Self-Reflection Modal (Inspired by TradingAgents) -->
+  <div id="memory-modal" class="modal-overlay" onclick="if(event.target===this) closeMemoryModal()">
+    <div class="modal-card" style="max-width: 860px; max-height: 85vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span style="font-size: 1.3rem;">🧠</span>
+          <div>
+            <h3>TRÍ NHỚ AI 3 NGĂN PHÂN LẬP (TRADING MEMORY V3)</h3>
+            <span style="font-size: 0.72rem; color: var(--text-dim);">Ngăn 1: Từng Đồng Coin (Phân lập rủi ro) • Ngăn 2: Từng Chiến Thuật • Ngăn 3: Quy Luật Toàn Cầu & Time-Decay</span>
+          </div>
+        </div>
+        <button class="modal-close-btn" onclick="closeMemoryModal()">✕</button>
+      </div>
+
+      <div class="modal-body" style="overflow-y: auto; flex: 1; padding: 18px;">
+        <div id="memory-stats-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px;">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Meta-Learning Pattern Matrix Section -->
+        <div id="memory-patterns-container" style="margin-bottom: 18px;">
+          <!-- Populated by JS: Win Amplifiers and Loss Traps -->
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h4 style="font-size: 0.85rem; color: #a5b4fc; font-weight: 700; margin: 0;">📜 NHẬT KÝ BÀI HỌC & CHUẨN ĐOÁN NGUYÊN NHÂN:</h4>
+          <button class="btn btn-outline" style="font-size: 0.7rem; padding: 4px 10px; color: var(--accent-red); border-color: rgba(239,68,68,0.3);" onclick="clearTradingMemory()">
+            🗑️ Xóa Trí Nhớ
+          </button>
+        </div>
+
+        <div id="memory-list-container" style="display: flex; flex-direction: column; gap: 10px;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Binance Futures Live & Testnet Connection Modal (Bước 2) -->
+  <div id="binance-modal" class="modal-overlay" onclick="if(event.target===this) closeBinanceModal()">
+    <div class="modal-card" style="max-width: 680px; max-height: 85vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span style="font-size: 1.3rem;">⚡</span>
+          <div>
+            <h3>KẾT NỐI SÀN BINANCE FUTURES (TESTNET & REAL MONEY)</h3>
+            <span style="font-size: 0.72rem; color: var(--text-dim);">Bước 2: Giao dịch khớp lệnh thực tế trên sàn Binance • Hỗ trợ Testnet miễn phí và Real Money</span>
+          </div>
+        </div>
+        <button class="modal-close-btn" onclick="closeBinanceModal()">✕</button>
+      </div>
+
+      <div class="modal-body" style="overflow-y: auto; flex: 1; padding: 18px;">
+        <!-- Status Card -->
+        <div id="binance-status-banner" style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <div style="font-size: 0.65rem; color: var(--text-dim); margin-bottom: 2px;">TRẠNG THÁI KẾT NỐI SÀN:</div>
+            <div id="binance-status-label" style="font-weight: 800; font-size: 0.95rem; color: #fbbf24; display: flex; align-items: center; gap: 6px;">
+              <span id="binance-dot" class="status-dot warning"></span>
+              <span id="binance-status-text">Đang kiểm tra kết nối...</span>
+            </div>
+          </div>
+          <div style="display: flex; gap: 14px; text-align: right; align-items: center;">
+            <div>
+              <div style="font-size: 0.62rem; color: var(--text-dim);">ĐỘ TRỄ (PING)</div>
+              <div id="binance-latency-val" style="font-weight: 700; color: #38bdf8; font-size: 0.85rem;">-- ms</div>
+            </div>
+            <div>
+              <div style="font-size: 0.62rem; color: var(--text-dim);">USDT KHẢ DỤNG (TRADE)</div>
+              <div id="binance-balance-val" style="font-weight: 800; color: #4ade80; font-size: 0.85rem;">-- USDT</div>
+            </div>
+            <div>
+              <div style="font-size: 0.62rem; color: var(--text-dim);">TỔNG VÍ QUY ĐỔI (USD)</div>
+              <div id="binance-total-usd-val" style="font-weight: 800; color: #f59e0b; font-size: 0.85rem;">-- USD</div>
+            </div>
+          </div>
+        </div>
+        <div id="binance-assets-pill" style="display: none; background: rgba(15, 23, 42, 0.6); border: 1px dashed rgba(245, 158, 11, 0.3); border-radius: 6px; padding: 6px 12px; margin-bottom: 14px; font-size: 0.72rem; color: #cbd5e1; justify-content: space-between; align-items: center;">
+          <span style="font-weight: 700; color: #fbbf24;">📊 Phân bổ tài sản ví:</span>
+          <span id="binance-assets-breakdown-text">USDT: 5,000 | USDC: 5,000 | BTC: 0.01</span>
+        </div>
+
+        <!-- 3-Step Guide Box -->
+        <div style="background: rgba(56, 189, 248, 0.06); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; padding: 12px 14px; margin-bottom: 16px;">
+          <div style="font-weight: 800; font-size: 0.82rem; color: #38bdf8; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+            <span>📖</span>
+            <span>HƯỚNG DẪN 3 BƯỚC LẤY KHÓA TESTNET MIỄN PHÍ TRONG 30 GIÂY:</span>
+          </div>
+          <ol style="margin: 0; padding-left: 20px; font-size: 0.75rem; color: #e2e8f0; line-height: 1.55;">
+            <li>Truy cập trang web chính thức của Binance Futures Testnet: <a href="https://testnet.binancefuture.com" target="_blank" style="color: #fbbf24; font-weight: 700; text-decoration: underline;">https://testnet.binancefuture.com</a> (Hoàn toàn miễn phí, không cần nạp tiền).</li>
+            <li>Đăng nhập (bằng tài khoản <strong>GitHub</strong> hoặc đăng ký email chỉ mất 10 giây). Sàn sẽ tặng ngay <strong>15,000 USDT</strong> tiền ảo miễn phí.</li>
+            <li>Tại góc dưới hoặc phần <strong>API Key</strong> trên trang Testnet, bấm tạo và copy cặp <strong>API Key</strong> &amp; <strong>Secret Key</strong> dán vào ô bên dưới.</li>
+          </ol>
+        </div>
+
+        <!-- Settings Form -->
+        <div class="planner-form">
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;">CHẾ ĐỘ GIAO DỊCH (EXECUTION ENGINE):</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+              <label style="display: flex; align-items: center; gap: 6px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 8px 10px; cursor: pointer; font-size: 0.74rem;">
+                <input type="radio" name="binance-mode-select" value="BINANCE_TESTNET" checked onchange="onBinanceModeChange(this.value)">
+                <span>🟡 Binance Testnet</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 6px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 8px 10px; cursor: pointer; font-size: 0.74rem;">
+                <input type="radio" name="binance-mode-select" value="PAPER" onchange="onBinanceModeChange(this.value)">
+                <span>⚪ Paper Simulation</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 6px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 8px 10px; cursor: pointer; font-size: 0.74rem;">
+                <input type="radio" name="binance-mode-select" value="BINANCE_REAL" onchange="onBinanceModeChange(this.value)">
+                <span>🔴 Binance Real (Tiền thật)</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label for="binance-api-key" style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;">BINANCE API KEY:</label>
+            <input type="password" id="binance-api-key" class="form-control" placeholder="Dán API Key từ Binance Testnet vào đây..." style="width: 100%; font-family: var(--font-mono); font-size: 0.8rem;">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label for="binance-api-secret" style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;">BINANCE SECRET KEY:</label>
+            <input type="password" id="binance-api-secret" class="form-control" placeholder="Dán Secret Key từ Binance Testnet vào đây..." style="width: 100%; font-family: var(--font-mono); font-size: 0.8rem;">
+          </div>
+
+          <div style="font-size: 0.7rem; color: #64748b; margin-bottom: 16px; line-height: 1.4;">
+            🛡️ <strong>Bảo mật tối đa</strong>: Khóa API được lưu cục bộ trong file <code style="color:#cbd5e1;">.env</code> trên máy tính của bạn. Hệ thống chỉ yêu cầu quyền Trading và <strong>không bao giờ yêu cầu quyền Rút tiền (Withdrawal)</strong>.
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <button id="btn-binance-test" class="btn btn-secondary" style="flex: 1; border-color: #38bdf8; color: #38bdf8;" onclick="testBinanceConnection()">
+              ⚡ KIỂM TRA PING &amp; SỐ DƯ
+            </button>
+            <button id="btn-binance-save" class="btn btn-primary" style="flex: 1; background: linear-gradient(135deg, #f59e0b, #d97706); border-color: #f59e0b;" onclick="saveBinanceConfig()">
+              💾 LƯU CẤU HÌNH &amp; ÁP DỤNG
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Multi-Strategy Profiles Modal (Bảo tồn toàn bộ chiến lược theo quy mô vốn) -->
+  <div id="strategy-modal" class="modal-overlay" onclick="if(event.target===this) closeStrategyModal()">
+    <div class="modal-card" style="max-width: 780px; max-height: 88vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span style="font-size: 1.3rem;">🎯</span>
+          <div>
+            <h3>KHO CHIẾN LƯỢC ĐA QUY MÔ VỐN (STRATEGY PROFILES)</h3>
+            <span style="font-size: 0.72rem; color: var(--text-dim);">Lưu trữ độc lập từng chiến lược theo quy mô vốn • Không bỏ mất chiến lược cũ</span>
+          </div>
+        </div>
+        <button class="modal-close-btn" onclick="closeStrategyModal()">✕</button>
+      </div>
+
+      <div class="modal-body" style="overflow-y: auto; flex: 1; padding: 18px;">
+        <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; font-size: 0.76rem; color: #e2e8f0; line-height: 1.5;">
+          💡 <strong>Cơ chế bảo toàn chiến lược:</strong> Hệ thống lưu trữ vĩnh viễn các bộ quy tắc (Đòn bẩy, Phân bổ vốn, Cắt lỗ/Chốt lời, Mô hình nến Price Action & Hợp lưu đa khung thời gian). Bạn có thể tự do chuyển đổi giữa các chiến lược tùy theo số vốn thực tế trong tài khoản mà không sợ bị ghi đè!
+        </div>
+
+        <div id="strategy-cards-list" style="display: flex; flex-direction: column; gap: 14px;">
+          <!-- Dynamically populated via loadStrategyProfiles() -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Session Strategy Adaptation Modal (Thích ứng chiến thuật theo khung giờ & phiên thế giới) -->
+  <div id="session-modal" class="modal-overlay" onclick="if(event.target===this) closeSessionModal()">
+    <div class="modal-card" style="max-width: 820px; max-height: 88vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span style="font-size: 1.3rem;">🌐</span>
+          <div>
+            <h3>CHIẾN THUẬT THEO KHUNG GIỜ & PHIÊN GIAO DỊCH (GIỜ VIỆT NAM)</h3>
+            <span style="font-size: 0.72rem; color: var(--text-dim);">Tự động thích ứng đòn bẩy, vốn cược và bộ lọc rủi ro theo chu kỳ dòng tiền 24/7</span>
+          </div>
+        </div>
+        <button class="modal-close-btn" onclick="closeSessionModal()">✕</button>
+      </div>
+
+      <div class="modal-body" style="overflow-y: auto; flex: 1; padding: 18px;">
+        <div id="session-current-highlight" style="margin-bottom: 16px;">
+          <!-- Dynamically populated current session card -->
+        </div>
+
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; font-size: 0.76rem; color: #e2e8f0; line-height: 1.5;">
+          💡 <strong>Quy luật dòng tiền định lượng:</strong> Thị trường Crypto giao dịch 24/7 nhưng biến động bùng nổ tập trung mạnh nhất vào Phiên Mỹ (20:00 - 23:30 VN chiếm 65%+ khối lượng). Khung chiều 13:30 - 16:30 VN thường là bẫy quét râu (Judas Swing) của phiên London. Bot tự động siết đòn bẩy và giảm tiền cược ở phiên bẫy, bung toàn lực ở phiên vàng để tối ưu lợi nhuận!
+        </div>
+
+        <div style="font-size: 0.78rem; font-weight: 700; color: #94a3b8; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">
+          📋 LỘ TRÌNH 6 PHIÊN GIAO DỊCH 24 GIỜ:
+        </div>
+
+        <div id="session-cards-list" style="display: flex; flex-direction: column; gap: 12px;">
+          <!-- Dynamically populated via loadSessionInfo() -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Quản Trị Lãi/Lỗ Trong Ngày & Cầu Chì An Toàn (Daily Metrics & Circuit Breaker) -->
+  <div id="daily-modal" class="modal-overlay" onclick="if(event.target===this) closeDailyMetricsModal()">
+    <div class="modal-card" style="max-width: 620px; max-height: 85vh; display: flex; flex-direction: column;">
+      <div class="modal-header" style="background: linear-gradient(135deg, rgba(74, 222, 128, 0.15), rgba(16, 185, 129, 0.05)); border-bottom: 1px solid rgba(74, 222, 128, 0.3);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 1.5rem;">📅</span>
+          <div>
+            <h3 style="margin: 0; font-size: 1.1rem; color: #4ade80; font-weight: 800;">LÃI / LỖ TRONG NGÀY & CẦU CHÌ AN TOÀN</h3>
+            <span style="font-size: 0.72rem; color: #94a3b8;">Reset tự động lúc 07:00 AM VN (00:00 UTC theo nến ngày Binance)</span>
+          </div>
+        </div>
+        <button class="modal-close-btn" onclick="closeDailyMetricsModal()" title="Đóng">✕</button>
+      </div>
+
+      <div class="modal-body" style="overflow-y: auto; flex: 1; padding: 20px;">
+        <!-- Daily KPI Highlight Card -->
+        <div id="daily-modal-highlight" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 18px; margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+            <div>
+              <span style="font-size: 0.72rem; color: #94a3b8; text-transform: uppercase;">NGÀY GIAO DỊCH HIỆN TẠI</span>
+              <div id="daily-modal-date" style="font-size: 1.1rem; font-weight: 800; color: #f8fafc; font-family: var(--font-mono);">2026-10-21</div>
+            </div>
+            <div id="daily-modal-badge" class="badge-mini" style="background: rgba(74, 222, 128, 0.2); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.4); font-size: 0.75rem;">
+              ✓ HOẠT ĐỘNG
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 12px;">
+            <div style="background: rgba(0,0,0,0.25); padding: 10px 12px; border-radius: 8px;">
+              <div style="font-size: 0.7rem; color: #94a3b8;">VỐN MỞ NGÀY (07:00 VN)</div>
+              <div id="daily-modal-start-equity" style="font-size: 1.25rem; font-weight: 800; color: #38bdf8; font-family: var(--font-mono);">$10.00</div>
+            </div>
+            <div style="background: rgba(0,0,0,0.25); padding: 10px 12px; border-radius: 8px;">
+              <div style="font-size: 0.7rem; color: #94a3b8;">LÃI / LỖ HÔM NAY (ROI)</div>
+              <div id="daily-modal-roi" style="font-size: 1.25rem; font-weight: 800; color: #4ade80; font-family: var(--font-mono);">+$0.00 (+0.0%)</div>
+            </div>
+          </div>
+
+          <div style="font-size: 0.75rem; color: #cbd5e1; display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px;">
+            <span>Tổng tài sản hiện tại: <strong id="daily-modal-current-equity" style="color:#f8fafc;">$10.00</strong></span>
+            <span>Reset tiếp theo: <strong style="color:#fbbf24;">07:00 AM VN</strong></span>
+          </div>
+        </div>
+
+        <!-- Two Shield Rules Cards -->
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px;">
+          <!-- Target Profit Shield -->
+          <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px; padding: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span style="font-weight: 700; color: #fbbf24; font-size: 0.85rem;">🔒 LUẬT KHÓA LÃI BẢO TOÀN THÀNH QUẢ (+20.0%)</span>
+              <span id="daily-target-status-badge" class="badge-mini" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">ĐANG BÁM SÁT</span>
+            </div>
+            <div style="font-size: 0.75rem; color: #cbd5e1; line-height: 1.45; margin-bottom: 8px;">
+              Khi lãi ngày chạm mốc <strong>+20.0%</strong>, hệ thống tự động <strong>ĐÓNG BĂNG MỞ LỆNH MỚI</strong> đến 07:00 sáng mai để đút 100% tiền lãi vào két, bảo vệ thành quả tuyệt đối trước biến động thị trường!
+            </div>
+            <div id="btn-unlock-profit-wrapper" style="display: none; margin-top: 6px;">
+              <button class="btn btn-outline" style="font-size: 0.72rem; padding: 4px 10px; color: #fbbf24; border-color: rgba(245, 158, 11, 0.4);" onclick="unlockProfitTargetNow()">
+                🔓 Mở Khóa Cho Phép Tiếp Tục Mở Lệnh (Ghi đè thủ công)
+              </button>
+            </div>
+          </div>
+
+          <!-- Circuit Breaker Shield -->
+          <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span style="font-weight: 700; color: #f87171; font-size: 0.85rem;">🚨 CẦU CHÌ AN TOÀN NGÀY (Max Drawdown -8.0%)</span>
+              <span id="daily-breaker-status-badge" class="badge-mini" style="background: rgba(16, 185, 129, 0.2); color: #4ade80;">AN TOÀN</span>
+            </div>
+            <div style="font-size: 0.75rem; color: #cbd5e1; line-height: 1.45;">
+              Quy tắc chuẩn Quỹ Prop Firm: Nếu hôm nay lỗ chạm <strong>-8.0% vốn ngày</strong>, cầu chì tự động <strong>ngắt toàn bộ lệnh mở mới</strong> đến 07:00 sáng mai để bảo toàn vốn tích lũy, tuyệt đối tránh cuốn vào chuỗi thua cảm xúc.
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button class="btn btn-secondary" onclick="resetDailyMetricsNow()" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
+            🔄 Chốt Vốn & Đặt Lại Mốc Ngày Ngay
+          </button>
         </div>
       </div>
     </div>
@@ -727,6 +1140,6 @@
   </aside>
 
   <script src="/static/lightweight-charts.js"></script>
-  <script src="/static/app.js"></script>
+  <script src="/static/app.js?v=4.6"></script>
 </body>
 </html>

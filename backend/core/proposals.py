@@ -44,7 +44,8 @@ class ProposalManager:
         timeframe: str = "1h",
         edge: float = 0.0,
         reasoning: str = "",
-        analysis_summary: Optional[Dict[str, str]] = None
+        analysis_summary: Optional[Dict[str, str]] = None,
+        signal_dna: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """
         Creates a new trade proposal in PENDING status.
@@ -81,6 +82,7 @@ class ProposalManager:
             "edge_percent": f"{edge * 100:+.1f}%",
             "reasoning": reasoning,
             "analysis_summary": analysis_summary or {},
+            "signal_dna": signal_dna or {},
             "status": "PENDING", # PENDING, APPROVED, REJECTED
             "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
@@ -116,6 +118,14 @@ class ProposalManager:
             self.save()
             return True
         return False
+
+    def clear_pending_for_coin(self, coin: str):
+        clean = coin.upper().replace("USDT", "").strip()
+        to_remove = [k for k, v in self.proposals.items() if v.get("status") == "PENDING" and v.get("coin", "").upper() == clean]
+        for k in to_remove:
+            del self.proposals[k]
+        if to_remove:
+            self.save()
 
     def clear_all(self):
         self.proposals = {}

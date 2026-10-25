@@ -1,0 +1,34 @@
+{
+  "active_strategy_id": "MICRO_SNIPER_SMC",
+  "active_strategy": {
+    "id": "MICRO_SNIPER_SMC",
+    "name": "🎯 Bắn Tỉa Sóng 15M SMC ($10 - Đòn Bẩy 10x)",
+    "badge": "🌊 15M DAY SCALP",
+    "target_capital": "Vốn $10 – $50",
+    "description": "Chiến lược 15M Day-Scalp chất lượng cao. Khung 15M + 1H lọc sạch sóng nhiễu, bắt trọn Liquidity Sweep và FVG retest. Đòn bẩy 10x an toàn, SL 1.5% sau cản cứng nến 15m, TP 3.0% (R:R 1:2.0). Đánh ít lệnh (2-4 lệnh/ngày) nhưng chắc tay, không overtrading.",
+    "target_coins": [
+      "BTC",
+      "ETH",
+      "SOL"
+    ],
+    "capital_budget": 10.0,
+    "stake_percent_range": [
+      0.25,
+      0.4
+    ],
+    "default_stake": 2.5,
+    "leverage": 10,
+    "max_leverage": 15,
+    "sl_percent": 0.015,
+    "tp_percent": 0.03,
+    "min_edge": 0.04,
+    "multi_timeframe": true,
+    "candlestick_patterns": true,
+    "strategy_category": "SMC_SWEEP"
+  },
+  "available_strategies": [
+    "MICRO_SNIPER_SMC",
+    "CLASSIC_QUANT_SCALPER",
+    "CONSERVATIVE_SWING_DEFENDER"
+  ]
+}

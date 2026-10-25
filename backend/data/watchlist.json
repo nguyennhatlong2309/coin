@@ -1,19 +1,25 @@
 {
   "coins": [
-    "BTC",
-    "ETH",
     "SOL",
-    "BNB",
+    "BEB",
+    "IOST",
+    "ALT",
     "DOGE",
-    "PIXEL"
+    "EPIC",
+    "ARK",
+    "INIT",
+    "SOPH"
   ],
   "active": {
-    "BTC": true,
-    "ETH": true,
     "SOL": true,
-    "BNB": true,
+    "BEB": true,
+    "IOST": true,
+    "ALT": true,
     "DOGE": true,
-    "PIXEL": true
+    "EPIC": true,
+    "ARK": true,
+    "INIT": true,
+    "SOPH": true
   },
-  "updated_at": 1792272008.2509868
+  "updated_at": 1792774588.9508219
 }

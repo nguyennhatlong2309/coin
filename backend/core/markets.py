@@ -62,12 +62,12 @@ CURATED_POLYMARKET_EVENTS = [
 
 _cached_markets: List[Dict[str, Any]] = []
 _last_market_fetch: float = 0.0
-_MARKET_CACHE_TTL: float = 30.0 # 30 seconds cache
+_MARKET_CACHE_TTL: float = 120.0 # 120 seconds cache for instant web responsiveness
 
 def fetch_prediction_markets(limit: int = 15, force_refresh: bool = False) -> List[Dict[str, Any]]:
     """
-    Fetches real live prediction markets with in-memory caching (TTL: 30s)
-    to guarantee sub-millisecond responses on high-frequency portfolio polling.
+    Fetches real live prediction markets with in-memory caching (TTL: 120s)
+    to guarantee sub-millisecond responses on web dashboard load.
     """
     global _cached_markets, _last_market_fetch
     now = time.time()
@@ -76,10 +76,10 @@ def fetch_prediction_markets(limit: int = 15, force_refresh: bool = False) -> Li
 
     markets = []
     
-    # 1. Fetch live markets from Manifold Markets open API (with fast timeout)
+    # 1. Fetch live markets from Manifold Markets open API (with ultra-fast 0.6s timeout)
     try:
         url = f"https://api.manifold.markets/v0/markets?limit={limit}&sort=liquidity"
-        with httpx.Client(timeout=2.5) as client:
+        with httpx.Client(timeout=0.6) as client:
             resp = client.get(url)
             if resp.status_code == 200:
                 data = resp.json()

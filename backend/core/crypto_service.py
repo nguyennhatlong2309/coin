@@ -15,6 +15,9 @@ class CryptoService:
         self.cache_time = 0.0
         self.cached_tickers: List[Dict[str, Any]] = []
         self.cached_tickers_map: Dict[str, Dict[str, Any]] = {}
+        self.all_tickers_cache: List[Dict[str, Any]] = []
+        self.all_tickers_cache_time = 0.0
+        self.klines_cache: Dict[str, Dict[str, Any]] = {}
         self.client = httpx.Client(timeout=4.0, headers={"User-Agent": "quant-desk/1.0"})
         self.load()
 
@@ -113,13 +116,13 @@ class CryptoService:
             "is_active": self.active_status.get(base, True)
         }
 
-    def fetch_coin_ticker(self, coin: str) -> Optional[Dict[str, Any]]:
+    def fetch_coin_ticker(self, coin: str, force_refresh: bool = False) -> Optional[Dict[str, Any]]:
         """Fetch 24hr stats & liquidity for a single coin, with quick cache fallback."""
         symbol = self.normalize_symbol(coin)
         base = self.get_coin_base(symbol)
         
-        # Check cache if fresh (within 3 seconds)
-        if (time.time() - self.cache_time < 3.0) and base in self.cached_tickers_map:
+        # Check cache if fresh (within 2 seconds) and not forced
+        if not force_refresh and (time.time() - self.cache_time < 2.0) and base in self.cached_tickers_map:
             return self.cached_tickers_map[base]
 
         url = f"https://api.binance.com/api/v3/ticker/24hr?symbol={symbol}"
@@ -193,6 +196,14 @@ class CryptoService:
 
         symbol = self.normalize_symbol(coin)
         base = self.get_coin_base(symbol)
+
+        # Caching logic based on timeframe TTL
+        cache_key = f"{symbol}_{interval}_{min(limit, 300)}"
+        ttl = 50.0 if interval == "1h" else (20.0 if interval == "15m" else 3.0)
+        cached = self.klines_cache.get(cache_key)
+        if cached and (time.time() - cached.get("ts", 0) < ttl):
+            return cached["data"]
+
         url = f"https://api.binance.com/api/v3/klines?symbol={symbol}&interval={interval}&limit={min(limit, 300)}"
 
         try:
@@ -225,7 +236,7 @@ class CryptoService:
                     "color": "rgba(16, 185, 129, 0.5)" if is_bull else "rgba(239, 68, 68, 0.5)"
                 })
 
-            return {
+            result = {
                 "coin": base,
                 "symbol": symbol,
                 "interval": interval,
@@ -234,9 +245,32 @@ class CryptoService:
                 "last_price": candles[-1]["close"] if candles else 0,
                 "count": len(candles)
             }
+            self.klines_cache[cache_key] = {"ts": time.time(), "data": result}
+            return result
         except Exception as e:
             logger.warning(f"Error fetching klines for {symbol}: {e}")
+            if cached:
+                return cached["data"]
             return {"error": str(e)}
+
+    def fetch_multi_timeframe_klines(self, coin: str) -> Dict[str, Any]:
+        """
+        Thu thập dữ liệu nến 3 tầng đa khung thời gian phục vụ Chiến Lược Bắn Tỉa Cá Mập:
+        - 1H: Khung vĩ mô (Macro Trend & Đỉnh/Đáy ngày)
+        - 15M: Khung cấu trúc (Market Structure & FVG)
+        - 1M: Khung bóp cò (Trigger Entry & Pinbar Sweeps)
+        """
+        k1m = self.fetch_klines(coin, interval="1m", limit=60)
+        k15m = self.fetch_klines(coin, interval="15m", limit=40)
+        k1h = self.fetch_klines(coin, interval="1h", limit=40)
+
+        return {
+            "coin": coin.upper().replace("USDT", ""),
+            "klines_1m": k1m.get("candles", []) if isinstance(k1m, dict) else [],
+            "klines_15m": k15m.get("candles", []) if isinstance(k15m, dict) else [],
+            "klines_1h": k1h.get("candles", []) if isinstance(k1h, dict) else [],
+            "last_price": k1m.get("last_price", 0.0) if isinstance(k1m, dict) else 0.0
+        }
 
     def fetch_all_watchlist(self, force_refresh: bool = False) -> List[Dict[str, Any]]:
         """Fetch tickers for all coins in user's watchlist using fast batch endpoint (with 2.5-sec caching)."""
@@ -337,3 +371,89 @@ class CryptoService:
             return f"${price:.6f}"
         else:
             return f"${price:.8f}"
+
+    @staticmethod
+    def format_volume(volume: float) -> str:
+        if volume >= 1_000_000_000:
+            return f"${volume / 1_000_000_000:.2f}B"
+        elif volume >= 1_000_000:
+            return f"${volume / 1_000_000:.1f}M"
+        elif volume >= 1_000:
+            return f"${volume / 1_000:.0f}K"
+        return f"${volume:.0f}"
+
+    def get_all_usdt_tickers(self, force_refresh: bool = False) -> List[Dict[str, Any]]:
+        now = time.time()
+        if not force_refresh and (now - self.all_tickers_cache_time < 90.0) and self.all_tickers_cache:
+            return self.all_tickers_cache
+
+        url = "https://api.binance.com/api/v3/ticker/24hr"
+        try:
+            resp = self.client.get(url)
+            if resp.status_code == 200:
+                raw_list = resp.json()
+                results = []
+                for item in raw_list:
+                    symbol = item.get("symbol", "")
+                    if not symbol.endswith("USDT"):
+                        continue
+                    # Ignore leveraged tokens (UP/DOWN/BEAR/BULL) and stablecoin pairs
+                    base = self.get_coin_base(symbol)
+                    if base in {"USDC", "FDUSD", "TUSD", "BUSD", "EUR", "DAI", "USDP", "AEUR"}:
+                        continue
+                    if any(symbol.endswith(suffix) for suffix in ["UPUSDT", "DOWNUSDT", "BULLUSDT", "BEARUSDT"]):
+                        continue
+                    
+                    price = float(item.get("lastPrice", 0))
+                    if price <= 0:
+                        continue
+                    change_pct = float(item.get("priceChangePercent", 0))
+                    quote_vol = float(item.get("quoteVolume", 0))
+                    
+                    results.append({
+                        "symbol": symbol,
+                        "coin": base,
+                        "price": price,
+                        "price_formatted": self.format_price(price),
+                        "change_pct": round(change_pct, 2),
+                        "quote_volume": quote_vol,
+                        "volume_formatted": self.format_volume(quote_vol)
+                    })
+                
+                # Sort descending by 24h quote volume
+                results.sort(key=lambda x: x["quote_volume"], reverse=True)
+                self.all_tickers_cache = results
+                self.all_tickers_cache_time = now
+                return results
+        except Exception as e:
+            logger.warning(f"Error fetching all 24hr tickers: {e}")
+
+        return self.all_tickers_cache
+
+    def search_coins(self, query: str = "", limit: int = 15) -> List[Dict[str, Any]]:
+        all_tickers = self.get_all_usdt_tickers()
+        q = (query or "").strip().upper()
+
+        if not q:
+            selected = all_tickers[:limit]
+        else:
+            exact = []
+            starts = []
+            contains = []
+            for item in all_tickers:
+                coin = item["coin"]
+                if coin == q:
+                    exact.append(item)
+                elif coin.startswith(q):
+                    starts.append(item)
+                elif q in coin:
+                    contains.append(item)
+            selected = (exact + starts + contains)[:limit]
+
+        out = []
+        for item in selected:
+            d = dict(item)
+            d["in_watchlist"] = d["coin"] in self.watchlist
+            out.append(d)
+        return out
+
